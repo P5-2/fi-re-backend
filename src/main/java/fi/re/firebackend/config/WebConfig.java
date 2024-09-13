@@ -1,6 +1,6 @@
 package fi.re.firebackend.config;
 
-import mul.cam.e.security.SecurityConfig;
+//import mul.cam.e.security.SecurityConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +19,7 @@ import org.springframework.web.multipart.support.StandardServletMultipartResolve
 import java.util.Date;
 
 @EnableWebMvc
-@ComponentScan(basePackages = "mul.cam.e")  // <- 공통 팩키지
+@ComponentScan(basePackages = "fi.re.firebackend.")  // <- 공통 팩키지
 public class WebConfig implements WebMvcConfigurer {
 
     /*@Bean   // <- object 생성

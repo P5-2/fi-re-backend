@@ -14,7 +14,7 @@ ext {
     junitVersion = '5.9.2'
     springVersion = '5.3.37'
     lombokVersion = '1.18.30'
-    springSecurityVersion='5.8.13'
+    springSecurityVersion = '5.8.13'
 }
 
 sourceCompatibility = '1.8'
@@ -26,7 +26,7 @@ tasks.withType(JavaCompile) {
 
 dependencies {
     // 스프링
-    implementation ("org.springframework:spring-context:${springVersion}")
+    implementation("org.springframework:spring-context:${springVersion}")
             { exclude group: 'commons-logging', module: 'commons-logging' }
     implementation "org.springframework:spring-webmvc:${springVersion}"
     implementation 'javax.inject:javax.inject:1'
@@ -90,12 +90,20 @@ dependencies {
 
     // 테스트
     testImplementation "org.springframework:spring-test:${springVersion}"
-    testCompileOnly"org.projectlombok:lombok:${lombokVersion}"
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+
+    // ND4J
+    implementation 'org.nd4j:nd4j-native-platform:1.0.0-M1.1'
+
+    //DL4J
+    implementation 'org.deeplearning4j:deeplearning4j-core:1.0.0-M1.1'
+    implementation 'org.nd4j:nd4j-api:1.0.0-M1.1'
 }
 
 test {
-    useJUnitPlatform()}
+    useJUnitPlatform()
+}

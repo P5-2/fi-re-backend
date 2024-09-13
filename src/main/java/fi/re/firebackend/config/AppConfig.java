@@ -13,7 +13,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import javax.sql.DataSource;
 
 // Database 설정
-@MapperScan("mul.cam.e")
+@MapperScan("fi.re.firebackend.")
 public class AppConfig {
 
     @Bean
