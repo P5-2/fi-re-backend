@@ -1,129 +1,153 @@
 package fi.re.firebackend.service.gold;
 
+import fi.re.firebackend.dao.gold.GoldDao;
 import fi.re.firebackend.dto.gold.GoldInfo;
-import fi.re.firebackend.dto.gold.LSTMData;
+import fi.re.firebackend.util.api.GoldInfoApi;
 import fi.re.firebackend.util.api.JsonConverter;
 import fi.re.firebackend.util.dateUtil.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
-public class GoldServiceImpl implements GoldService{
+@Transactional
+public class GoldServiceImpl implements GoldService {
 
-    private final RestTemplate restTemplate;
+    private final GoldDao goldDao;
+    private final GoldInfoApi goldInfoApi;
 
     @Autowired
-    public GoldServiceImpl(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public GoldServiceImpl(GoldDao goldDao, GoldInfoApi goldInfoApi) {
+        this.goldDao = goldDao;
+        this.goldInfoApi = goldInfoApi;
     }
 
-    //DB에 api에서 받은 정보 저장하는 함수
-//    public String setGoldData(){
-//        //
+    public void saveGoldData(GoldInfo goldInfo, String itmsNm) {
+        // 금종목이 이미 존재하는지 확인
+        int count = goldDao.checkGoldCategoryExists(Integer.parseInt(goldInfo.getSrtnCd()));
+
+        // 금종목이 없다면 삽입
+        if (count == 0) {
+            goldDao.insertGoldCategory(Integer.parseInt(goldInfo.getSrtnCd()), itmsNm);  // 금종목 삽입
+        }
+
+        // 금 시세 데이터 삽입
+        goldDao.insertGoldData(goldInfo);
+    }
+
+    // OpenAPI로부터 데이터를 가져와서 DB에 저장하는 메서드
+    @Override
+    public int setDataFromAPI() {
+        // 1. 테이블이 비었는지 확인
+        int recordcount = goldDao.isTableEmpty();
+        List<GoldInfo> goldInfoList;
+
+        // 2. 테이블에 데이터가 존재하면
+        if (recordcount > 0) {
+            // 마지막으로 업데이트한 날짜 구하기
+            String lastUpdateDate = goldDao.getLastBasDt();
+            String today = new SimpleDateFormat("yyyyMMdd").format(new Date());
+            String lastWeekDay = "";
+
+            // last day, today 평일 날짜로 바꾸기
+            try {
+                lastWeekDay = DateUtil.getMostRecentWeekday(today);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+
+            // 최신일이 같은 날이면 0 반환
+            if (lastUpdateDate.equals(lastWeekDay)) {
+                System.out.println("최신 데이터입니다.");
+                return 0;
+            }
+
+            // 날짜 차이 계산 후 API 호출
+            int dayDiff = DateUtil.calcDateDiff(lastUpdateDate, lastWeekDay);
+            try {
+                goldInfoList = JsonConverter.convertJsonToList(goldInfoApi.getGoldData("endBasDt", lastWeekDay, dayDiff));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            // 불러온 데이터 DB에 저장 (종목 확인 및 삽입 포함)
+            for (GoldInfo goldInfo : goldInfoList) {
+                String itmsNm = "금"; // 미니금, 금
+                saveGoldData(goldInfo, itmsNm);  // 금종목 확인 및 삽입
+            }
+
+        } else {
+            // 테이블이 비어 있을 경우 OpenAPI로부터 데이터 가져오기
+            String today = new SimpleDateFormat("yyyyMMdd").format(new Date());
+
+            // 3년치 데이터 가져오기
+            try {
+                String response = goldInfoApi.getGoldData("endBasDt", today, 1095);
+                goldInfoList = JsonConverter.convertJsonToList(response);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            // 데이터를 DB에 저장 (종목 확인 및 삽입 포함)
+            for (GoldInfo goldInfo : goldInfoList) {
+                String itmsNm = "금";  // 미니금, 금
+                saveGoldData(goldInfo, itmsNm);  // 금종목 확인 및 삽입
+            }
+        }
+
+        return goldInfoList.size();  // 삽입된 데이터의 개수 반환
+    }
+
+
+    // 최근 업데이트된 날짜와 현재 날짜 비교
+//    @Override
+//    public int getLastUpdateDate() {
+//        String lastBasDt = goldDao.getLastBasDt();
+//        String today = new SimpleDateFormat("yyyyMMdd").format(new Date());
+//        if (lastBasDt == null) return -1;
+//
+//        // 날짜 차이 계산
+//        int dayDiff = DateUtil.calcDateDiff(lastBasDt, today);
+//
+//        // 만약 오늘이 주말이면 날짜를 평일로 조정
+//        Calendar cal = Calendar.getInstance();
+//        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+//
+//        if (dayOfWeek == Calendar.SUNDAY) {
+//            dayDiff -= 2;  // 일요일 -> 금요일
+//        } else if (dayOfWeek == Calendar.SATURDAY) {
+//            dayDiff -= 1;  // 토요일 -> 금요일
+//        }
+//
+//        return dayDiff;
 //    }
 
+    // 현재 날짜로부터 주어진 기간(days)의 금 시세 데이터를 받아오는 함수
+//    @Override
+//    public List<GoldInfo> getGoldInfoInPeriod(String endBasDt, int days) {
+//        // endBasDt부터 주어진 기간 동안의 데이터를 불러옴
+//        Calendar cal = Calendar.getInstance();
+//        cal.add(Calendar.DATE, -days);
+//        String startBasDt = new SimpleDateFormat("yyyyMMdd").format(cal.getTime());
+//
+//        return goldDao.getGoldInfoInPeriod(startBasDt, endBasDt);
+//    }
 
-
-    @Override
-    public int checkLastUpdateDate() {
-
-        return 0;
-    }
-
-    @Override
-    public GoldInfo getDaysInfo(String basDt) {
-        return null;
-    }
-
-    @Override
-    public List<GoldInfo> getAllGoldInfoInPeriod(String endBasDt) {
-//        return List.of();
-        return null;
-    }
-
-    //현재 날짜로부터 1년 전까지의 데이터를 받아오는 함수
-    //매개변수로 받는 endBasDt와 OpenApi의 endBasDt는 다름
-    @Override
-    public List<GoldInfo> getAllGoldInfoInPeriod(String endBasDt, int months) {
-        DateUtil dateUtil;
-
-
-//        return List.of();
-        return null;
-    }
-
-
-    // 예측된 금 값 받아오는 함수
-    @Override
-    public List<GoldInfo> getFutureGoldPrice() throws Exception {
-        try{
-            LSTMData data;
-
-            String date = "20240913";
-            return JsonConverter.convertJsonToList(getGoldData("basDt", date));
-        }catch (Exception e){
-            throw new Exception(e.toString());
-        }
-    }
-
-    // getGoldData의 dateType은 basDt, beginBasDt, endBasDt 중 하나
-    // basDt : 기준일자로 해당되는 하루의 금 값 정보 요청
-    // beginBasDt : 입력한 일자 이후 현재까지의 모든 일자 정보
-    // endBasDt : 입력한 일자 이전의 모든 정보
-    //Open API를 이용하여 금 시세 가져오는 함수(데이터가 없을 때나 하루의 시작에 한 번만 가져옴)
-    public String getGoldData(String dateType, String queryDate) {
-        String apiUrl = "https://apis.data.go.kr/1160100/service/GetGeneralProductInfoService/getGoldPriceInfo";
-        String serviceKey = "NfkNz94MvmtFAx%2Fs5jLbtZw%2FgYQgMbzMgvaHKWD0c%2BaSa8JqBy2jTLvmQgAv27%2F6%2B7mHYYn2L1FJspaFCMpLzw%3D%3D"; //인증 키
-        String numOfRows = "10";
-        String pageNo = "1";
-        String resultType = "json";
-        //어떤 날짜로 받아와야할지 수정하기
-        String basDt = "20240913"; //
-        String beginBasDt = "20220919"; //마지막으로 최신화한 날짜 저장하고 유동적으로 변경하기
-        String endBasDt = "오늘 날짜"; //db에 저장할거 한 번만 저장하면 될 듯
-
-        StringBuilder urlBuilder = new StringBuilder(apiUrl);
-        try {
-            urlBuilder.append("?" + URLEncoder.encode("ServiceKey", "UTF-8") + "=" + serviceKey);
-            urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode(pageNo, "UTF-8"));
-            urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode(numOfRows, "UTF-8"));
-            urlBuilder.append("&" + URLEncoder.encode("resultType", "UTF-8") + "=" + URLEncoder.encode(resultType, "UTF-8"));
-            urlBuilder.append("&" + URLEncoder.encode(dateType, "UTF-8") + "=" + URLEncoder.encode(queryDate, "UTF-8"));
-            urlBuilder.append("&" + URLEncoder.encode("resultType", "UTF-8") + "=" + URLEncoder.encode(resultType, "UTF-8"));
-            // API 호출
-            URL url = new URL(urlBuilder.toString());
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Content-type", "application/json");
-
-            BufferedReader rd;
-            if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
-                rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            } else {
-                rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-            }
-
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = rd.readLine()) != null) {
-                sb.append(line);
-            }
-            rd.close();
-            conn.disconnect();
-            return sb.toString();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "Error occurred while fetching data. "+e;
-        }
-    }
+    // 예측된 금값 받아오는 함수
+//    @Override
+//    public List<GoldInfo> getFutureGoldPrice() throws Exception {
+//        try {
+//            String futureDate = "20240913";  // 예시로 예측하려는 날짜
+//            List<GoldInfo> predictedGoldPrices = JsonConverter.convertJsonToList(getGoldData("basDt", futureDate));
+//            return predictedGoldPrices;
+//        } catch (Exception e) {
+//            throw new Exception("Error fetching future gold price: " + e.getMessage());
+//        }
+//    }
 }

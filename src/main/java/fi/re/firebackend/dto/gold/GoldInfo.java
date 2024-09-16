@@ -1,5 +1,6 @@
 package fi.re.firebackend.dto.gold;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 @Data
@@ -8,9 +9,11 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GoldInfo {
     private int basDt;
     private int clpr;
+    private String srtnCd;
     private int vs;
     private double fltRt;
     private int mkp;
