@@ -14,7 +14,7 @@ public interface GoldDao {
     String getLastBasDt();
 
     // 특정 날짜 범위의 데이터를 가져오기
-    List<GoldInfo> getGoldInfoInPeriod(String startDate, String endDate);
+    List<GoldInfo> getGoldInfoInPeriod(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
     //테이블이 비었는지 확인
     int isTableEmpty();

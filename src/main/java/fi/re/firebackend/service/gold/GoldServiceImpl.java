@@ -1,10 +1,12 @@
 package fi.re.firebackend.service.gold;
 
 import fi.re.firebackend.dao.gold.GoldDao;
+import fi.re.firebackend.dto.gold.GoldPredicted;
 import fi.re.firebackend.dto.gold.GoldInfo;
 import fi.re.firebackend.util.api.GoldInfoApi;
 import fi.re.firebackend.util.api.JsonConverter;
 import fi.re.firebackend.util.dateUtil.DateUtil;
+import fi.re.firebackend.util.goldPredict.GoldPriceExpectation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -22,10 +25,13 @@ public class GoldServiceImpl implements GoldService {
     private final GoldDao goldDao;
     private final GoldInfoApi goldInfoApi;
 
+    private final GoldPriceExpectation goldPriceExpectation;
+
     @Autowired
-    public GoldServiceImpl(GoldDao goldDao, GoldInfoApi goldInfoApi) {
+    public GoldServiceImpl(GoldDao goldDao, GoldInfoApi goldInfoApi, GoldPriceExpectation goldPriceExpectation) {
         this.goldDao = goldDao;
         this.goldInfoApi = goldInfoApi;
+        this.goldPriceExpectation = goldPriceExpectation;
     }
 
     public void saveGoldData(GoldInfo goldInfo, String itmsNm) {
@@ -105,49 +111,32 @@ public class GoldServiceImpl implements GoldService {
     }
 
 
-    // 최근 업데이트된 날짜와 현재 날짜 비교
-//    @Override
-//    public int getLastUpdateDate() {
-//        String lastBasDt = goldDao.getLastBasDt();
-//        String today = new SimpleDateFormat("yyyyMMdd").format(new Date());
-//        if (lastBasDt == null) return -1;
-//
-//        // 날짜 차이 계산
-//        int dayDiff = DateUtil.calcDateDiff(lastBasDt, today);
-//
-//        // 만약 오늘이 주말이면 날짜를 평일로 조정
-//        Calendar cal = Calendar.getInstance();
-//        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-//
-//        if (dayOfWeek == Calendar.SUNDAY) {
-//            dayDiff -= 2;  // 일요일 -> 금요일
-//        } else if (dayOfWeek == Calendar.SATURDAY) {
-//            dayDiff -= 1;  // 토요일 -> 금요일
-//        }
-//
-//        return dayDiff;
-//    }
-
     // 현재 날짜로부터 주어진 기간(days)의 금 시세 데이터를 받아오는 함수
-//    @Override
-//    public List<GoldInfo> getGoldInfoInPeriod(String endBasDt, int days) {
-//        // endBasDt부터 주어진 기간 동안의 데이터를 불러옴
-//        Calendar cal = Calendar.getInstance();
-//        cal.add(Calendar.DATE, -days);
-//        String startBasDt = new SimpleDateFormat("yyyyMMdd").format(cal.getTime());
-//
-//        return goldDao.getGoldInfoInPeriod(startBasDt, endBasDt);
-//    }
+    @Override
+    public List<GoldInfo> getGoldInfoInPeriod(String endBasDt, int days) {
+        // endBasDt부터 주어진 기간 동안의 데이터를 불러옴
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -days);
+        String startBasDt = new SimpleDateFormat("yyyyMMdd").format(cal.getTime());
+
+        return goldDao.getGoldInfoInPeriod(startBasDt, endBasDt);
+    }
 
     // 예측된 금값 받아오는 함수
-//    @Override
-//    public List<GoldInfo> getFutureGoldPrice() throws Exception {
-//        try {
-//            String futureDate = "20240913";  // 예시로 예측하려는 날짜
-//            List<GoldInfo> predictedGoldPrices = JsonConverter.convertJsonToList(getGoldData("basDt", futureDate));
-//            return predictedGoldPrices;
-//        } catch (Exception e) {
-//            throw new Exception("Error fetching future gold price: " + e.getMessage());
-//        }
-//    }
+    @Override
+    public List<GoldPredicted> getFutureGoldPrice() throws Exception {
+        try {
+            String startDate = "20220627"; //DB에 저장된 가장 빠른 날짜 불러와서 사용해도 되지만 성능적인 면에서 fix 해놓음
+            String endDate = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
+
+            List<GoldPredicted> predictedGoldPrices = goldPriceExpectation.lstm(goldDao.getGoldInfoInPeriod(startDate, endDate));
+            System.out.println("predict !!!!!!!!!!!!!!!");
+            System.out.println(predictedGoldPrices);
+            return predictedGoldPrices;
+        } catch (Exception e) {
+            e.printStackTrace(); // 예외의 상세한 스택 트레이스를 로그에 출력
+            throw new Exception("Error fetching future gold price: " + e.getMessage());
+        }
+
+    }
 }
