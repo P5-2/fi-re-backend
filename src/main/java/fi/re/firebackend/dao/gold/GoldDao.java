@@ -1,6 +1,7 @@
 package fi.re.firebackend.dao.gold;
 
 import fi.re.firebackend.dto.gold.GoldInfo;
+import fi.re.firebackend.dto.gold.GoldPredicted;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -27,4 +28,7 @@ public interface GoldDao {
 
     // 금 시세 데이터 삽입
     void insertGoldData(GoldInfo goldInfo);
+
+    //예측한 금 시세 테이블에 저장
+    void insertGoldPredictData(GoldPredicted goldPredicted);
 }

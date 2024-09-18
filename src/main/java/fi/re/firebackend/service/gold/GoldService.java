@@ -1,7 +1,7 @@
 package fi.re.firebackend.service.gold;
 
-import fi.re.firebackend.dto.gold.GoldPredicted;
 import fi.re.firebackend.dto.gold.GoldInfo;
+import fi.re.firebackend.dto.gold.GoldPredicted;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +17,6 @@ public interface GoldService {
     //매개변수로 받는 endBasDt와 OpenApi의 endBasDt는 다름
     List<GoldInfo> getGoldInfoInPeriod(String endBasDt, int days);
 
-    //예측된 금 값(1년 뒤 금 값까지 반환)
+    //예측된 금 값(test데이터만큼 반환)
     List<GoldPredicted> getFutureGoldPrice() throws Exception;
 }

@@ -1,8 +1,8 @@
 package fi.re.firebackend.service.gold;
 
 import fi.re.firebackend.dao.gold.GoldDao;
-import fi.re.firebackend.dto.gold.GoldPredicted;
 import fi.re.firebackend.dto.gold.GoldInfo;
+import fi.re.firebackend.dto.gold.GoldPredicted;
 import fi.re.firebackend.util.api.GoldInfoApi;
 import fi.re.firebackend.util.api.JsonConverter;
 import fi.re.firebackend.util.dateUtil.DateUtil;
@@ -47,6 +47,16 @@ public class GoldServiceImpl implements GoldService {
         goldDao.insertGoldData(goldInfo);
     }
 
+    public void saveGoldPredictData(GoldPredicted goldPredicted) {
+
+        // 해당 날짜가 이미 존재하는지 확인
+        int count = goldDao.checkGoldCategoryExists(Integer.parseInt(goldPredicted.getDate()));
+        // 날짜가 없다면 삽입
+        if (count == 0) {
+            goldDao.insertGoldPredictData(goldPredicted);
+        }
+    }
+
     // OpenAPI로부터 데이터를 가져와서 DB에 저장하는 메서드
     @Override
     public int setDataFromAPI() {
@@ -61,31 +71,33 @@ public class GoldServiceImpl implements GoldService {
             String today = new SimpleDateFormat("yyyyMMdd").format(new Date());
             String lastWeekDay = "";
 
-            // last day, today 평일 날짜로 바꾸기
+            // today를 평일 날짜로 변환
             try {
                 lastWeekDay = DateUtil.getMostRecentWeekday(today);
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
 
-            // 최신일이 같은 날이면 0 반환
-            if (lastUpdateDate.equals(lastWeekDay)) {
+            // 날짜 차이 계산
+            int dayDiff = DateUtil.calcDateDiff(lastUpdateDate, lastWeekDay) - 1;
+
+            // 최신일이 같은 날이면 0 반환하고 종료
+            if (dayDiff <= 0) {
                 System.out.println("최신 데이터입니다.");
                 return 0;
             }
 
-            // 날짜 차이 계산 후 API 호출
-            int dayDiff = DateUtil.calcDateDiff(lastUpdateDate, lastWeekDay);
+            // API 호출하여 새로운 데이터를 가져옴
             try {
                 goldInfoList = JsonConverter.convertJsonToList(goldInfoApi.getGoldData("endBasDt", lastWeekDay, dayDiff));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
 
-            // 불러온 데이터 DB에 저장 (종목 확인 및 삽입 포함)
-            for (GoldInfo goldInfo : goldInfoList) {
-                String itmsNm = "금"; // 미니금, 금
-                saveGoldData(goldInfo, itmsNm);  // 금종목 확인 및 삽입
+            //맨 마지막으로 받아온 데이터가 최신 데이터이면 저장 안함
+            if (goldInfoList.stream()
+                    .anyMatch(goldInfo -> goldInfo.getBasDt() == Integer.parseInt(lastUpdateDate))) {
+                return 0;
             }
 
         } else {
@@ -100,11 +112,11 @@ public class GoldServiceImpl implements GoldService {
                 throw new RuntimeException(e);
             }
 
-            // 데이터를 DB에 저장 (종목 확인 및 삽입 포함)
-            for (GoldInfo goldInfo : goldInfoList) {
-                String itmsNm = "금";  // 미니금, 금
-                saveGoldData(goldInfo, itmsNm);  // 금종목 확인 및 삽입
-            }
+        }
+        // 데이터를 DB에 저장 (종목 확인 및 삽입 포함)
+        for (GoldInfo goldInfo : goldInfoList) {
+            String itmsNm = "금";  // 미니금, 금
+            saveGoldData(goldInfo, itmsNm);  // 금종목 확인 및 삽입
         }
 
         return goldInfoList.size();  // 삽입된 데이터의 개수 반환
@@ -129,10 +141,13 @@ public class GoldServiceImpl implements GoldService {
             String startDate = "20220627"; //DB에 저장된 가장 빠른 날짜 불러와서 사용해도 되지만 성능적인 면에서 fix 해놓음
             String endDate = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
 
-            List<GoldPredicted> predictedGoldPrices = goldPriceExpectation.lstm(goldDao.getGoldInfoInPeriod(startDate, endDate));
-            System.out.println("predict !!!!!!!!!!!!!!!");
-            System.out.println(predictedGoldPrices);
-            return predictedGoldPrices;
+            List<GoldPredicted> predictedList = goldPriceExpectation.lstm(goldDao.getGoldInfoInPeriod(startDate, endDate));
+            //예측치를 db에 저장
+            for (GoldPredicted predicted : predictedList) {
+                saveGoldPredictData(predicted);
+            }
+
+            return predictedList;
         } catch (Exception e) {
             e.printStackTrace(); // 예외의 상세한 스택 트레이스를 로그에 출력
             throw new Exception("Error fetching future gold price: " + e.getMessage());

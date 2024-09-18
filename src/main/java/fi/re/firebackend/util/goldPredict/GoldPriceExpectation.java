@@ -1,8 +1,8 @@
 package fi.re.firebackend.util.goldPredict;
 
 import fi.re.firebackend.dao.gold.GoldDao;
-import fi.re.firebackend.dto.gold.GoldPredicted;
 import fi.re.firebackend.dto.gold.GoldInfo;
+import fi.re.firebackend.dto.gold.GoldPredicted;
 import org.apache.commons.lang3.time.DateUtils;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
@@ -18,7 +18,6 @@ import org.nd4j.linalg.dataset.api.preprocessor.NormalizerMinMaxScaler;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
@@ -31,7 +30,7 @@ import java.util.List;
 @Component
 public class GoldPriceExpectation {
 
-    @Autowired
+    //    @Autowired
     private GoldDao goldDao;
 
     private static final int N_EPOCHS = 100;
@@ -39,6 +38,10 @@ public class GoldPriceExpectation {
     private static final double MOMENTUM = 0.9;
     private static final int SEED = 1000;
     private static final int NUM_FEATURES = 7;
+
+    GoldPriceExpectation(GoldDao goldDao) {
+        this.goldDao = goldDao;
+    }
 
     public List<GoldPredicted> lstm(List<GoldInfo> goldInfoPerDay) throws Exception {
         long startTime = System.currentTimeMillis();
@@ -142,7 +145,6 @@ public class GoldPriceExpectation {
         scaler.fit(dataSet);
         scaler.transform(dataSet);
 
-        System.out.println("getTrainingData: " + dataSet);
         return dataSet;
     }
 
@@ -178,31 +180,9 @@ public class GoldPriceExpectation {
         scaler.fit(dataSet);
         scaler.transform(dataSet);
 
-        System.out.println("getTestData: " + dataSet);
         return dataSet;
     }
 
-    //    private List<GoldPredicted> learnResult(INDArray predicted, int trainSize) throws ParseException {
-//        List<GoldPredicted> GoldPredicteds = new ArrayList<>();
-//
-//        // 오늘 날짜를 "yyyyMMdd" 형식으로 가져오기
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-//        String todayString = sdf.format(Calendar.getInstance().getTime());
-//        String lastDay = (Integer.parseInt(todayString) - 1) + "";
-//        Date today = sdf.parse(todayString); // String을 Date 객체로 변환
-//
-//        for (int i = 0; i < predicted.size(0); i++) {
-//            long predictedValue = (long) predicted.getDouble(i);
-//            Date predictionDate = DateUtils.addDays(today, i + 1); // 예측 날짜
-//
-//            GoldInfo lastGoldInfo = goldDao.getGoldInfoInPeriod(lastDay, todayString).get(0); // 가장 최근의 저장된 GoldInfo
-//            double actualValue = lastGoldInfo.getClpr(); // 실제 값
-//
-//            GoldPredicteds.add(new GoldPredicted(predictionDate, predictedValue));
-//        }
-//
-//        return GoldPredicteds;
-//    }
     private List<GoldPredicted> learnResult(INDArray predicted, int futureDays) throws ParseException {
         List<GoldPredicted> GoldPredicteds = new ArrayList<>();
 
@@ -211,9 +191,7 @@ public class GoldPriceExpectation {
         String todayString = sdf.format(Calendar.getInstance().getTime());
         Date today = sdf.parse(todayString); // String을 Date 객체로 변환
 
-
         for (int i = 0; i < futureDays; i++) {
-            System.out.print(" getDouble : "+predicted.getDouble(i));
             long predictedValue = (long) predicted.getDouble(i); // 예측된 값
             String predictionDate = sdf.format(DateUtils.addDays(today, i + 1)); // 예측 날짜
 
