@@ -1,7 +1,7 @@
 ---
 name: Enhancement issue template
 about: 이미 추가된 기능의 개선 이슈를 위한 템플릿
-title: ''
+title: "[Enhancement] "
 labels: enhancement
 assignees: ''
 
