@@ -72,8 +72,9 @@ public class GoldController {
     public List<GoldPredicted> test() {
         try {
             String today = "20240918";
-            goldPredictionService.deleteOldGoldPrices();
-            goldPredictionService.saveGoldPredictData();
+//            goldPredictionService.deleteOldGoldPrices();
+//            goldPredictionService.saveGoldPredictData();
+            goldPredictionService.goldPredictUpdate();
             // 미래 금 시세 데이터를 가져옴
             return goldPredictionService.getFutureGoldPrice(today);
         } catch (Exception e) {
