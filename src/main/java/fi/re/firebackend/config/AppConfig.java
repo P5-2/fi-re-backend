@@ -24,7 +24,7 @@ public class AppConfig {
 
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/TestDB?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8&useUnicode=true");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/firedb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8&useUnicode=true");
         dataSource.setUsername("root");
         dataSource.setPassword("1234");
         dataSource.setInitialSize(5);

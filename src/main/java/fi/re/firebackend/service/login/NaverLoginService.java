@@ -1,17 +1,17 @@
-package fi.re.firebackend.service;
+package fi.re.firebackend.service.login;
 
-import fi.re.firebackend.dao.MemberDao;
+import fi.re.firebackend.dao.login.NaverLoginDao;
 import fi.re.firebackend.dto.login.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class MemberService {
+public class NaverLoginService {
 
-    private final MemberDao dao;
+    private final NaverLoginDao dao;
 
-    public MemberService(MemberDao dao) {
+    public NaverLoginService(NaverLoginDao dao) {
         this.dao = dao;
     }
 

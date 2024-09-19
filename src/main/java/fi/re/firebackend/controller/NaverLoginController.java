@@ -1,7 +1,7 @@
 package fi.re.firebackend.controller;
 
 import fi.re.firebackend.dto.login.MemberDto;
-import fi.re.firebackend.service.MemberService;
+import fi.re.firebackend.service.login.NaverLoginService;
 import org.nd4j.shade.jackson.databind.JsonNode;
 import org.nd4j.shade.jackson.databind.ObjectMapper;
 import org.springframework.http.*;
@@ -17,9 +17,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/naver")
 public class NaverLoginController {
-    private final MemberService service;
+    private final NaverLoginService service;
 
-    public NaverLoginController(MemberService service) {
+    public NaverLoginController(NaverLoginService service) {
         this.service = service;
     }
 
@@ -48,9 +48,6 @@ public class NaverLoginController {
         try {
             ResponseEntity<String> response = restTemplate.exchange(tokenUrl, HttpMethod.POST, entity, String.class);
             System.out.println("NaverLoginController.handleNaverCallback >> ");
-
-            // access_token , refresh_token 세션에 저장하기
-
             return ResponseEntity.ok(response.getBody());  // 받은 토큰 정보를 그대로 반환
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("토큰 요청 실패: " + e.getMessage());
@@ -109,6 +106,20 @@ public class NaverLoginController {
         return ResponseEntity.ok(response.getBody());
     }
 
+    // 리프레시 토큰 추출 메서드
+    private String extractRefreshToken(String tokenResponse) {
+        try {
+            // JSON 파싱을 위한 ObjectMapper 생성
+            ObjectMapper objectMapper = new ObjectMapper();
+            // JSON 문자열을 JsonNode로 파싱
+            JsonNode jsonNode = objectMapper.readTree(tokenResponse);
+            // 리프레시 토큰을 추출
+            return jsonNode.path("refresh_token").asText();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 
     private String extractNameFromProfile(String profileResponse) {

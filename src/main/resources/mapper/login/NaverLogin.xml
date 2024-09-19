@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="fi.re.firebackend.dao.login.NaverLoginDao">
+    <insert id="NaverLogin" parameterType="fi.re.firebackend.dto.login.MemberDto">
+        INSERT INTO member (username, platform, nickname, age, salary, assets, riskPoint, exp, goalAmount, keyword)
+        VALUES (#{username}, "Naver", #{nickname}, #{age}, 1000, 1000, 1000, 1000, 1000, 1000);
+    </insert>
+</mapper>
