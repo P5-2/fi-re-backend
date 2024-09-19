@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
@@ -18,6 +19,7 @@ import javax.sql.DataSource;
 @Configuration
 @MapperScan("fi.re.firebackend.dao")
 @PropertySource({"classpath:/application.properties"})
+@EnableScheduling
 public class AppConfig {
 
     @Bean

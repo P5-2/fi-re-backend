@@ -25,13 +25,10 @@ public class GoldServiceImpl implements GoldService {
     private final GoldDao goldDao;
     private final GoldInfoApi goldInfoApi;
 
-    private final GoldPriceExpectation goldPriceExpectation;
-
     @Autowired
-    public GoldServiceImpl(GoldDao goldDao, GoldInfoApi goldInfoApi, GoldPriceExpectation goldPriceExpectation) {
+    public GoldServiceImpl(GoldDao goldDao, GoldInfoApi goldInfoApi) {
         this.goldDao = goldDao;
         this.goldInfoApi = goldInfoApi;
-        this.goldPriceExpectation = goldPriceExpectation;
     }
 
     public void saveGoldData(GoldInfo goldInfo, String itmsNm) {
@@ -47,15 +44,6 @@ public class GoldServiceImpl implements GoldService {
         goldDao.insertGoldData(goldInfo);
     }
 
-    public void saveGoldPredictData(GoldPredicted goldPredicted) {
-
-        // 해당 날짜가 이미 존재하는지 확인
-        int count = goldDao.checkGoldCategoryExists(Integer.parseInt(goldPredicted.getDate()));
-        // 날짜가 없다면 삽입
-        if (count == 0) {
-            goldDao.insertGoldPredictData(goldPredicted);
-        }
-    }
 
     // OpenAPI로부터 데이터를 가져와서 DB에 저장하는 메서드
     @Override
@@ -129,7 +117,6 @@ public class GoldServiceImpl implements GoldService {
         return goldInfoList.size();  // 삽입된 데이터의 개수 반환
     }
 
-
     // 현재 날짜로부터 주어진 기간(days)의 금 시세 데이터를 받아오는 함수
     @Override
     public List<GoldInfo> getGoldInfoInPeriod(String endBasDt, int days) {
@@ -141,24 +128,5 @@ public class GoldServiceImpl implements GoldService {
         return goldDao.getGoldInfoInPeriod(startBasDt, endBasDt);
     }
 
-    // 예측된 금값 받아오는 함수
-    @Override
-    public List<GoldPredicted> getFutureGoldPrice() throws Exception {
-        try {
-            String startDate = "20220627"; //DB에 저장된 가장 빠른 날짜 불러와서 사용해도 되지만 성능적인 면에서 fix 해놓음
-            String endDate = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
 
-            List<GoldPredicted> predictedList = goldPriceExpectation.lstm(goldDao.getGoldInfoInPeriod(startDate, endDate));
-            //예측치를 db에 저장
-            for (GoldPredicted predicted : predictedList) {
-                saveGoldPredictData(predicted);
-            }
-
-            return predictedList;
-        } catch (Exception e) {
-            e.printStackTrace(); // 예외의 상세한 스택 트레이스를 로그에 출력
-            throw new Exception("Error fetching future gold price: " + e.getMessage());
-        }
-
-    }
 }

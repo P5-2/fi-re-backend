@@ -5,6 +5,7 @@
 
 <mapper namespace="fi.re.firebackend.dao.gold.GoldDao">
 
+
     <!-- 마지막 저장된 기준일자 가져오기 -->
     <select id="getLastBasDt" resultType="String">
         SELECT MAX(basDt)
@@ -13,8 +14,8 @@
 
     <!-- 금종목이 존재하는지 확인하는 쿼리 -->
     <select id="checkGoldCategoryExists" resultType="int">
-        SELECT COUNT(1)
-        FROM gold_category
+        SELECT COUNT(*)
+        FROM gold_trading
         WHERE srtnCd = #{srtnCd}
     </select>
 
@@ -29,13 +30,6 @@
         INSERT INTO gold_trading (srtnCd, clpr, vs, fltRt, mkp, hipr, lopr, trqu, basDt)
         VALUES (#{srtnCd}, #{clpr}, #{vs}, #{fltRt}, #{mkp}, #{hipr}, #{lopr}, #{trqu}, #{basDt})
     </insert>
-
-    <!-- 예측된 금 시세를 삽입하는 쿼리 -->
-    <insert id="insertGoldPredictData">
-        INSERT INTO Gold_Predict_Prices (PbasDt, dayPrc)
-        VALUES (#{date}, #{dayPrice})
-    </insert>
-
 
     <!-- 특정 날짜 범위의 데이터를 가져오기 -->
     <select id="getGoldInfoInPeriod" resultType="fi.re.firebackend.dto.gold.GoldInfo">
@@ -57,5 +51,32 @@
         SELECT COUNT(*)
         FROM gold_trading
     </select>
+
+    <!-- Gold_Predict_Prices -->
+
+    <!-- 예측된 금 시세를 삽입하는 쿼리 -->
+    <insert id="insertGoldPredictData">
+        INSERT INTO Gold_Predict_Prices (PbasDt, dayPrc)
+        VALUES (#{date}, #{dayPrice})
+    </insert>
+
+
+    <select id="getGoldPredictData" resultType="fi.re.firebackend.dto.gold.GoldPredicted">
+        SELECT pbasDt,
+               dayPrc
+        FROM gold_predict_prices
+        WHERE pbasDt &gt;= #{today}
+    </select>
+
+
+    <select id="getLastPBasDt" resultType="java.lang.String">
+        SELECT MAX(pBasDt)
+        FROM Gold_Predict_Prices
+    </select>
+
+    <delete id="deleteGoldPredictData">
+        delete from gold_predict_prices
+        where pBasDt  &lt;= #{pBasDt}
+    </delete>
 
 </mapper>

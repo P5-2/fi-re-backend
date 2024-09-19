@@ -17,6 +17,5 @@ public interface GoldService {
     //매개변수로 받는 endBasDt와 OpenApi의 endBasDt는 다름
     List<GoldInfo> getGoldInfoInPeriod(String endBasDt, int days);
 
-    //예측된 금 값(test데이터만큼 반환)
-    List<GoldPredicted> getFutureGoldPrice() throws Exception;
+
 }

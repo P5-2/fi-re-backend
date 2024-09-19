@@ -31,4 +31,13 @@ public interface GoldDao {
 
     //예측한 금 시세 테이블에 저장
     void insertGoldPredictData(GoldPredicted goldPredicted);
+
+    //기간이 지난 금 예측 시세 row 삭제
+    int deleteGoldPredictData(String pBasDt);
+
+    //금 시세 예측 데이터 불러오기
+    List<GoldPredicted> getGoldPredictData(@Param("today") String today);
+
+    // 예측값 테이블에서 마지막 저장된 기준일자 가져오기
+    String getLastPBasDt();
 }
