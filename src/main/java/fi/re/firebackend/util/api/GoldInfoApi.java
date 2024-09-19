@@ -21,10 +21,6 @@ public class GoldInfoApi {
     @Value("${gold.api_key}")
     private String SERVICE_KEY;
 
-    public GoldInfoApi() {
-
-    }
-
     public String getGoldData(String dateType, String endBasDt, int days) throws IOException {
 
 //        String apiUrl = "https://apis.data.go.kr/1160100/service/GetGeneralProductInfoService/getGoldPriceInfo";
@@ -35,7 +31,7 @@ public class GoldInfoApi {
         String basDt = "20240913"; //기준일자와 일치하는 하루 검색
         String beginBasDt = "20220919"; //기준일자 : 기준 일자보다 크거나 같은 데이터를 검색
 //        String endBasDt = "오늘 날짜"; //기준일자가 검색값보다 작은 데이터를 검색
-
+        String likeSrtnCd = "4020000";
         String refDataName = dateType;
         String refDate = endBasDt; //기준이 되는 날짜
         String numOfRows = Integer.toString(days);
@@ -54,6 +50,7 @@ public class GoldInfoApi {
                 .queryParam("pageNo", pageNo)
                 .queryParam("numOfRows", numOfRows)
                 .queryParam("resultType", resultType)
+                .queryParam("likeSrtnCd", likeSrtnCd)
                 .queryParam(refDataName, refDate)
                 .build()
                 .toUriString();

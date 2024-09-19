@@ -115,8 +115,15 @@ public class GoldServiceImpl implements GoldService {
         }
         // 데이터를 DB에 저장 (종목 확인 및 삽입 포함)
         for (GoldInfo goldInfo : goldInfoList) {
-            String itmsNm = "금";  // 미니금, 금
-            saveGoldData(goldInfo, itmsNm);  // 금종목 확인 및 삽입
+            String itmsNm = "금";
+            //미니금이 아니라 금인 경우에만 저장
+            if (goldInfo.getSrtnCd().equals("4020000")) {
+                itmsNm = "금";
+                saveGoldData(goldInfo, itmsNm);  // 금종목 확인 및 삽입
+            } else if (goldInfo.getSrtnCd().equals("4020100")) {
+                itmsNm = "미니금";
+                saveGoldData(goldInfo, itmsNm);  // 금종목 확인 및 삽입
+            }
         }
 
         return goldInfoList.size();  // 삽입된 데이터의 개수 반환
