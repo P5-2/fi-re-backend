@@ -7,6 +7,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.web.client.RestTemplate;
@@ -16,6 +17,7 @@ import javax.sql.DataSource;
 // Database 설정
 @Configuration
 @MapperScan("fi.re.firebackend.dao")
+@PropertySource({"classpath:/application.properties"})
 public class AppConfig {
 
     @Bean
