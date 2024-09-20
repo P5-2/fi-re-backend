@@ -12,6 +12,6 @@ import java.util.Date;
 @NoArgsConstructor
 @ToString
 public class GoldPredicted {
-    private String date;
-    private long dayPrice;
+    private String pBasDt;
+    private long dayPrc;
 }
