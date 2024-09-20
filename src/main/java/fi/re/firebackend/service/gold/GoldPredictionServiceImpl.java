@@ -27,13 +27,12 @@ public class GoldPredictionServiceImpl implements GoldPredictionService {
 
     @Override
     @Scheduled(cron = "0 0 8 * * ?") //초 분 시 일 월 요일 현재는 08시 정각
-    public void goldPredictUpdate() throws Exception{
+    public void goldPredictUpdate() throws Exception {
         deleteOldGoldPrices();
         saveGoldPredictData();
     }
 
-    // 현재 저장된 예측 값과 예측된 결과의 차이를 구해서 차이 만큼의 미래만 저장(수정하기)
-
+    // 현재 저장된 예측 값과 예측된 결과의 차이를 구해서 차이 만큼의 미래만 저장
     public void saveGoldPredictData() throws Exception {
         try {
             String startDate = "20220627"; //DB에 저장된 가장 빠른 날짜 불러와서 사용해도 되지만 성능적인 면에서 fix 해놓음
@@ -44,7 +43,7 @@ public class GoldPredictionServiceImpl implements GoldPredictionService {
             //저장된 예측 값이 얼마나 있는지 확인하고
 
             //Scheduled 메서드가 잘 동작한다면 predictedList size가 크거나 같을 것이므로
-            String lastPredictedDate = goldDao.getLastPBasDt();
+            String lastPredictedDate = goldDao.getLastPBasDt() == null ? "00000000" : goldDao.getLastPBasDt();
 
             // 가장 큰 날짜 이후의 예측 데이터만 필터링
             List<GoldPredicted> filteredPredictions = predictedList.stream()
@@ -74,9 +73,7 @@ public class GoldPredictionServiceImpl implements GoldPredictionService {
 
     // 하루마다 예측했던 금 값 삭제하는 작업(오늘 날짜까지의 예측 데이터 삭제)
     // until today라고 생각하면 될 듯
-//    @Scheduled(cron = "0 53 16 * * ?") //초 분 시 일 월 요일
     @Transactional
-//    @Override
     public void deleteOldGoldPrices() {
         // 현재 날짜에 따라 금 시세 데이터 삭제
         String today = new SimpleDateFormat("yyyyMMdd").format(new Date());
