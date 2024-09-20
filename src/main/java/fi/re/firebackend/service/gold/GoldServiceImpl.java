@@ -2,12 +2,12 @@ package fi.re.firebackend.service.gold;
 
 import fi.re.firebackend.dao.gold.GoldDao;
 import fi.re.firebackend.dto.gold.GoldInfo;
-import fi.re.firebackend.dto.gold.GoldPredicted;
 import fi.re.firebackend.util.api.GoldInfoApi;
 import fi.re.firebackend.util.api.JsonConverter;
 import fi.re.firebackend.util.dateUtil.DateUtil;
-import fi.re.firebackend.util.goldPredict.GoldPriceExpectation;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +22,7 @@ import java.util.List;
 @Transactional
 public class GoldServiceImpl implements GoldService {
 
+    private static final Logger log = Logger.getLogger(GoldServiceImpl.class);
     private final GoldDao goldDao;
     private final GoldInfoApi goldInfoApi;
 
@@ -47,7 +48,8 @@ public class GoldServiceImpl implements GoldService {
 
     // OpenAPI로부터 데이터를 가져와서 DB에 저장하는 메서드
     @Override
-    public int setDataFromAPI() {
+    @Scheduled(cron = "0 0 8 * * ?") //초 분 시 일 월 요일 현재는 08시 정각
+    public void setDataFromAPI() {
         // 1. 테이블이 비었는지 확인
         int recordcount = goldDao.isTableEmpty();
         List<GoldInfo> goldInfoList;
@@ -71,8 +73,10 @@ public class GoldServiceImpl implements GoldService {
 
             // 최신일이 같은 날이면 0 반환하고 종료
             if (dayDiff <= 0) {
-                System.out.println("최신 데이터입니다.");
-                return 0;
+//                System.out.println("최신 데이터입니다.");
+                log.info("GoldService setDataFromAPI : 최신데이터입니다.");
+                return;
+//                return 0;
             }
 
             // API 호출하여 새로운 데이터를 가져옴
@@ -85,7 +89,9 @@ public class GoldServiceImpl implements GoldService {
             //맨 마지막으로 받아온 데이터가 최신 데이터이면 저장 안함
             if (goldInfoList.stream()
                     .anyMatch(goldInfo -> goldInfo.getBasDt() == Integer.parseInt(lastUpdateDate))) {
-                return 0;
+
+                return;
+//                return 0;
             }
 
         } else {
@@ -113,8 +119,8 @@ public class GoldServiceImpl implements GoldService {
                 saveGoldData(goldInfo, itmsNm);  // 금종목 확인 및 삽입
             }
         }
-
-        return goldInfoList.size();  // 삽입된 데이터의 개수 반환
+        log.info("GoldService setDataFromAPI : " + goldInfoList.size() + " row 삽입되었습니다.");
+//        return goldInfoList.size();  // 삽입된 데이터의 개수 반환
     }
 
     // 현재 날짜로부터 주어진 기간(days)의 금 시세 데이터를 받아오는 함수

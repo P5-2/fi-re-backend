@@ -35,8 +35,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         System.out.println("WebConfigurer addCorsMappings ~");
         // 접속 클라이언트를 허가(Restful)
-        registry.addMapping("/**").allowedOrigins("*");
-        //registry.addMapping("/**").allowedOrigins("http://localhost:3000");
+//        registry.addMapping("/**").allowedOrigins("*");
+        registry.addMapping("/**").allowedOrigins("http://localhost:5173");
     }
 /*
     @Bean

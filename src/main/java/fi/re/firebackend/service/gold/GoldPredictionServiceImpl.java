@@ -26,7 +26,7 @@ public class GoldPredictionServiceImpl implements GoldPredictionService {
     }
 
     @Override
-    @Scheduled(cron = "0 2 17 * * ?") //초 분 시 일 월 요일 현재는 09시 정각
+    @Scheduled(cron = "0 0 8 * * ?") //초 분 시 일 월 요일 현재는 08시 정각
     public void goldPredictUpdate() throws Exception{
         deleteOldGoldPrices();
         saveGoldPredictData();

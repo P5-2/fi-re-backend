@@ -32,7 +32,8 @@ public class GoldController {
     //DB에 API 받아와서 저장하는 요청
     @GetMapping("/init")
     public ResponseEntity<Object> setDataFromAPI() {
-        return ResponseEntity.ok(goldService.setDataFromAPI());
+        goldService.setDataFromAPI();
+        return ResponseEntity.ok("gold data updated successfully");
     }
 
     // 기준 날짜와 데이터 양을 기준으로 금 시세 데이터를 요청
@@ -41,7 +42,7 @@ public class GoldController {
     public List<GoldInfo> getGold(
             @RequestParam("endBasDt") String endBasDt,
             @RequestParam("numOfRows") int numOfRows) {
-
+        System.out.println("goldinforesponsed endBasDt: "+endBasDt+" numOfRows: "+numOfRows);
         return goldService.getGoldInfoInPeriod(endBasDt, numOfRows);
     }
 
@@ -70,8 +71,9 @@ public class GoldController {
 
     @GetMapping("/test")
     public List<GoldPredicted> test() {
+
         try {
-            String today = "20240918";
+            String today = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
 //            goldPredictionService.deleteOldGoldPrices();
 //            goldPredictionService.saveGoldPredictData();
             goldPredictionService.goldPredictUpdate();
