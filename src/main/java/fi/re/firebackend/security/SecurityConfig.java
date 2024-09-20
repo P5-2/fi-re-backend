@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import fi.re.firebackend.jwt.JwtTokenFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,7 +19,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 //@Import(WebConfig.class)
 //@ComponentScan(basePackageClasses = WebConfig.class)
-
+@Configuration
 @EnableWebSecurity
 @ComponentScan(basePackages  = {"fi.re.firebackend"})
 @RequiredArgsConstructor

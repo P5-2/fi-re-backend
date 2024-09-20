@@ -1,6 +1,7 @@
 package fi.re.firebackend.config;
 
 // (초기화)등록
+import fi.re.firebackend.security.SecurityConfig;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -10,7 +11,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[] { AppConfig.class };
+        return new Class[] { AppConfig.class, SecurityConfig.class  };
     }
 
     @Override

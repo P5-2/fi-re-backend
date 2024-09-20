@@ -7,18 +7,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @ToString
+@Builder
 public class SecurityUser implements UserDetails {
 
     private String username;    // id
     private String password;
     private String name;        // nickname
-    private String auth;    // ROLE_USER ROLE_MANAGER ROLE_ADMIN
+    private String auth;  // ROLE_USER, ROLE_MANAGER, ROLE_ADMIN
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

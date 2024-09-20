@@ -109,6 +109,9 @@ dependencies {
 
     //OAuth2 client support
     implementation ("org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}")
+
+    //gson
+    implementation 'com.google.code.gson:gson:2.9.0'
 }
 
 test {

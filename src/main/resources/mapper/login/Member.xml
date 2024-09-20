@@ -5,7 +5,26 @@
 <mapper namespace="fi.re.firebackend.dao.login.MemberDao">
     <select id="getInfo" parameterType="java.lang.String" resultType="fi.re.firebackend.security.SecurityUser">
         select username, password, name, auth
-        from member
+        from snsuser
         where username=#{username}
+    </select>
+
+    <!-- existByName 쿼리 추가 -->
+    <select id="ExistByName" parameterType="java.lang.String" resultType="java.lang.Boolean">
+        SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+        FROM snsuser
+        WHERE name = #{name}
+    </select>
+
+
+    <!-- 회원 가입 -->
+    <insert id="save" parameterType="fi.re.firebackend.security.SecurityUser">
+        INSERT INTO snsuser (username, password, name, auth)
+        VALUES (#{username}, #{password}, #{name}, #{auth})
+    </insert>
+
+    <select id="findByName" parameterType="String" resultType="fi.re.firebackend.security.SecurityUser">
+        SELECT * FROM snsuser
+        WHERE name = #{name}
     </select>
 </mapper>

@@ -60,7 +60,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         return token.substring("Bearer ".length());
     }
 
-
 }
 
 

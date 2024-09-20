@@ -11,6 +11,7 @@
     <typeAliases>
         <package name="fi.re.firebackend.dto.gold" />
         <package name="fi.re.firebackend.dto.login"/>
+        <package name="fi.re.firebackend.jwt.dto"/>
     </typeAliases>
 
     <mappers>
