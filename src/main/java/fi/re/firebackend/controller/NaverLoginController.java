@@ -2,20 +2,28 @@ package fi.re.firebackend.controller;
 
 import fi.re.firebackend.dto.login.NaverTokenDto;
 import fi.re.firebackend.dto.login.TokenResponseDto;
+import fi.re.firebackend.jwt.JwtTokenProvider;
 import fi.re.firebackend.jwt.dto.TokenDto;
 import fi.re.firebackend.service.login.NaverLoginService;
 import org.springframework.http.*;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @RestController
 @RequestMapping("/naver")
 public class NaverLoginController {
     private final NaverLoginService service;
+    private final UserDetailsService userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public NaverLoginController(NaverLoginService service) {
+    public NaverLoginController(NaverLoginService service, UserDetailsService userService, JwtTokenProvider jwtTokenProvider) {
         this.service = service;
+        this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @GetMapping("/callback")
@@ -32,40 +40,29 @@ public class NaverLoginController {
 
         return ResponseEntity.status(HttpStatus.OK).body(tokenResponseDto);
     }
-    /*// 콜백 해서 토큰 호출
-    @GetMapping("/callback")
-    public ResponseEntity<String> handleNaverCallback(@RequestParam String code, @RequestParam String state, HttpSession session) {
-        String clientId = "wHXxK_xfYQJP4U42Ueey";  // 실제 Client ID로 교체
-        String clientSecret = "qTHo_aIrhm";        // 실제 Client Secret으로 교체
-        String tokenUrl = "https://nid.naver.com/oauth2.0/token";
 
-        // 토큰 요청을 위한 파라미터 구성
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", clientId);
-        params.add("client_secret", clientSecret);
-        params.add("code", code);
-        params.add("state", state);
+    @GetMapping("/findname")
+    public ResponseEntity<?> findName(HttpServletRequest request) {
+        System.out.println("findName");
 
-        // RestTemplate을 사용해 네이버에 토큰 요청
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
-
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(tokenUrl, HttpMethod.POST, entity, String.class);
-            System.out.println("NaverLoginController.handleNaverCallback >> ");
-            return ResponseEntity.ok(response.getBody());  // 받은 토큰 정보를 그대로 반환
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("토큰 요청 실패: " + e.getMessage());
+        // 헤더에서 토큰 가져오기 (Bearer 접두어 제거 및 공백 제거)
+        String token = request.getHeader(JwtTokenProvider.httpHeaderKey);
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7).trim();
         }
-    }*/
 
-    // 프로필 불러오기 + 프로필 정보 db 저장
+        // JWT 토큰에서 사용자 정보 추출
+        String username = jwtTokenProvider.getUserInfo(token);
 
+        // 사용자 정보 가져오기
+        UserDetails userDetails = userService.loadUserByUsername(username);
 
+        // 사용자 닉네임 가져오기
+        String nickName = service.findName(username);
+
+        // 닉네임 반환
+        return ResponseEntity.status(HttpStatus.OK).body(nickName);
+    }
 
 }
 

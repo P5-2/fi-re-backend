@@ -27,4 +27,10 @@
         SELECT * FROM snsuser
         WHERE name = #{name}
     </select>
+
+    <!-- 닉네임 찾기 -->
+    <select id="findName" parameterType="String" resultType="String">
+        SELECT name FROM snsuser
+        WHERE username = #{username}
+    </select>
 </mapper>

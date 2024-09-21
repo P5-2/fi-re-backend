@@ -14,10 +14,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import java.time.Duration;
+import java.util.*;
 import javax.annotation.PostConstruct;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
 
 // 토큰을 발행하고 받은 토큰을 분석하는 클래스
 @RequiredArgsConstructor
@@ -28,6 +26,8 @@ public class JwtTokenProvider {
     private String securityKey = "myJWTkeymyJWTkeymyJWTkeymyJWTkeymyJWTkey";
     private long accessTokenValidTime = Duration.ofMinutes(30).toMillis(); // 액세스 토큰 유효시간 30분
     private long refreshTokenValidTime = Duration.ofDays(14).toMillis(); // 리프레시 토큰 유효시간 2주
+
+    private Set<String> tokenBlacklist = new HashSet<String>(); // 블랙리스트
 
     private final UserDetailsService userService;
 
@@ -63,6 +63,8 @@ public class JwtTokenProvider {
         return TokenDto.builder().accessToken(accessToken).refreshToken(refreshToken).key(userPk).build();
     }
 
+
+
     // JWT 토큰에서 인증 정보 조회
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = userService.loadUserByUsername(getUserInfo(token));
@@ -81,7 +83,7 @@ public class JwtTokenProvider {
     }
 
     // 토큰에서 회원 정보 추출
-    private String getUserInfo(String token) {
+    public String getUserInfo(String token) {
         return Jwts.parser().setSigningKey(securityKey).parseClaimsJws(token).getBody().getSubject();
     }
 

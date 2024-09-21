@@ -15,4 +15,6 @@ public interface MemberDao {
     void save(SecurityUser member);
     // 이메일로 회원 조회
     SecurityUser findByName(@Param("name") String name);
+    // 닉네임 찾기
+    String findName(String username);
 }

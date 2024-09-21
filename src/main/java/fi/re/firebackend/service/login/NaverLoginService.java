@@ -24,7 +24,6 @@ import java.util.Optional;
 @Transactional
 public class NaverLoginService {
 
-
     private final MemberDao memberDao;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -140,6 +139,7 @@ public class NaverLoginService {
         JsonElement element = JsonParser.parseString(result);
         String id = element.getAsJsonObject().get("response").getAsJsonObject().get("id").getAsString();
         String name = element.getAsJsonObject().get("response").getAsJsonObject().get("nickname").getAsString();
+
         // DB에 해당 이름이 없을 경우 회원 가입 로직 실행
         if (!memberDao.ExistByName(name)) { // memberRepository -> memberDao
             SecurityUser member = SecurityUser.builder() // Member는 SecurityUser
@@ -165,5 +165,8 @@ public class NaverLoginService {
         return tokenDto;
     }
 
-
+    // 닉네임 찾기
+    public String findName(String username){
+        return memberDao.findName(username);
+    }
 }

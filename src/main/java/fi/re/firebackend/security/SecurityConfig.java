@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -62,6 +63,26 @@ public class SecurityConfig {
 //                        options.sameOrigin()
 //                )
 //        );
+
+      /*  http.logout(logoutConfig ->
+                logoutConfig
+                        .logoutUrl("/logout")
+                        .logoutSuccessHandler((request, response, authentication) ->
+                                //SecurityContextHolder.clearContext()
+                        {
+                            System.out.println("logout securityconfig 호출");
+                            String authorization = request.getHeader("Authorization");
+
+                            SecurityContextHolder.getContext().setAuthentication(null);
+
+                            if (authorization == null || !authorization.startsWith("Bearer ")) {
+                                throw new RuntimeException("Access token과 함께 요청하십시오.");
+                            }
+
+                            SecurityContextHolder.clearContext();
+                        }
+                        )
+        );*/
 
         return http.build();
     }
