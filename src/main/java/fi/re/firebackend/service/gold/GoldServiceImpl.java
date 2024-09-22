@@ -72,10 +72,8 @@ public class GoldServiceImpl implements GoldService {
 
             // 최신일이 같은 날이면 0 반환하고 종료
             if (dayDiff <= 0) {
-//                System.out.println("최신 데이터입니다.");
                 log.info("GoldService setDataFromAPI : 최신데이터입니다.");
                 return;
-//                return 0;
             }
 
             // API 호출하여 새로운 데이터를 가져옴
@@ -88,9 +86,7 @@ public class GoldServiceImpl implements GoldService {
             //맨 마지막으로 받아온 데이터가 최신 데이터이면 저장 안함
             if (goldInfoList.stream()
                     .anyMatch(goldInfo -> goldInfo.getBasDt() == Integer.parseInt(lastUpdateDate))) {
-
                 return;
-//                return 0;
             }
 
         } else {
@@ -119,7 +115,6 @@ public class GoldServiceImpl implements GoldService {
             }
         }
         log.info("GoldService setDataFromAPI : " + goldInfoList.size() + " row 삽입되었습니다.");
-//        return goldInfoList.size();  // 삽입된 데이터의 개수 반환
     }
 
     // 현재 날짜로부터 주어진 기간(days)의 금 시세 데이터를 받아오는 함수
@@ -129,9 +124,6 @@ public class GoldServiceImpl implements GoldService {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -days);
         String startBasDt = new SimpleDateFormat("yyyyMMdd").format(cal.getTime());
-
         return goldDao.getGoldInfoInPeriod(startBasDt, endBasDt);
     }
-
-
 }

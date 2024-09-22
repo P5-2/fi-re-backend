@@ -5,7 +5,6 @@ import fi.re.firebackend.dto.gold.GoldPredicted;
 import fi.re.firebackend.service.gold.GoldPredictionService;
 import fi.re.firebackend.service.gold.GoldService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,31 +27,15 @@ public class GoldController {
         this.goldPredictionService = goldPredictionService;
     }
 
-
-    //DB에 API 받아와서 저장하는 요청
-    @GetMapping("/init")
-    public ResponseEntity<Object> setDataFromAPI() {
-        goldService.setDataFromAPI();
-        return ResponseEntity.ok("gold data updated successfully");
-    }
-
     // 기준 날짜와 데이터 양을 기준으로 금 시세 데이터를 요청
     // /gold/info?endBasDt={현재 혹은 궁금한 날짜}&numOfRows={파라미터}
     @GetMapping("/info")
     public List<GoldInfo> getGold(
             @RequestParam("endBasDt") String endBasDt,
             @RequestParam("numOfRows") int numOfRows) {
-        System.out.println("goldinforesponsed endBasDt: "+endBasDt+" numOfRows: "+numOfRows);
+        System.out.println("goldinforesponsed endBasDt: " + endBasDt + " numOfRows: " + numOfRows);
         return goldService.getGoldInfoInPeriod(endBasDt, numOfRows);
     }
-
-    // 기간 내 모든 금 시세 데이터를 호출 (최대 1년)
-    // /gold/allData?endBasDt={종료 날짜}
-    @GetMapping("/allData")
-    public List<GoldInfo> getAllGoldDataInPeriod(@RequestParam("endBasDt") String endBasDt) {
-        return goldService.getGoldInfoInPeriod(endBasDt, 365); // 최대 1년치 데이터 반환
-    }
-
 
     // 예측된 금 시세 데이터 요청
     // /gold/predict
@@ -71,17 +54,14 @@ public class GoldController {
 
     @GetMapping("/test")
     public List<GoldPredicted> test() {
-
         try {
             String today = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
-//            goldPredictionService.deleteOldGoldPrices();
-//            goldPredictionService.saveGoldPredictData();
+            goldService.setDataFromAPI();
             goldPredictionService.goldPredictUpdate();
-            // 미래 금 시세 데이터를 가져옴
             return goldPredictionService.getFutureGoldPrice(today);
         } catch (Exception e) {
             e.printStackTrace();
-            return null; // 예측 데이터를 가져오는 중 에러가 발생한 경우 null 반환
+            return null;
         }
     }
 
