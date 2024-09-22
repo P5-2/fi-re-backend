@@ -26,7 +26,6 @@ public class GoldServiceImpl implements GoldService {
     private final GoldDao goldDao;
     private final GoldInfoApi goldInfoApi;
 
-    @Autowired
     public GoldServiceImpl(GoldDao goldDao, GoldInfoApi goldInfoApi) {
         this.goldDao = goldDao;
         this.goldInfoApi = goldInfoApi;
@@ -81,7 +80,7 @@ public class GoldServiceImpl implements GoldService {
 
             // API 호출하여 새로운 데이터를 가져옴
             try {
-                goldInfoList = JsonConverter.convertJsonToList(goldInfoApi.getGoldData("endBasDt", lastWeekDay, dayDiff));
+                goldInfoList = JsonConverter.convertJsonToList(goldInfoApi.getGoldData("endBasDt", lastWeekDay, dayDiff), GoldInfo.class);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -101,7 +100,7 @@ public class GoldServiceImpl implements GoldService {
             // 3년치 데이터 가져오기
             try {
                 String response = goldInfoApi.getGoldData("endBasDt", today, 1095);
-                goldInfoList = JsonConverter.convertJsonToList(response);
+                goldInfoList = JsonConverter.convertJsonToList(response, GoldInfo.class);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

@@ -1,12 +1,8 @@
 package fi.re.firebackend.util.api;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.BufferedReader;
@@ -17,30 +13,22 @@ import java.net.URL;
 
 @Component
 @PropertySource({"classpath:/application.properties"})
-public class GoldInfoApi {
+public class ForexApi {
 
-    @Value("${gold.url}")
+    @Value("${forex.url}")
     private String API_URL;
 
-    @Value("${gold.api_key}")
-    private String SERVICE_KEY;
+    @Value("${forex.api_key}")
+    private String AUTH_KEY;
 
-    public String getGoldData(String dateType, String endBasDt, int days) throws IOException {
-        String pageNo = "1";    //페이지 번호
-        String resultType = "json"; // 결과 형식
-        String likeSrtnCd = "4020000";
-        String refDataName = dateType;
-        String refDate = endBasDt; //기준이 되는 날짜
-        String numOfRows = Integer.toString(days);
+    public String getForexData(String searchDate) throws IOException {
+        String data = "AP01"; //AP01 : 환율, AP02 : 대출금리, AP03 : 국제금리
 
         // UriComponentsBuilder로 URL 생성
         String urlString = UriComponentsBuilder.fromHttpUrl(API_URL)
-                .queryParam("ServiceKey", SERVICE_KEY)
-                .queryParam("pageNo", pageNo)
-                .queryParam("numOfRows", numOfRows)
-                .queryParam("resultType", resultType)
-                .queryParam("likeSrtnCd", likeSrtnCd)
-                .queryParam(refDataName, refDate)
+                .queryParam("authkey", AUTH_KEY)
+                .queryParam("searchdate", searchDate)
+                .queryParam("data", data)
                 .build()
                 .toUriString();
         URL url = new URL(urlString);
@@ -63,6 +51,7 @@ public class GoldInfoApi {
         rd.close();
         conn.disconnect();
         String result = sb.toString();
+        //1 : 성공, 2 : DATA코드 오류, 3 : 인증코드 오류, 4 : 일일제한횟수 마감
         System.out.println(result);
 
         return result;
