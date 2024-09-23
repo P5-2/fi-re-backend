@@ -5,8 +5,9 @@ import fi.re.firebackend.security.SecurityUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
+
 @Transactional
+@Service
 public class MemberService {
     private final MemberDao dao;
 
@@ -14,7 +15,7 @@ public class MemberService {
         this.dao = dao;
     }
 
-    public SecurityUser getInfo(String username){
+    public SecurityUser getInfo(String username) {
         return dao.getInfo(username);
     }
 }
