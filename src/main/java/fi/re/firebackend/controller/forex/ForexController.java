@@ -32,13 +32,14 @@ public class ForexController {
     }
 
     @GetMapping("/test")
-    public ResponseEntity<List<ForexDto>> getExchangeRateTest() {
+    public ResponseEntity<String> getExchangeRateTest() {
         LocalDate today = LocalDate.now();
         try {
             forexService.setForexFromApi();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return ResponseEntity.ok(forexService.getExchangeRateByDate(today));
+        String res = forexService.getExchangeRateByDate(today).toString();
+        return ResponseEntity.ok(res == null ? "null" : res);
     }
 }

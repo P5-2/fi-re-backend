@@ -44,7 +44,7 @@ public class GoldInfoApi {
                 .build()
                 .toUriString();
         URL url = new URL(urlString);
-
+        System.out.println(url);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-type", "application/json");

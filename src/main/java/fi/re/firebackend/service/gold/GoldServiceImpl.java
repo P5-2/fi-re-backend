@@ -78,7 +78,7 @@ public class GoldServiceImpl implements GoldService {
 
             // API 호출하여 새로운 데이터를 가져옴
             try {
-                goldInfoList = JsonConverter.convertJsonToList(goldInfoApi.getGoldData("endBasDt", lastWeekDay, dayDiff), GoldInfo.class);
+                goldInfoList = JsonConverter.convertJsonToList(goldInfoApi.getGoldData("endBasDt", lastWeekDay, dayDiff));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -96,7 +96,7 @@ public class GoldServiceImpl implements GoldService {
             // 3년치 데이터 가져오기
             try {
                 String response = goldInfoApi.getGoldData("endBasDt", today, 1095);
-                goldInfoList = JsonConverter.convertJsonToList(response, GoldInfo.class);
+                goldInfoList = JsonConverter.convertJsonToList(response);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

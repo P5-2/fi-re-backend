@@ -1,27 +1,46 @@
 package fi.re.firebackend.dto.forex;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDate;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-@ToString
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Data
+//api를 받아오기 위한 dto
 public class ForexDto {
-    private LocalDate searchDate;  // 날짜
-    private String curUnit;        // 통화 코드
-    private int result;            // 결과 코드
-    private double ttb;            // 매도 환율
-    private double tts;            // 매수 환율
-    private double dealBasR;       // 기준 환율
-    private int bkpr;              // 은행 환율
-    private int yyEfeeR;           // 연간 수수료율
-    private int tenDdEfeeR;        // 10년 수수료율
-    private int kftcBkpr;          // KFTC 은행 환율
-    private double kftcDealBasR;   // KFTC 기준 환율
+    @JsonProperty("result")
+    private int result;
+
+    @JsonProperty("cur_unit")
+    private String curUnit;
+
+    @JsonProperty("ttb")
+    private String ttb;
+
+    @JsonProperty("tts")
+    private String tts;
+
+    @JsonProperty("deal_bas_r")
+    private String dealBasR;
+
+    @JsonProperty("bkpr")
+    private String bkpr;
+
+    @JsonProperty("yy_efee_r")
+    private String yyEfeeR;
+
+    @JsonProperty("ten_dd_efee_r")
+    private String tenDdEfeeR;
+
+    @JsonProperty("kftc_bkpr")
+    private String kftcBkpr;
+
+    @JsonProperty("kftc_deal_bas_r")
+    private String kftcDealBasR;
+
+    @JsonProperty("cur_nm")
+    private String curNm;
+
 }

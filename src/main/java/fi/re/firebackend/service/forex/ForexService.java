@@ -10,7 +10,6 @@ import java.util.List;
 
 
 @Service
-@Transactional
 public interface ForexService {
     void setForexFromApi() throws IOException;
     List<ForexDto> getExchangeRateByDate(LocalDate searchDate);

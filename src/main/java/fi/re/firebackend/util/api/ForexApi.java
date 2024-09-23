@@ -22,20 +22,24 @@ public class ForexApi {
     private String AUTH_KEY;
 
     public String getForexData(String searchDate) throws IOException {
-        String data = "AP01"; //AP01 : 환율, AP02 : 대출금리, AP03 : 국제금리
+        String data = "AP01"; // AP01 : 환율, AP02 : 대출금리, AP03 : 국제금리
 
         // UriComponentsBuilder로 URL 생성
         String urlString = UriComponentsBuilder.fromHttpUrl(API_URL)
                 .queryParam("authkey", AUTH_KEY)
-                .queryParam("searchdate", searchDate)
                 .queryParam("data", data)
+                .queryParam("searchdate", searchDate)
                 .build()
                 .toUriString();
+
         URL url = new URL(urlString);
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-type", "application/json");
+        conn.setConnectTimeout(10000);  // 연결 타임아웃
+        conn.setReadTimeout(10000);     // 응답 대기 타임아웃
+
         System.out.println("Response code: " + conn.getResponseCode());
         BufferedReader rd;
         if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
@@ -51,9 +55,9 @@ public class ForexApi {
         rd.close();
         conn.disconnect();
         String result = sb.toString();
-        //1 : 성공, 2 : DATA코드 오류, 3 : 인증코드 오류, 4 : 일일제한횟수 마감
         System.out.println(result);
 
         return result;
     }
+
 }
