@@ -35,11 +35,11 @@ public class KakaoLoginService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
-    String rest_api_key;
+//    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
 
-    @Value("${application.spring.security.kakao.redirect-uri}")
-    String redirect_uri;
+
+//    @Value("${application.spring.security.kakao.redirect-uri}")
+
 
     // Token 가져오기
     public KakaoTokenDto getKakaoToken(String code) {
@@ -47,6 +47,9 @@ public class KakaoLoginService {
         String access_Token = "";
         String refresh_Token = "";
         String reqURL = "https://kauth.kakao.com/oauth/token";
+        String rest_api_key="3ac8e4957835e3e46a6bbce90bdee2e7";
+        String redirect_uri="http://localhost:5173/kakao/callback";
+        String client_secret="RtiowmigZAXeFWRqXdilvNnZLCL0FIyh";
 
         String result = null;
         String id_token = null;
@@ -67,6 +70,7 @@ public class KakaoLoginService {
             sb.append("&redirect_uri=" + redirect_uri);
             System.out.println("code = " + code);
             sb.append("&code=" + code);
+            sb.append("&client_secret=" + client_secret);
             bw.write(sb.toString());
             bw.flush();
 
@@ -145,8 +149,23 @@ public class KakaoLoginService {
         //Gson 라이브러리로 JSON파싱
         JsonElement element = JsonParser.parseString(result);
 
-        Long id = element.getAsJsonObject().get("id").getAsLong();
+        String id = element.getAsJsonObject().get("id").getAsString();
         String nickname = element.getAsJsonObject().get("properties").getAsJsonObject().get("nickname").getAsString();
+
+        // DB에 해당 이름이 없을 경우 회원 가입 로직 실행
+        if (!memberDao.ExistByName(nickname)) { // memberRepository -> memberDao
+            SecurityUser member = SecurityUser.builder() // Member는 SecurityUser
+                    .password("") // 비밀번호는 비워둡니다
+                    .username(id) // username을 id로 설정
+                    .name(nickname)
+                    .auth("ROLE_USER") // auth 필드에 ROLE_USER 설정
+                    .build();
+
+            memberDao.save(member);
+        }
+
+
+
 
 //        DB에 해당 회원정보 있을경우 JWT Token 생성 후 리턴
         SecurityUser member = memberDao.findByName(nickname); // Optional을 사용하지 않고 직접 호출
@@ -159,6 +178,11 @@ public class KakaoLoginService {
         // jwtService.saveRefreshToken(tokenDto); // 필요 시 리프레시 토큰 저장 로직 추가
         System.out.println("tokenDto=" + tokenDto);
         return tokenDto;
+    }
+
+    // 닉네임 찾기
+    public String findName(String username){
+        return memberDao.findName(username);
     }
 
 }

@@ -1,4 +1,4 @@
-package fi.re.firebackend.controller;
+package fi.re.firebackend.controller.login;
 
 import fi.re.firebackend.dto.login.NaverTokenDto;
 import fi.re.firebackend.dto.login.TokenResponseDto;

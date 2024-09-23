@@ -81,7 +81,7 @@ public class JwtTokenProvider {
     }
 
     // 토큰에서 회원 정보 추출
-    private String getUserInfo(String token) {
+    public String getUserInfo(String token) {
         return Jwts.parser().setSigningKey(securityKey).parseClaimsJws(token).getBody().getSubject();
     }
 
