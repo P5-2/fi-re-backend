@@ -4,13 +4,50 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="fi.re.firebackend.dao.forex.ForexDao">
-    <insert id="insertExchangeRate">
-        INSERT INTO Exchange_Rate (searchdate, cur_unit, result, ttb, tts, deal_bas_r, bkpr, yy_efe_r, ten_dd_efe_r, kftc_bkpr, kftc_deal_bas_r)
-        VALUES (#{searchDate}, #{curUnit}, #{result}, #{ttb}, #{tts}, #{dealBasR}, #{bkpr}, #{yyEfeeR}, #{tenDdEfeeR}, #{kftcBkpr}, #{kftcDealBasR})
+    <insert id="insertExchangeRate" parameterType="fi.re.firebackend.dto.forex.ForexEntity">
+        INSERT INTO exchange_rate (searchdate, cur_unit, result, ttb, tts, deal_bas_r, bkpr, yy_efe_r, ten_dd_efe_r,
+                                   kftc_bkpr, kftc_deal_bas_r)
+        VALUES (#{searchDate}, #{curUnit}, #{result}, #{ttb}, #{tts}, #{dealBasR}, #{bkpr}, #{yyEfeeR}, #{tenDdEfeeR},
+                #{kftcBkpr}, #{kftcDealBasR})
     </insert>
 
-    <select id="selectExchangeRateByDate" resultType="fi.re.firebackend.dto.forex.ForexDto">
-        SELECT * FROM Exchange_Rate WHERE searchdate = #{searchDate}
+    <insert id="insertExchangeRateCategory" parameterType="fi.re.firebackend.dto.forex.ForexCategoryEntity">
+        INSERT INTO exchange_rate_category (cur_unit, cur_nm)
+        VALUES (#{curUnit}, #{curNm})
+    </insert>
+
+    <select id="selectExchangeRateByDate" parameterType="java.time.LocalDate"
+            resultType="fi.re.firebackend.dto.forex.ForexDto">
+        SELECT *
+        FROM Exchange_Rate
+        WHERE searchdate = #{searchDate}
     </select>
 
+    <select id="isCurUnitExists" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM exchange_rate_category
+        WHERE cur_unit like #{curUnit}
+    </select>
+
+    <select id="isExistsBySearchDateAndCurUnit" parameterType="map" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM exchange_rate
+        WHERE searchdate = #{searchDate}
+          AND cur_unit = #{curUnit}
+    </select>
+
+    <update id="updateExchangeRate" parameterType="fi.re.firebackend.dto.forex.ForexEntity">
+        UPDATE exchange_rate
+        SET result          = #{result},
+            ttb             = #{ttb},
+            tts             = #{tts},
+            deal_bas_r      = #{dealBasR},
+            bkpr            = #{bkpr},
+            yy_efe_r        = #{yyEfeeR},
+            ten_dd_efe_r    = #{tenDdEfeeR},
+            kftc_bkpr       = #{kftcBkpr},
+            kftc_deal_bas_r = #{kftcDealBasR}
+        WHERE searchdate = #{searchDate}
+          AND cur_unit = #{curUnit}
+    </update>
 </mapper>
