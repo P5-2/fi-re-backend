@@ -26,7 +26,6 @@ public class GoldServiceImpl implements GoldService {
     private final GoldDao goldDao;
     private final GoldInfoApi goldInfoApi;
 
-    @Autowired
     public GoldServiceImpl(GoldDao goldDao, GoldInfoApi goldInfoApi) {
         this.goldDao = goldDao;
         this.goldInfoApi = goldInfoApi;
@@ -107,10 +106,10 @@ public class GoldServiceImpl implements GoldService {
         for (GoldInfo goldInfo : goldInfoList) {
             String itmsNm = "금";
             //미니금이 아니라 금인 경우에만 저장
-            if (goldInfo.getSrtnCd().equals("4020000")) {
+            if (goldInfo.getSrtnCd().equals("04020000")) {
                 itmsNm = "금";
                 saveGoldData(goldInfo, itmsNm);  // 금종목 확인 및 삽입
-            } else if (goldInfo.getSrtnCd().equals("4020100")) {
+            } else if (goldInfo.getSrtnCd().equals("04020100")) {
                 itmsNm = "미니금";
                 saveGoldData(goldInfo, itmsNm);  // 금종목 확인 및 삽입
             }

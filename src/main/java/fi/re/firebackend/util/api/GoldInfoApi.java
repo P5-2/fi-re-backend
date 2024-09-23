@@ -1,7 +1,11 @@
 package fi.re.firebackend.util.api;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -11,7 +15,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-@Controller
+@Component
 @PropertySource({"classpath:/application.properties"})
 public class GoldInfoApi {
 
@@ -31,7 +35,7 @@ public class GoldInfoApi {
 
         // UriComponentsBuilder로 URL 생성
         String urlString = UriComponentsBuilder.fromHttpUrl(API_URL)
-                .queryParam("ServiceKey", SERVICE_KEY)
+                .queryParam("serviceKey", SERVICE_KEY)
                 .queryParam("pageNo", pageNo)
                 .queryParam("numOfRows", numOfRows)
                 .queryParam("resultType", resultType)
@@ -40,7 +44,7 @@ public class GoldInfoApi {
                 .build()
                 .toUriString();
         URL url = new URL(urlString);
-
+        System.out.println(url);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-type", "application/json");
