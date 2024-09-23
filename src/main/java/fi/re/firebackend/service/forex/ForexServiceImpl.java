@@ -30,13 +30,12 @@ public class ForexServiceImpl implements ForexService {
     public void setForexFromApi() throws IOException {
 //        String searchDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
         String searchDate = "20240920";
-        String forexResult = forexApi.getForexData(searchDate);
+        List<ForexDto> forexResult = forexApi.getForexData(searchDate);
 
         log.info("forex res: " + forexResult);
-        if (forexResult != null && !forexResult.isEmpty()) {
-            List<ForexDto> rates = ForexJsonConverter.convertJsonToList(forexResult);
-            for (ForexDto rate : rates) {
-                forexDao.insertExchangeRate(rate);
+        if (!forexResult.isEmpty()) {
+            for (ForexDto forex : forexResult) {
+                forexDao.insertExchangeRate(forex);
             }
         } else {
             log.info("No forex data found");

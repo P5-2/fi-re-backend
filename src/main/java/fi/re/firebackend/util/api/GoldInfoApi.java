@@ -35,7 +35,7 @@ public class GoldInfoApi {
 
         // UriComponentsBuilder로 URL 생성
         String urlString = UriComponentsBuilder.fromHttpUrl(API_URL)
-                .queryParam("ServiceKey", SERVICE_KEY)
+                .queryParam("serviceKey", SERVICE_KEY)
                 .queryParam("pageNo", pageNo)
                 .queryParam("numOfRows", numOfRows)
                 .queryParam("resultType", resultType)

@@ -26,7 +26,7 @@
     </insert>
 
     <!-- 금 시세 데이터를 삽입하는 쿼리 -->
-    <insert id="insertGoldData">
+    <insert id="insertGoldData" parameterType="fi.re.firebackend.dto.gold.GoldInfo">
         INSERT INTO gold_trading (srtnCd, clpr, vs, fltRt, mkp, hipr, lopr, trqu, basDt)
         VALUES (#{srtnCd}, #{clpr}, #{vs}, #{fltRt}, #{mkp}, #{hipr}, #{lopr}, #{trqu}, #{basDt})
     </insert>

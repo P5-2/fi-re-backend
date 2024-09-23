@@ -18,6 +18,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 // Database 설정
@@ -74,5 +75,12 @@ public class AppConfig {
     @Bean
     public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
+    }
+
+    @PostConstruct
+    public void init() {
+        // TLS 프로토콜 설정
+        System.setProperty("https.protocols", "TLSv1.1,TLSv1.2");
+        System.out.println("TLS 프로토콜 설정 완료: TLSv1.1, TLSv1.2");
     }
 }

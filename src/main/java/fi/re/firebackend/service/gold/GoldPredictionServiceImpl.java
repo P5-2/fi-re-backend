@@ -3,6 +3,7 @@ package fi.re.firebackend.service.gold;
 import fi.re.firebackend.dao.gold.GoldDao;
 import fi.re.firebackend.dto.gold.GoldPredicted;
 import fi.re.firebackend.util.goldPredict.GoldPriceExpectation;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +18,14 @@ import java.util.stream.Collectors;
 @Transactional
 public class GoldPredictionServiceImpl implements GoldPredictionService {
 
+    private final GoldService goldService;
     GoldPriceExpectation goldPriceExpectation;
     GoldDao goldDao;
 
-    public GoldPredictionServiceImpl(GoldPriceExpectation goldPriceExpectation, GoldDao goldDao) {
+    public GoldPredictionServiceImpl(GoldPriceExpectation goldPriceExpectation, GoldDao goldDao, GoldService goldService) {
         this.goldPriceExpectation = goldPriceExpectation;
         this.goldDao = goldDao;
+        this.goldService = goldService;
     }
 
     @Override
@@ -37,6 +40,10 @@ public class GoldPredictionServiceImpl implements GoldPredictionService {
         try {
             String startDate = "20220627"; //DB에 저장된 가장 빠른 날짜 불러와서 사용해도 되지만 성능적인 면에서 fix 해놓음
             String endDate = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
+            int isGoldCategoryEmpty = goldDao.isTableEmpty();
+            if(isGoldCategoryEmpty == 0){
+                goldService.setDataFromAPI();
+            }
 
             //학습 모듈 호출
             List<GoldPredicted> predictedList = goldPriceExpectation.lstm(goldDao.getGoldInfoInPeriod(startDate, endDate));
@@ -44,7 +51,7 @@ public class GoldPredictionServiceImpl implements GoldPredictionService {
 
             //Scheduled 메서드가 잘 동작한다면 predictedList size가 크거나 같을 것이므로
             String lastPredictedDate = goldDao.getLastPBasDt() == null ? "00000000" : goldDao.getLastPBasDt();
-
+            System.out.println(lastPredictedDate);
             // 가장 큰 날짜 이후의 예측 데이터만 필터링
             List<GoldPredicted> filteredPredictions = predictedList.stream()
                     .filter(predicted -> predicted.getPBasDt().compareTo(lastPredictedDate) > 0)
