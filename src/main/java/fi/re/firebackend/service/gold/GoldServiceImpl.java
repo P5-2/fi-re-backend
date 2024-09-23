@@ -26,7 +26,6 @@ public class GoldServiceImpl implements GoldService {
     private final GoldDao goldDao;
     private final GoldInfoApi goldInfoApi;
 
-    @Autowired
     public GoldServiceImpl(GoldDao goldDao, GoldInfoApi goldInfoApi) {
         this.goldDao = goldDao;
         this.goldInfoApi = goldInfoApi;

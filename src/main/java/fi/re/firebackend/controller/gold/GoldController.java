@@ -33,7 +33,6 @@ public class GoldController {
     public List<GoldInfo> getGold(
             @RequestParam("endBasDt") String endBasDt,
             @RequestParam("numOfRows") int numOfRows) {
-        System.out.println("goldinforesponsed endBasDt: " + endBasDt + " numOfRows: " + numOfRows);
         return goldService.getGoldInfoInPeriod(endBasDt, numOfRows);
     }
 
