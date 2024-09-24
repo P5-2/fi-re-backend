@@ -1,6 +1,5 @@
 package fi.re.firebackend.controller.forex;
 
-import fi.re.firebackend.dto.forex.ForexDto;
 import fi.re.firebackend.dto.forex.ForexResponseDto;
 import fi.re.firebackend.service.forex.ForexService;
 import org.json.simple.parser.ParseException;
@@ -11,9 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -39,7 +36,7 @@ public class ForexController {
 
             // 해당 날짜의 환율을 가져옴
             List<ForexResponseDto> rates = forexService.getExchangeRateByDate(date);
-            System.out.println("rates : "+rates);
+            System.out.println("rates : " + rates);
             // 리스트가 비어있는 경우 처리
             if (rates.isEmpty()) {
                 return ResponseEntity.noContent().build(); // 204 No Content
@@ -61,6 +58,7 @@ public class ForexController {
         LocalDate today = LocalDate.now();
         try {
             forexService.setForexDataFromApi(today);
+//            System.out.println("insert date: "+today);
         } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
