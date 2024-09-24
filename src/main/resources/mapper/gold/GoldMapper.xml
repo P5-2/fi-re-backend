@@ -57,7 +57,7 @@
     <!-- 예측된 금 시세를 삽입하는 쿼리 -->
     <insert id="insertGoldPredictData">
         INSERT INTO Gold_Predict_Prices (PbasDt, dayPrc)
-        VALUES (#{date}, #{dayPrice})
+        VALUES (#{pBasDt}, #{dayPrc})
     </insert>
 
 
@@ -67,7 +67,6 @@
         FROM gold_predict_prices
         WHERE pbasDt &gt;= #{today}
     </select>
-
 
     <select id="getLastPBasDt" resultType="java.lang.String">
         SELECT MAX(pBasDt)
