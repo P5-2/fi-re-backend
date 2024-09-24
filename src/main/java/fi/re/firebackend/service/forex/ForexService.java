@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 public interface ForexService {
-    void setForexFromApi() throws IOException, ParseException;
+    void setForexDataFromApi(LocalDate date) throws IOException, ParseException;
 
-    List<ForexResponseDto> getExchangeRateByDate(LocalDate searchDate);
+    List<ForexResponseDto> getExchangeRateByDate(LocalDate searchDate) throws IOException, ParseException;
 }
