@@ -44,7 +44,8 @@ public class SecurityConfig {
                 .authorizeRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .antMatchers("/naver/**").permitAll()
                         .antMatchers("/kakao/**").permitAll()
-                        .anyRequest().authenticated());   // (무조건)증명
+                        //.anyRequest().authenticated());   // (무조건)증명
+                );
 
         // 2. 세션을 사용하지 않음
         http.sessionManagement((sessionManagement)

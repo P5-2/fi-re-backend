@@ -1,9 +1,6 @@
 package fi.re.firebackend.dto.gold;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 
@@ -11,6 +8,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Getter
+@Setter
 public class GoldPredicted {
     private String pBasDt;
     private long dayPrc;
