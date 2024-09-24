@@ -3,11 +3,13 @@ package fi.re.firebackend.dto.forex;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Data
+@NoArgsConstructor
 //api를 받아오기 위한 dto
 public class ForexDto {
     @JsonProperty("result")
