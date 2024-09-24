@@ -19,7 +19,7 @@ public class ForexEntity {
     private double dealBasR;       // 기준 환율
     private int bkpr;              // 은행 환율
     private int yyEfeeR;           // 연간 수수료율
-    private int tenDdEfeeR;        // 10년 수수료율
+    private int tenDdEfeeR;        // 10일환가료율
     private int kftcBkpr;          // KFTC 은행 환율
     private double kftcDealBasR;   // KFTC 기준 환율
 }

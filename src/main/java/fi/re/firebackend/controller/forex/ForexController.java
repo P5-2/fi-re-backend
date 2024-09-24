@@ -1,6 +1,7 @@
 package fi.re.firebackend.controller.forex;
 
 import fi.re.firebackend.dto.forex.ForexDto;
+import fi.re.firebackend.dto.forex.ForexResponseDto;
 import fi.re.firebackend.service.forex.ForexService;
 import org.json.simple.parser.ParseException;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -27,14 +29,19 @@ public class ForexController {
 
     // API를 통해 특정 날짜의 외환 정보 검색
     @GetMapping("/date/{searchDate}")
-    public ResponseEntity<List<ForexDto>> getExchangeRateByDate(@PathVariable String searchDate) {
+    public ResponseEntity<List<ForexResponseDto>> getExchangeRateByDate(@PathVariable String searchDate) {
         try {
             // 날짜 문자열을 형식에 맞춰 변환
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
             LocalDate date = LocalDate.parse(searchDate, formatter);
 
+            // 현재 시간을 기준으로 12시 이전이면 날짜에서 -1
+            LocalTime now = LocalTime.now();
+            if (now.isBefore(LocalTime.NOON)) {
+                date = date.minusDays(1);
+            }
             // 해당 날짜의 환율을 가져옴
-            List<ForexDto> rates = forexService.getExchangeRateByDate(date);
+            List<ForexResponseDto> rates = forexService.getExchangeRateByDate(date);
 
             // 리스트가 비어있는 경우 처리
             if (rates.isEmpty()) {

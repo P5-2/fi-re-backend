@@ -17,11 +17,21 @@
     </insert>
 
     <select id="selectExchangeRateByDate" parameterType="java.time.LocalDate"
-            resultType="fi.re.firebackend.dto.forex.ForexDto">
-        SELECT *
-        FROM Exchange_Rate
-        WHERE searchdate = #{searchDate}
+            resultType="fi.re.firebackend.dto.forex.ForexResponseDto">
+        SELECT er.cur_unit      AS curUnit,   -- 통화 코드
+               erc.cur_nm       AS curNm,     -- 국가/통화명
+               er.deal_bas_r    AS dealBasR,  -- 매매 기준율
+               er.ttb           AS ttb,       -- 전신환(송금) 받으실때
+               er.tts           AS tts,       -- 전신환(송금) 보내실때
+               er.ten_dd_efe_r AS tenDdEfeeR -- 10일환가료율
+        FROM exchange_rate er
+                 JOIN
+             exchange_rate_category erc
+             ON
+                 er.cur_unit = erc.cur_unit
+        WHERE er.searchdate = #{searchDate}
     </select>
+
 
     <select id="isCurUnitExists" parameterType="java.lang.String" resultType="java.lang.Integer">
         SELECT COUNT(*)

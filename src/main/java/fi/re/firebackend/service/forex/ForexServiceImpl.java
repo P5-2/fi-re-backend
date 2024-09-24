@@ -4,6 +4,7 @@ import fi.re.firebackend.dao.forex.ForexDao;
 import fi.re.firebackend.dto.forex.ForexCategoryEntity;
 import fi.re.firebackend.dto.forex.ForexDto;
 import fi.re.firebackend.dto.forex.ForexEntity;
+import fi.re.firebackend.dto.forex.ForexResponseDto;
 import fi.re.firebackend.util.api.ForexApi;
 import org.apache.log4j.Logger;
 import org.json.simple.parser.ParseException;
@@ -85,7 +86,7 @@ public class ForexServiceImpl implements ForexService {
     }
 
     // 특정 날짜의 외환 정보 검색
-    public List<ForexDto> getExchangeRateByDate(LocalDate searchDate) {
+    public List<ForexResponseDto> getExchangeRateByDate(LocalDate searchDate) {
         return forexDao.selectExchangeRateByDate(searchDate);
     }
 

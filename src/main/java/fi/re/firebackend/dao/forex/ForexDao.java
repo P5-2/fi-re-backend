@@ -1,8 +1,8 @@
 package fi.re.firebackend.dao.forex;
 
 import fi.re.firebackend.dto.forex.ForexCategoryEntity;
-import fi.re.firebackend.dto.forex.ForexDto;
 import fi.re.firebackend.dto.forex.ForexEntity;
+import fi.re.firebackend.dto.forex.ForexResponseDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -27,7 +27,7 @@ public interface ForexDao {
     int isExistsBySearchDateAndCurUnit(Map<String, Object> dateUnitMap);
 
     // 특정 날짜의 외환 정보를 검색
-    List<ForexDto> selectExchangeRateByDate(@Param("searchDate") LocalDate searchDate);
+    List<ForexResponseDto> selectExchangeRateByDate(@Param("searchDate") LocalDate searchDate);
 
 
     int updateExchangeRate(ForexEntity forexEntity);
