@@ -22,8 +22,7 @@
                erc.cur_nm       AS curNm,     -- 국가/통화명
                er.deal_bas_r    AS dealBasR,  -- 매매 기준율
                er.ttb           AS ttb,       -- 전신환(송금) 받으실때
-               er.tts           AS tts,       -- 전신환(송금) 보내실때
-               er.ten_dd_efe_r AS tenDdEfeeR -- 10일환가료율
+               er.tts           AS tts       -- 전신환(송금) 보내실때
         FROM exchange_rate er
                  JOIN
              exchange_rate_category erc
