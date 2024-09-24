@@ -42,9 +42,10 @@ public class SecurityConfig {
                 .addFilterBefore(this.corsFilter(), UsernamePasswordAuthenticationFilter.class)
 
                 .authorizeRequests(authorizeHttpRequests -> authorizeHttpRequests
-                      /*  .antMatchers("/naver/**").permitAll()
-                        .antMatchers("/kakao/**").permitAll()*/
-                        .anyRequest().authenticated());   // (무조건)증명
+                       .antMatchers("/naver/**").permitAll()
+                        .antMatchers("/kakao/**", "/finance/**").permitAll()
+                      //  .anyRequest().authenticated()
+                );   // (무조건)증명
 
         // 2. 세션을 사용하지 않음
         http.sessionManagement((sessionManagement)

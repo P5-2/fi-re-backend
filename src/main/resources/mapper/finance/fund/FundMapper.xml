@@ -22,7 +22,21 @@
 
     <select id="all"
             resultType="fi.re.firebackend.dto.finance.fund.FundDto">
-        select prdNo, pname, type, rate, dngrGrade, region, bseDt, selectCount
+        select prdNo, pname, type, rate, dngrGrade, region, bseDt, selectCount, nav
         from fund
+    </select>
+
+
+    <!-- 페이지 네이션 -->
+    <select id="selectFunds" resultType="fi.re.firebackend.dto.finance.fund.FundDto">
+        SELECT *
+        FROM fund
+        ORDER BY prdNo
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="countFunds" resultType="int">
+        SELECT COUNT(*)
+        FROM fund
     </select>
 </mapper>
