@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import com.nimbusds.jwt.JWT;
 import fi.re.firebackend.dao.login.MemberDao;
 import fi.re.firebackend.dto.login.KakaoTokenDto;
+import fi.re.firebackend.dto.member.MemberDto;
 import fi.re.firebackend.jwt.JwtTokenProvider;
 import fi.re.firebackend.jwt.dto.TokenDto;
 import fi.re.firebackend.security.SecurityUser;
@@ -161,7 +162,13 @@ public class KakaoLoginService {
                     .auth("ROLE_USER") // auth 필드에 ROLE_USER 설정
                     .build();
 
+            MemberDto memberDto = new MemberDto();
+            memberDto.setUsername(id);      // Set username as id
+            memberDto.setPlatform("Kakao"); // Set the platform, assuming 'platform' is defined in your context
+            memberDto.setNickname(nickname);     // Set nickname as name
+
             memberDao.save(member);
+            memberDao.memberSave(memberDto);
         }
 
 
