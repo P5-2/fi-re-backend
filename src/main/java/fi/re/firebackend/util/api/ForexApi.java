@@ -44,17 +44,17 @@ public class ForexApi {
 
         HttpURLConnection conn = null;
         BufferedReader rd = null;
-        StringBuilder response = new StringBuilder();
         List<ForexDto> forexList = new ArrayList<>();
         try {
             URL url = new URL(urlString);
             HttpURLConnection.setFollowRedirects(false);
             System.setProperty( "https.protocols", "TLSv1.1,TLSv1.2" );
+
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
-//            conn.setRequestProperty("Content-type", "application/json");
-//            conn.setConnectTimeout(10000);  // 연결 타임아웃
-//            conn.setReadTimeout(10000);     // 응답 대기 타임아웃
+            conn.setRequestProperty("Content-type", "application/json");
+            conn.setConnectTimeout(10000);  // 연결 타임아웃
+            conn.setReadTimeout(10000);     // 응답 대기 타임아웃
 
             System.out.println("Response code: " + conn.getResponseCode());
 

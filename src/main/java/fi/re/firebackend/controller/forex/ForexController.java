@@ -1,6 +1,5 @@
 package fi.re.firebackend.controller.forex;
 
-import fi.re.firebackend.dto.forex.ForexDto;
 import fi.re.firebackend.dto.forex.ForexResponseDto;
 import fi.re.firebackend.service.forex.ForexService;
 import org.json.simple.parser.ParseException;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -34,15 +32,11 @@ public class ForexController {
             // 날짜 문자열을 형식에 맞춰 변환
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
             LocalDate date = LocalDate.parse(searchDate, formatter);
+            System.out.println("date: " + date);
 
-            // 현재 시간을 기준으로 12시 이전이면 날짜에서 -1
-            LocalTime now = LocalTime.now();
-            if (now.isBefore(LocalTime.NOON)) {
-                date = date.minusDays(1);
-            }
             // 해당 날짜의 환율을 가져옴
             List<ForexResponseDto> rates = forexService.getExchangeRateByDate(date);
-
+            System.out.println("rates : " + rates);
             // 리스트가 비어있는 경우 처리
             if (rates.isEmpty()) {
                 return ResponseEntity.noContent().build(); // 204 No Content
@@ -51,15 +45,20 @@ public class ForexController {
             return ResponseEntity.ok(rates); // 200 OK
         } catch (DateTimeParseException e) {
             return ResponseEntity.badRequest().body(null); // 400 Bad Request
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
     }
 
 
     @GetMapping("/test")
-    public ResponseEntity<String> getExchangeRateTest() {
+    public ResponseEntity<String> getExchangeRateTest() throws IOException, ParseException {
         LocalDate today = LocalDate.now();
         try {
-            forexService.setForexFromApi();
+            forexService.setForexDataFromApi(today);
+//            System.out.println("insert date: "+today);
         } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }

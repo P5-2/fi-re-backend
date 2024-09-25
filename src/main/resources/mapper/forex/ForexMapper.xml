@@ -18,7 +18,8 @@
 
     <select id="selectExchangeRateByDate" parameterType="java.time.LocalDate"
             resultType="fi.re.firebackend.dto.forex.ForexResponseDto">
-        SELECT er.cur_unit      AS curUnit,   -- 통화 코드
+        SELECT er.searchdate    AS searchDate,   -- 통화 코드
+               er.cur_unit      AS curUnit,   -- 통화 코드
                erc.cur_nm       AS curNm,     -- 국가/통화명
                er.deal_bas_r    AS dealBasR,  -- 매매 기준율
                er.ttb           AS ttb,       -- 전신환(송금) 받으실때

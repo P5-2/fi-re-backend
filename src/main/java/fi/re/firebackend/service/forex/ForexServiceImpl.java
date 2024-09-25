@@ -13,10 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -30,14 +32,21 @@ public class ForexServiceImpl implements ForexService {
         this.forexApi = forexApi;
     }
 
-    @Override
+    // 오늘 날짜로(12시 전이면 어제 날짜로 api에서 불러와서 저장하는 함수)
     @Scheduled(cron = "0 0 12 * * ?") //초 분 시 일 월 요일 현재는 12시 정각(영업일 11시 전후로 업데이트되므로)
     public void setForexFromApi() throws IOException, ParseException {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -1); // 하루 빼기
-        Date yesterday = calendar.getTime();
+        LocalDate todayDate = isBeforeNoon(LocalDate.now());
+        setForexDataFromApi(todayDate);
+    }
 
-        String searchDate = new SimpleDateFormat("yyyyMMdd").format(yesterday);
+    //api에서 매개변수로 받는 날짜를 불러오는 함수
+    @Override
+    public void setForexDataFromApi(LocalDate date) throws IOException, ParseException {
+
+        // DateTimeFormatter를 사용하여 포맷
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String searchDate = date.format(formatter);
+        // 오늘날짜로 api 가져오기
         List<ForexDto> forexResult = forexApi.getForexData(searchDate);
 
         log.info("forex res: " + forexResult);
@@ -50,12 +59,10 @@ public class ForexServiceImpl implements ForexService {
         }
     }
 
+    //DB에 저장하는 함수(데이터가 있는지 확인하고 없으면 insert 있으면 update)
     public void saveExchangeRate(ForexDto forexDto, String searchDate) throws IOException, ParseException {
         // 1. cur_unit이 exchange_rate_category에 존재하는지 확인
-
         String curUnit = forexDto.getCurUnit();
-
-        // 1. cur_unit이 exchange_rate_category에 존재하는지 확인
         if (forexDao.isCurUnitExists(curUnit) == 0) {
             // 해당 cur_unit이 존재하지 않으면 새로운 카테고리 추가
             ForexCategoryEntity newCategory = new ForexCategoryEntity();
@@ -74,7 +81,7 @@ public class ForexServiceImpl implements ForexService {
         dateUnitMap.put("curUnit", forexEntity.getCurUnit());
 
         int count = forexDao.isExistsBySearchDateAndCurUnit(dateUnitMap);
-        System.out.println(count);
+//        System.out.println(count);
         // 데이터가 존재하는지 확인 후 업데이트 또는 삽입
         if (count > 0) {
             forexDao.updateExchangeRate(forexEntity);
@@ -85,8 +92,23 @@ public class ForexServiceImpl implements ForexService {
         }
     }
 
+    @Override
     // 특정 날짜의 외환 정보 검색
-    public List<ForexResponseDto> getExchangeRateByDate(LocalDate searchDate) {
+    public List<ForexResponseDto> getExchangeRateByDate(LocalDate searchDate) throws IOException, ParseException {
+
+        //searchDate가 오늘이면
+        if (searchDate.equals(LocalDate.now())) {
+            searchDate = isBeforeNoon(searchDate);
+        }
+
+        Map<String, Object> dateUnitMap = new HashMap<>();
+        dateUnitMap.put("searchDate", searchDate);
+        dateUnitMap.put("curUnit", "KRW"); //원화를 기준으로 데이터를 받았는지 확인
+        // db에 없으면 api에서 받아오기
+        if (forexDao.isExistsBySearchDateAndCurUnit(dateUnitMap) == 0) {
+            setForexDataFromApi(searchDate);
+        }
+
         return forexDao.selectExchangeRateByDate(searchDate);
     }
 
@@ -120,6 +142,15 @@ public class ForexServiceImpl implements ForexService {
         }
         // 콤마를 제거하고 int로 변환
         return Integer.parseInt(numberStr.replace(",", ""));
+    }
+
+    public LocalDate isBeforeNoon(LocalDate date) {
+        //현재 시간 구하기
+        LocalTime today = LocalTime.now();
+        if (today.isBefore(LocalTime.NOON)) {
+            date = date.minusDays(1);
+        }
+        return date;
     }
 
 
