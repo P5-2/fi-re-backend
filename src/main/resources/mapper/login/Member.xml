@@ -23,6 +23,12 @@
         VALUES (#{username}, #{password}, #{name}, #{auth})
     </insert>
 
+    <!--  member 테이블에 저장  -->
+    <insert id="memberSave" parameterType="fi.re.firebackend.dto.member.MemberDto">
+        INSERT INTO member (username, platform, nickname)
+        VALUES (#{username}, #{platform}, #{nickname})
+    </insert>
+
     <select id="findByName" parameterType="String" resultType="fi.re.firebackend.security.SecurityUser">
         SELECT * FROM snsuser
         WHERE name = #{name}
@@ -33,4 +39,6 @@
         SELECT name FROM snsuser
         WHERE username = #{username}
     </select>
+
+
 </mapper>
