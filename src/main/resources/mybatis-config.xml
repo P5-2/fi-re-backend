@@ -10,18 +10,16 @@
 
     <typeAliases>
         <package name="fi.re.firebackend.dto.gold" />
-<<<<<<< HEAD
         <package name="fi.re.firebackend.dto.login"/>
+        <package name="fi.re.firebackend.dto."/>
         <package name="fi.re.firebackend.jwt.dto"/>
-=======
->>>>>>> 88651938e89ca585c11ac3856a66bef069cb0948
     </typeAliases>
 
     <mappers>
         <mapper resource="mapper/gold/GoldDao.xml"/>
-<<<<<<< HEAD
         <mapper resource="mapper/login/Member.xml"/>
-=======
->>>>>>> 88651938e89ca585c11ac3856a66bef069cb0948
+        <mapper resource="mapper/recommendation/DepositDao.xml"/>
+        <mapper resource="mapper/recommendation/FundDao.xml"/>
     </mappers>
+
 </configuration>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fi.re.firebackend.dao.recommendation.FundRcmdDao">
+
+    <select id="getAllFund" resultType="fi.re.firebackend.dto.recommendation.FundEntity">
+        SELECT prdNo,
+               pname,
+               type,
+               rate,
+               dngrGrade,
+               region,
+               bseDt,
+               selectCount
+        FROM fund
+    </select>
+
+</mapper>
+

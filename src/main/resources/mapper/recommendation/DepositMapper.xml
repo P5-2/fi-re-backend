@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fi.re.firebackend.dao.recommendation.DepositDao">
+
+    <select id="getAllDeposit" resultType="fi.re.firebackend.dto.recommendation.DepositEntity">
+        SELECT prdNo,
+               pname,
+               type,
+               bname,
+               minRate,
+               maxRate,
+               subPeriod,
+               subAmount,
+               target,
+               benefit,
+               description,
+               selectCount,
+               keyword
+        FROM savings
+    </select>
+
+    <select id="getMemberInfo" parameterType="java.lang.String"
+            resultType="fi.re.firebackend.dto.recommendation.MemberEntity">
+        SELECT username,
+               age,
+               salary,
+               assets,
+               riskPoint,
+               goalAmount,
+               keyword
+        FROM member
+        where username like #{username}
+    </select>
+
+</mapper>
+
