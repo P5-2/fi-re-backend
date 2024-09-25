@@ -24,7 +24,6 @@ public class DepositEntity {
     private String benefit;     // 혜택
     private String description; // 상품 설명
     private int selectCount;    // 선택 횟수
-    //    private List<String> keyword;  // 관련 키워드
     private String keyword;     // 관련 키워드
     private List<String> keywordList; // 분리된 키워드 리스트
 }

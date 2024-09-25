@@ -18,6 +18,4 @@ public class FundVo {
     private BigDecimal rate;    // 수익률
     private int dngrGrade;      // 위험 등급
     private String region;      // 투자 지역
-    private Timestamp bseDt;    // 기준일자
-    private int selectCount;    // 선택 횟수
 }

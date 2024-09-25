@@ -20,3 +20,4 @@ public class FundEntity {
     private Timestamp bseDt;    // 기준일자
     private int selectCount;    // 선택 횟수
 }
+// 사용 할 지 안 할 지 고민해보기

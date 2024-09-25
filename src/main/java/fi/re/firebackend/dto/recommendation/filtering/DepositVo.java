@@ -1,10 +1,13 @@
 package fi.re.firebackend.dto.recommendation.filtering;
 
 import fi.re.firebackend.dto.recommendation.DepositEntity;
+import fi.re.firebackend.util.recommendUtil.KeywordExtractor;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,18 +23,24 @@ public class DepositVo {
 
     public DepositVo(DepositEntity depositEntity) {
         this.depositEntity = depositEntity;
+        KeywordExtractor keywordExtractor = new KeywordExtractor();
         parseSubAmount(depositEntity.getSubAmount()); // subAmount를 기반으로 minAmount와 maxAmount 파싱
-        parseKeywords(depositEntity.getKeyword()); // 키워드 분리
+        parseKeywords(depositEntity.getKeyword()); // String 으로 되어있는 키워드 분리
+        // description에서 키워드 추출
+        List<String> extractedKeywords = keywordExtractor.extractKeywords(depositEntity.getDescription());
+        List<String> ageKeywordAddList = new ArrayList<>(depositEntity.getKeywordList());
+        ageKeywordAddList.addAll(extractedKeywords);
+        depositEntity.setKeywordList(ageKeywordAddList);
     }
 
     private void parseSubAmount(String subAmount) {
         // subAmount 범위를 파싱하여 최소 및 최대 금액을 설정
-        BigDecimal[] range = parseSubAmountRange(subAmount);
+        BigDecimal[] range = parseSubAmountToMinMax(subAmount);
         this.minAmount = range[0];
         this.maxAmount = range[1];
     }
 
-    private BigDecimal[] parseSubAmountRange(String subAmount) {
+    private BigDecimal[] parseSubAmountToMinMax(String subAmount) {
         BigDecimal minAmount = BigDecimal.ZERO;
         BigDecimal maxAmount = BigDecimal.valueOf(Long.MAX_VALUE); // 기본값을 제한 없음으로 설정
 
@@ -48,7 +57,7 @@ public class DepositVo {
             // 만원 처리
             if (matcher.group(3) != null) {
                 BigDecimal amount = new BigDecimal(matcher.group(3)).multiply(BigDecimal.valueOf(10000)); // 만원 단위 변환
-                String qualifier = matcher.group(4); // '이상', '이하', '부터', '제한없음'을 가져옴
+                String qualifier = matcher.group(4); // '이상', '이하', '부터', '제한없음'
 
                 if ("이상".equals(qualifier) || "부터".equals(qualifier)) {
                     minAmount = amount; // 최소 금액
@@ -80,25 +89,10 @@ public class DepositVo {
         return new BigDecimal[]{minAmount, maxAmount};
     }
 
-
-
-
     private void parseKeywords(String keyword) {
         if (keyword != null && !keyword.isEmpty()) {
             this.depositEntity.setKeywordList(Arrays.asList(keyword.split(",")));
         }
     }
 
-    // DepositEntity에 대한 getter 메서드 추가
-    public DepositEntity getDepositEntity() {
-        return depositEntity;
-    }
-
-    public BigDecimal getMinAmount() {
-        return minAmount;
-    }
-
-    public BigDecimal getMaxAmount() {
-        return maxAmount;
-    }
 }

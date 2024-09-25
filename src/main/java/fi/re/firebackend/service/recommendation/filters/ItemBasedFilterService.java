@@ -1,103 +1,156 @@
 package fi.re.firebackend.service.recommendation.filters;
 
 import fi.re.firebackend.dto.recommendation.filtering.DepositVo;
-import fi.re.firebackend.dto.recommendation.FundEntity;
+import fi.re.firebackend.dto.recommendation.filtering.FundVo;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class ItemBasedFilterService {
+    //https://commons.apache.org/sandbox/commons-text/jacoco/org.apache.commons.text.similarity/CosineSimilarity.java.html
+    private static final MathContext MATH_CONTEXT = new MathContext(10, RoundingMode.HALF_UP);
 
-    private static final MathContext MATH_CONTEXT = new MathContext(10, RoundingMode.HALF_UP); // Precision for BigDecimal
+    // 두 벡터의 코사인 유사도를 구하는 메서드
+    public BigDecimal cosineSimilarity(BigDecimal[] vec1, BigDecimal[] vec2) {
+        if (vec1 == null || vec2 == null) {
+            throw new IllegalArgumentException("Vectors must not be null");
+        }
 
-    // Cosine Similarity calculation using BigDecimal
-    private BigDecimal cosineSimilarity(BigDecimal[] vec1, BigDecimal[] vec2) {
+        if (vec1.length != vec2.length) {
+            throw new IllegalArgumentException("Vectors must be of the same length");
+        }
+
         BigDecimal dotProduct = BigDecimal.ZERO;
         BigDecimal normA = BigDecimal.ZERO;
         BigDecimal normB = BigDecimal.ZERO;
 
-        // Calculate dot product and norms
         for (int i = 0; i < vec1.length; i++) {
             dotProduct = dotProduct.add(vec1[i].multiply(vec2[i], MATH_CONTEXT));
-            normA = normA.add(vec1[i].pow(2), MATH_CONTEXT);
-            normB = normB.add(vec2[i].pow(2), MATH_CONTEXT);
+            normA = normA.add(vec1[i].pow(2, MATH_CONTEXT), MATH_CONTEXT);
+            normB = normB.add(vec2[i].pow(2, MATH_CONTEXT), MATH_CONTEXT);
         }
 
-        // Calculate square root of norms
         BigDecimal normASqrt = normA.sqrt(MATH_CONTEXT);
         BigDecimal normBSqrt = normB.sqrt(MATH_CONTEXT);
-
-        // Denominator of cosine similarity
         BigDecimal denominator = normASqrt.multiply(normBSqrt, MATH_CONTEXT);
 
-        // Return 0 if the denominator is 0 to avoid division by zero
         if (denominator.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO;
         }
 
-        // Calculate and return cosine similarity
         return dotProduct.divide(denominator, MATH_CONTEXT);
     }
 
-    // Recommend the most similar Deposit based on cosine similarity
-    public DepositVo recmdDeposits(DepositVo targetProduct, List<DepositVo> allProducts) {
-        DepositVo bestMatch = null;
-        BigDecimal highestSimilarity = BigDecimal.valueOf(-1); // Initialize with a low value
+    // 이율을 이용한 유사도 구하기(추후 딥러닝으로 대체해야할듯)
+    public List<DepositVo> recmdDeposits(List<DepositVo> targetProducts, List<DepositVo> allProducts) {
+        List<DepositSimilarity> similarities = new ArrayList<>();
 
-        for (DepositVo product : allProducts) {
-            if (!product.equals(targetProduct)) { // Skip comparison with itself
-                BigDecimal similarity = cosineSimilarity(
-                        new BigDecimal[] {
-                                product.getDepositEntity().getMinRate(),
-                                product.getDepositEntity().getMaxRate()
-                        },
-                        new BigDecimal[] {
-                                targetProduct.getDepositEntity().getMinRate(),
-                                targetProduct.getDepositEntity().getMaxRate()
-                        }
-                );
+        for (DepositVo targetProduct : targetProducts) {
+            for (DepositVo product : allProducts) {
+                if (!product.equals(targetProduct)) { // 자기 자신과 비교 pass
+                    BigDecimal similarity = cosineSimilarity(
+                            new BigDecimal[]{
+                                    product.getDepositEntity().getMinRate(),
+                                    product.getDepositEntity().getMaxRate()
+                            },
+                            new BigDecimal[]{
+                                    targetProduct.getDepositEntity().getMinRate(),
+                                    targetProduct.getDepositEntity().getMaxRate()
+                            }
+                    );
 
-                // Update the best match if a higher similarity is found
-                if (similarity.compareTo(highestSimilarity) > 0) {
-                    highestSimilarity = similarity;
-                    bestMatch = product;
+                    // 유사도 정보를 저장
+                    similarities.add(new DepositSimilarity(product, similarity));
                 }
             }
         }
 
-        return bestMatch; // Return the best matching deposit
+        // 유사도 높은 순서로 정렬
+        similarities.sort((s1, s2) -> s2.getSimilarity().compareTo(s1.getSimilarity()));
+
+        // 추천된 예적금 리스트 생성
+        return similarities.stream()
+                .map(DepositSimilarity::getDepositVo)
+                .collect(Collectors.toList());
     }
 
-    // Recommend the most similar Fund based on cosine similarity
-    public FundEntity recmdFund(FundEntity targetFund, List<FundEntity> allFunds) {
-        FundEntity bestMatch = null;
-        BigDecimal highestSimilarity = BigDecimal.valueOf(-1); // Initialize with a low value
 
-        for (FundEntity fund : allFunds) {
-            if (!fund.equals(targetFund)) { // Skip comparison with itself
-                BigDecimal similarity = cosineSimilarity(
-                        new BigDecimal[] {
-                                fund.getRate(),
-                                BigDecimal.valueOf(fund.getDngrGrade())
-                        },
-                        new BigDecimal[] {
-                                targetFund.getRate(),
-                                BigDecimal.valueOf(targetFund.getDngrGrade())
-                        }
-                );
+    // 수익률을 이용한 유사도 구하기(추후 딥러닝으로 대체해야할듯)
+    public List<FundVo> recmdFunds(List<FundVo> targetFunds, List<FundVo> allFunds) {
+        List<FundSimilarity> similarities = new ArrayList<>();
 
-                // Update the best match if a higher similarity is found
-                if (similarity.compareTo(highestSimilarity) > 0) {
-                    highestSimilarity = similarity;
-                    bestMatch = fund;
+        for (FundVo targetFund : targetFunds) {
+            for (FundVo fund : allFunds) {
+                if (!fund.equals(targetFund)) { // 자기 자신과 비교 pass
+                    BigDecimal similarity = cosineSimilarity(
+                            new BigDecimal[]{
+                                    fund.getRate(),
+                                    BigDecimal.valueOf(fund.getDngrGrade())
+                            },
+                            new BigDecimal[]{
+                                    targetFund.getRate(),
+                                    BigDecimal.valueOf(targetFund.getDngrGrade())
+                            }
+                    );
+
+                    // 유사도 정보를 FundSimilarity에 저장
+                    similarities.add(new FundSimilarity(fund, similarity));
                 }
             }
         }
 
-        return bestMatch; // Return the best matching fund
+        // 유사도 높은 순서로 정렬
+        similarities.sort((s1, s2) -> s2.getSimilarity().compareTo(s1.getSimilarity()));
+
+        // 추천된 펀드 리스트 생성
+        return similarities.stream()
+                .map(FundSimilarity::getFundVo)
+                .collect(Collectors.toList());
     }
+
+
+    // 유사도 정보를 저장할 예적금 유사도 내부 클래스
+    private static class DepositSimilarity {
+        private final DepositVo depositVo;
+        private final BigDecimal similarity;
+
+        public DepositSimilarity(DepositVo depositVo, BigDecimal similarity) {
+            this.depositVo = depositVo;
+            this.similarity = similarity;
+        }
+
+        public DepositVo getDepositVo() {
+            return depositVo;
+        }
+
+        public BigDecimal getSimilarity() {
+            return similarity;
+        }
+    }
+
+    // 유사도 정보를 저장할 펀드 유사도 내부 클래스
+    private static class FundSimilarity {
+        private final FundVo fundVo;
+        private final BigDecimal similarity;
+
+        public FundSimilarity(FundVo fundVo, BigDecimal similarity) {
+            this.fundVo = fundVo;
+            this.similarity = similarity;
+        }
+
+        public FundVo getFundVo() {
+            return fundVo;
+        }
+
+        public BigDecimal getSimilarity() {
+            return similarity;
+        }
+    }
+
 }
