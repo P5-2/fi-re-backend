@@ -7,7 +7,10 @@ import com.google.gson.JsonParser;
 import fi.re.firebackend.jwt.JwtTokenProvider;
 import fi.re.firebackend.jwt.dto.TokenDto;
 import fi.re.firebackend.security.SecurityUser;
+
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
@@ -22,6 +25,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @Transactional
+@PropertySource({"classpath:/application.properties"})
 public class NaverLoginService {
 
     private final MemberDao memberDao;
@@ -33,13 +37,17 @@ public class NaverLoginService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    @Value("${naver.client_id}")
+    private String CLIENT_ID;
+
+    @Value("${naver.client_secret}")
+    private String CLIENT_SECRET;
+
 
     // token 받아오기
     public NaverTokenDto getNaverToken(String code, String state) {
         String access_Token = "";
         String refresh_Token = "";
-        String client_id = "wHXxK_xfYQJP4U42Ueey";  // 실제 Client ID로 교체
-        String client_secret = "qTHo_aIrhm";        // 실제 Client Secret으로 교체
         String reqURL = "https://nid.naver.com/oauth2.0/token";
 
         String result = null;
@@ -56,8 +64,8 @@ public class NaverLoginService {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
-            sb.append("&client_id=" + client_id);
-            sb.append("&client_secret=" + client_secret);
+            sb.append("&client_id=" + CLIENT_ID);
+            sb.append("&client_secret=" + CLIENT_SECRET);
             System.out.println("code = " + code);
             sb.append("&code=" + code);
             sb.append("&state=" + state);
