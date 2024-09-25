@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fi.re.firebackend.dao.finance.fund.FundDao">
+    <select id="getFundById"
+            parameterType="int"
+            resultType="fi.re.firebackend.dto.finance.fund.FundDto">
+        select prdNo, pname, type, rate, dngrGrade, region, bseDt, selectCount
+        from fund
+        where prdNo = #{prdNo}
+    </select>
+
+    <select id="hot"
+            resultType="fi.re.firebackend.dto.finance.fund.FundDto">
+        select prdNo, pname, type, rate, dngrGrade, region, bseDt, selectCount
+        from fund
+        order by selectCount desc
+        limit 3
+    </select>
+
+    <select id="all"
+            resultType="fi.re.firebackend.dto.finance.fund.FundDto">
+        select prdNo, pname, type, rate, dngrGrade, region, bseDt, selectCount
+        from fund
+    </select>
+</mapper>

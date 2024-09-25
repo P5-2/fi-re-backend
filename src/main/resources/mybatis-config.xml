@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true" />
+    </settings>
+
+    <typeAliases>
+        <package name="fi.re.firebackend.dto.gold" />
+        <package name="fi.re.firebackend.dto.login"/>
+        <package name="fi.re.firebackend.jwt.dto"/>
+        <package name="fi.re.firebackend.dto.survey"/>
+
+    </typeAliases>
+
+    <mappers>
+        <mapper resource="mapper/gold/GoldDao.xml"/>
+        <mapper resource="mapper/survey/SurveyMapper.xml"/>
+        <mapper resource="mapper/login/Member.xml"/>
+    </mappers>
+</configuration>
