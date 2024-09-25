@@ -24,7 +24,7 @@ public class JwtTokenProvider {
 
     public static String httpHeaderKey = "Authorization"; // 허가
     private String securityKey = "myJWTkeymyJWTkeymyJWTkeymyJWTkeymyJWTkey";
-    private long accessTokenValidTime = Duration.ofMinutes(30).toMillis(); // 액세스 토큰 유효시간 30분
+    private long accessTokenValidTime = Duration.ofMinutes(60).toMillis(); // 액세스 토큰 유효시간 30분
     private long refreshTokenValidTime = Duration.ofDays(14).toMillis(); // 리프레시 토큰 유효시간 2주
 
     private Set<String> tokenBlacklist = new HashSet<String>(); // 블랙리스트

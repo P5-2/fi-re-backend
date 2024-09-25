@@ -16,4 +16,5 @@ public class FundDto {
     private String region;
     private String bseDt;
     private int selectCount;
+    private double nav;
 }

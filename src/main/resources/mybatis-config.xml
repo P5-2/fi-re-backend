@@ -12,13 +12,11 @@
         <package name="fi.re.firebackend.dto.gold" />
         <package name="fi.re.firebackend.dto.login"/>
         <package name="fi.re.firebackend.jwt.dto"/>
-        <package name="fi.re.firebackend.dto.survey"/>
 
     </typeAliases>
 
     <mappers>
         <mapper resource="mapper/gold/GoldDao.xml"/>
-        <mapper resource="mapper/survey/SurveyMapper.xml"/>
         <mapper resource="mapper/login/Member.xml"/>
     </mappers>
 </configuration>

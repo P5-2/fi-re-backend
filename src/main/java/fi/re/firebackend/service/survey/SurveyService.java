@@ -25,8 +25,6 @@ public class SurveyService {
 
     public void insertSurveyResult(SurveyDto surveyDto,String username) {
 
-
-
         if (username == null || username.isEmpty()) {
             username = generateRandomUsername(); // 랜덤 username 생성
         }

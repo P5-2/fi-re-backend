@@ -68,7 +68,6 @@
         WHERE pbasDt &gt;= #{today}
     </select>
 
-
     <select id="getLastPBasDt" resultType="java.lang.String">
         SELECT MAX(pBasDt)
         FROM Gold_Predict_Prices
