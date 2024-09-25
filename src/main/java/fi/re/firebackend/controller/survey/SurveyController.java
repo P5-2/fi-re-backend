@@ -8,6 +8,7 @@ import fi.re.firebackend.service.gold.GoldPredictionService;
 import fi.re.firebackend.service.gold.GoldService;
 import fi.re.firebackend.service.survey.SurveyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +20,17 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/survey")
 public class SurveyController {
 
+
     private final SurveyService surveyService;
-    String username;
-    JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
+
+
 
 //    의존성
     @Autowired
-    public SurveyController(SurveyService surveyService) {
+    public SurveyController(SurveyService surveyService, JwtTokenProvider jwtTokenProvider) {
         this.surveyService = surveyService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @PostMapping("/result")
@@ -37,8 +41,12 @@ public class SurveyController {
             token = token.substring(7).trim();
         }
 
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("JWT 토큰이 필요합니다.");
+        }
+
         // JWT 토큰에서 사용자 정보 추출
-        username = jwtTokenProvider.getUserInfo(token);
+        String username = jwtTokenProvider.getUserInfo(token);
         surveyService.insertSurveyResult(surveyDto, username);
         return ResponseEntity.ok().body(surveyDto.toString());
     }
