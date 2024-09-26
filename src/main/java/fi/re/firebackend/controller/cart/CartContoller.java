@@ -17,14 +17,14 @@ public class CartContoller {
         this.cartService = cartService;
     }
 
-    @GetMapping("/saving/add")
+    @GetMapping("/savings/add")
     public ResponseEntity<String> addSavingToCart(@RequestParam int prdNo) {
         System.out.println("CartContoller addSavingToCart");
         cartService.updateSavingCartStatus(prdNo, true);
         return ResponseEntity.ok("Saving item added to cart successfully.");
     }
 
-    @GetMapping("/saving/remove")
+    @GetMapping("/savings/remove")
     public ResponseEntity<String> removeSavingFromCart(@RequestParam int prdNo) {
         cartService.updateSavingCartStatus(prdNo, false);
         return ResponseEntity.ok("Saving item removed from cart successfully.");
@@ -37,13 +37,13 @@ public class CartContoller {
     }
 
     // fund
-    @GetMapping("/fund/add")
+    @GetMapping("/funds/add")
     public ResponseEntity<String> addFundToCart(@RequestParam int prdNo) {
         cartService.updateFundCartStatus(prdNo, true);
         return ResponseEntity.ok("Fund item added to cart successfully.");
     }
 
-    @GetMapping("/fund/remove")
+    @GetMapping("/funds/remove")
     public ResponseEntity<String> removeFundFromCart(@RequestParam int prdNo) {
         cartService.updateFundCartStatus(prdNo, false);
         return ResponseEntity.ok("Fund item removed from cart successfully.");
