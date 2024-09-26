@@ -9,8 +9,6 @@ import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class FundVo {
     private int prdNo;          // 상품 번호
     private String pname;       // 상품명

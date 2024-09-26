@@ -8,6 +8,7 @@ import fi.re.firebackend.dto.recommendation.filtering.DepositVo;
 import fi.re.firebackend.dto.recommendation.filtering.FundVo;
 import fi.re.firebackend.service.recommendation.filters.ContentsBasedFilterService;
 import fi.re.firebackend.service.recommendation.filters.ItemBasedFilterService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
 
+    private static final Logger log = Logger.getLogger(RecommendationServiceImpl.class);
     private final ContentsBasedFilterService contentsBasedFilterService;
     private final ItemBasedFilterService itemBasedFilterService;
     private final DepositDao depositDao; // 예적금 레포지토리
@@ -54,9 +56,10 @@ public class RecommendationServiceImpl implements RecommendationService {
 
         // 4. 컨텐츠 기반 필터링
         List<DepositVo> filteredSavings = contentsBasedFilterService.filterDeposits(user, depositVos);
-
+        log.info(filteredSavings);
         // 5. 아이템 기반 추천
-        List<DepositVo> recommendedDeposits = itemBasedFilterService.recmdDeposits(filteredSavings, filteredSavings);
+        List<DepositVo> recommendedDeposits = itemBasedFilterService.recmdDepositsBySelectCount(filteredSavings);
+        log.info(recommendedDeposits);
 
         return recommendedDeposits.stream().limit(5).collect(Collectors.toList());
     }
@@ -73,7 +76,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         List<FundVo> filteredFunds = contentsBasedFilterService.filterFund(user, allFunds);
 
         // 4. 아이템 기반 추천
-        List<FundVo> recommendedFunds = itemBasedFilterService.recmdFunds(filteredFunds, filteredFunds);
+        List<FundVo> recommendedFunds = itemBasedFilterService.recmdFundsBySelectCount(filteredFunds);
 
         return recommendedFunds.stream().limit(5).collect(Collectors.toList());
     }

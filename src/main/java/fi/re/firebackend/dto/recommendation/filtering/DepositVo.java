@@ -14,8 +14,6 @@ import java.util.regex.Pattern;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class DepositVo {
     private DepositEntity depositEntity; // DepositEntity 조합
     private BigDecimal minAmount;         // 최소 가입금액
