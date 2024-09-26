@@ -15,6 +15,6 @@ public interface SavingsDao {
     //예적금 Hot리스트
     List<SavingsDto> hot();
 
-    //에적금 전체 리스트
+    //예적금 전체 리스트
     List<SavingsDto> all();
 }
