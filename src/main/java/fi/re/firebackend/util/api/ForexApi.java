@@ -48,8 +48,7 @@ public class ForexApi {
         try {
             URL url = new URL(urlString);
             HttpURLConnection.setFollowRedirects(false);
-            System.setProperty( "https.protocols", "TLSv1.1,TLSv1.2" );
-
+            System.setProperty("https.protocols", "TLSv1.1,TLSv1.2");
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Content-type", "application/json");

@@ -4,6 +4,7 @@ import fi.re.firebackend.dao.login.MemberDao;
 import fi.re.firebackend.dto.login.*;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import fi.re.firebackend.dto.member.MemberDto;
 import fi.re.firebackend.jwt.JwtTokenProvider;
 import fi.re.firebackend.jwt.dto.TokenDto;
 import fi.re.firebackend.security.SecurityUser;
@@ -157,7 +158,13 @@ public class NaverLoginService {
                     .auth("ROLE_USER") // auth 필드에 ROLE_USER 설정
                     .build();
 
+            MemberDto memberDto = new MemberDto();
+            memberDto.setUsername(id);      // Set username as id
+            memberDto.setPlatform("Naver"); // Set the platform, assuming 'platform' is defined in your context
+            memberDto.setNickname(name);     // Set nickname as name
             memberDao.save(member);
+            memberDao.memberSave(memberDto);
+
         }
 
         // DB에 해당 이름의 회원 정보 있을 경우 JWT 토큰 생성해서 리턴
