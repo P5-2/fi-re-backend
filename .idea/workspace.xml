@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="81b6b348-47c7-4256-b841-565879dde739" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/savings/SavingsService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/02adac62-4f61-461a-b10e-6d50e73a60d7.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/02adac62-4f61-461a-b10e-6d50e73a60d7.xml" afterDir="false" />
+    <list default="true" id="81b6b348-47c7-4256-b841-565879dde739" name="Changes" comment="Fix: 자체 더미데이터에서 외부 API 호출로 변경하는 과정에서의 Controller 변경">
+      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/savings/SavingOptionDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/cart/CartContoller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/cart/CartContoller.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/finance/savings/SavingsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/finance/savings/SavingsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/savings/SavingsDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/savings/SavingsDto.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -205,9 +204,22 @@
       <workItem from="1727252395829" duration="2217000" />
       <workItem from="1727254708499" duration="506000" />
     </task>
+    <task id="LOCAL-00001" summary="Fix: 자체 더미데이터에서 외부 API 호출로 변경하는 과정에서의 Controller 변경">
+      <option name="closed" value="true" />
+      <created>1727339046886</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1727339046886</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Fix: 자체 더미데이터에서 외부 API 호출로 변경하는 과정에서의 Controller 변경" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix: 자체 더미데이터에서 외부 API 호출로 변경하는 과정에서의 Controller 변경" />
   </component>
 </project>

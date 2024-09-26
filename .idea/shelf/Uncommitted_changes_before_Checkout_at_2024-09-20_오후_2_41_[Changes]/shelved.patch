@@ -1,0 +1,22 @@
+Index: src/main/java/fi/re/firebackend/dao/login/MemberDao.java
+===================================================================
+diff --git a/src/main/java/fi/re/firebackend/dao/login/MemberDao.java b/src/main/java/fi/re/firebackend/dao/login/MemberDao.java
+deleted file mode 100644
+--- a/src/main/java/fi/re/firebackend/dao/login/MemberDao.java	(revision 0c29b6e56f80e0dcdc53d08ad3982035a91787e1)
++++ /dev/null	(revision 0c29b6e56f80e0dcdc53d08ad3982035a91787e1)
+@@ -1,4 +0,0 @@
+-package fi.re.firebackend.dao.login;
+-
+-public interface MemberDao {
+-}
+Index: src/main/java/fi/re/firebackend/service/login/MemberService.java
+===================================================================
+diff --git a/src/main/java/fi/re/firebackend/service/login/MemberService.java b/src/main/java/fi/re/firebackend/service/login/MemberService.java
+deleted file mode 100644
+--- a/src/main/java/fi/re/firebackend/service/login/MemberService.java	(revision 0c29b6e56f80e0dcdc53d08ad3982035a91787e1)
++++ /dev/null	(revision 0c29b6e56f80e0dcdc53d08ad3982035a91787e1)
+@@ -1,4 +0,0 @@
+-package fi.re.firebackend.service.login;
+-
+-public class MemberService {
+-}

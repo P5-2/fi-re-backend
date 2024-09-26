@@ -1,0 +1,56 @@
+Index: src/main/java/fi/re/firebackend/dao/login/KakaoLoginDao.java
+===================================================================
+diff --git a/src/main/java/fi/re/firebackend/dao/login/KakaoLoginDao.java b/src/main/java/fi/re/firebackend/dao/login/KakaoLoginDao.java
+deleted file mode 100644
+--- a/src/main/java/fi/re/firebackend/dao/login/KakaoLoginDao.java	
++++ /dev/null	
+@@ -1,4 +0,0 @@
+-package fi.re.firebackend.dao.login;
+-
+-public class KakaoLoginDao {
+-}
+Index: src/main/java/fi/re/firebackend/member/UserMemberService.java
+===================================================================
+diff --git a/src/main/java/fi/re/firebackend/member/UserMemberService.java b/src/main/java/fi/re/firebackend/member/UserMemberService.java
+deleted file mode 100644
+--- a/src/main/java/fi/re/firebackend/member/UserMemberService.java	
++++ /dev/null	
+@@ -1,5 +0,0 @@
+-package fi.re.firebackend.member;
+-
+-//사용자 관련 비즈니스 로직 처리
+-public class UserMemberService {
+-}
+Index: src/main/java/fi/re/firebackend/dao/login/MemberDao.java
+===================================================================
+diff --git a/src/main/java/fi/re/firebackend/dao/login/MemberDao.java b/src/main/java/fi/re/firebackend/dao/login/MemberDao.java
+deleted file mode 100644
+--- a/src/main/java/fi/re/firebackend/dao/login/MemberDao.java	
++++ /dev/null	
+@@ -1,4 +0,0 @@
+-package fi.re.firebackend.dao.login;
+-
+-public interface MemberDao {
+-}
+Index: src/main/java/fi/re/firebackend/service/login/KakaoLoginService.java
+===================================================================
+diff --git a/src/main/java/fi/re/firebackend/service/login/KakaoLoginService.java b/src/main/java/fi/re/firebackend/service/login/KakaoLoginService.java
+deleted file mode 100644
+--- a/src/main/java/fi/re/firebackend/service/login/KakaoLoginService.java	
++++ /dev/null	
+@@ -1,4 +0,0 @@
+-package fi.re.firebackend.service.login;
+-
+-public class KakaoLoginService {
+-}
+Index: src/main/java/fi/re/firebackend/service/login/MemberService.java
+===================================================================
+diff --git a/src/main/java/fi/re/firebackend/service/login/MemberService.java b/src/main/java/fi/re/firebackend/service/login/MemberService.java
+deleted file mode 100644
+--- a/src/main/java/fi/re/firebackend/service/login/MemberService.java	
++++ /dev/null	
+@@ -1,4 +0,0 @@
+-package fi.re.firebackend.service.login;
+-
+-public class MemberService {
+-}

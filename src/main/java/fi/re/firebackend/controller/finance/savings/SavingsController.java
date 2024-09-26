@@ -20,8 +20,8 @@ public class SavingsController {
     private final SavingsService savingsService;
 
     @Autowired
-    public SavingsController(SavingsDao savingsDao, SavingsService savingsService) {
-        this.savingsDao = savingsDao;
+    public SavingsController(SavingsService savingsService) {
+//      this.savingsDao = savingsDao;
         this.savingsService = savingsService;
     }
 
