@@ -25,4 +25,15 @@
         SELECT prdNo, pname, type, bname, minRate, maxRate, subPeriod, subAmount, target, benefit, description, selectCount, keyword
         FROM savings
     </select>
+
+    <!-- 장바구니 -->
+    <update id="updateSavingsCartStatus">
+        UPDATE savings SET isInCart = #{isInCart} WHERE prdNo = #{prdNo}
+    </update>
+
+    <!-- 장바구니 목록 조회 -->
+    <select id="selectSavingsInCart" resultType="fi.re.firebackend.dto.finance.savings.SavingsDto">
+        SELECT * FROM savings
+        WHERE isInCart = 1
+    </select>
 </mapper>
