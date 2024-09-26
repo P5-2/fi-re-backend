@@ -7,6 +7,7 @@ import fi.re.firebackend.dto.recommendation.filtering.FundVo;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,8 @@ public class ContentsBasedFilterService {
     // 예적금 상품의 필터링
     public List<DepositVo> filterDeposits(MemberEntity member, List<DepositVo> depositsList) {
         member.parseKeywords();
+        List<String> memberKeyword = member.getKeywordList();
+
         return depositsList.stream()
                 .filter(deposit -> {
                     if (deposit.getDepositEntity().getType().equals("예금")) {
@@ -31,7 +34,7 @@ public class ContentsBasedFilterService {
                     }
                     return false;
                 })
-                .filter(deposit -> hasCommonKeyword(deposit.getDepositEntity().getKeywordList(), member.getKeywordList())) // 키워드 매칭
+                .filter(deposit -> hasCommonKeyword(deposit.getDepositEntity().getKeywordList(), memberKeyword == null ? new ArrayList<>() : memberKeyword)) // 키워드 매칭
                 .collect(Collectors.toList());
     }
 
@@ -40,7 +43,7 @@ public class ContentsBasedFilterService {
     public List<FundVo> filterFund(MemberEntity member, List<FundVo> fundList) {
         // 위험도 범위에 따른 필터링
         List<FundVo> filteredFunds = fundList.stream()
-                .filter(fund -> fund.getDngrGrade() <= convertRiskPointToGrade(member.getRiskPoint()))
+                .filter(fund -> fund.getDngrGrade() >= convertRiskPointToGrade(member.getRiskPoint()))
                 .collect(Collectors.toList());
         return filteredFunds;
     }
@@ -58,17 +61,16 @@ public class ContentsBasedFilterService {
 
     // 위험도 변환
     private int convertRiskPointToGrade(int riskPoint) {
-        if (riskPoint >= 80) {
+        if (riskPoint >= 34) {
             return 1; // 매우 높은 위험 등급 펀드
-        } else if (riskPoint >= 60) {
+        } else if (riskPoint >= 28) {
             return 2; // 높은 위험 등급 펀드
-        } else if (riskPoint >= 40) {
+        } else if (riskPoint >= 22) {
             return 3; // 중간 위험 등급 펀드
-        } else if (riskPoint >= 20) {
+        } else if (riskPoint >= 16) {
             return 4; // 낮은 위험 등급 펀드
         } else {
             return 5; // 매우 낮은 위험 등급 펀드
         }
     }
 }
-
