@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fi.re.firebackend.dao.survey.SurveyDao">
+    <update id="updateSurveyResult" parameterType="fi.re.firebackend.dto.member.MemberDto" >
+        UPDATE Member
+        SET
+            age = #{age},
+            riskPoint = #{riskPoint},
+            assets = #{assets},
+            keyword = #{keyword}
+        WHERE username = #{username};
+    </update>
+</mapper>

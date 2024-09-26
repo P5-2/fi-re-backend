@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fi.re.firebackend.dao.member.MemberDaotwo">
+    <insert id="insertMember" parameterType="fi.re.firebackend.dto.member.MemberDto">
+        INSERT INTO Member (
+            username, platform, nickname, age, salary, assets, riskPoint, exp, goalAmount, keyword, email
+        ) VALUES (
+                     #{username}, #{platform}, #{nickname}, #{age}, #{salary}, #{assets}, #{riskPoint}, #{exp}, #{goalAmount}, #{keyword}, #{email}
+                 )
+    </insert>
+
+    <select id="findMember" resultType="fi.re.firebackend.dto.member.MemberDto">
+        SELECT * FROM Member WHERE username = #{username}
+    </select>
+</mapper>
