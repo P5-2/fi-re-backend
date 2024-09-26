@@ -21,5 +21,12 @@ public interface FundDao {
 
     // 페이지 네이션
     List<FundDto> selectFunds(@Param("size") int size, @Param("offset") int offset);
+
     int countFunds(); // 총 펀드 개수
+
+    // 비교함 담기
+    void updateFundCartStatus(@Param("prdNo") int prdNo, @Param("isInCart") int isInCart);
+
+    // 비교함에 있는 데이터 조회
+    List<FundDto> selectFundsInCart();
 }
