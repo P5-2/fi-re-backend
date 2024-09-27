@@ -33,7 +33,8 @@ public class ForexController {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
             LocalDate date = LocalDate.parse(searchDate, formatter);
             System.out.println("date: " + date);
-
+            //일단 최신화
+            forexService.setForexDataFromApi(date);
             // 해당 날짜의 환율을 가져옴
             List<ForexResponseDto> rates = forexService.getExchangeRateByDate(date);
             System.out.println("rates : " + rates);

@@ -120,6 +120,8 @@ public class GoldServiceImpl implements GoldService {
     // 현재 날짜로부터 주어진 기간(days)의 금 시세 데이터를 받아오는 함수
     @Override
     public List<GoldInfo> getGoldInfoInPeriod(String endBasDt, int days) {
+        //스케줄링이 거의 불가능하므로 데이터 불러오기 default
+        setDataFromAPI();
         // endBasDt부터 주어진 기간 동안의 데이터를 불러옴
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -days);
