@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SavingOptionDto {
+    private String intrRateTypeNm;
     private String saveTrm;
     private String intrRate;
     private String intrRate2;
+
 }

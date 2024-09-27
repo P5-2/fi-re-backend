@@ -10,13 +10,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SavingsDto {
+
     private String finPrdtCd;
     private String korCoNm;
     private String finPrdtNm;
     private String joinWay;
-    private String mtrtInt;
     private String spclCnd;
-    private String joinDeny;
     private String joinMember;
     private String etcNote;
     private long maxLimit;

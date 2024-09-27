@@ -24,4 +24,6 @@ public interface SavingsDao {
     void updateSavingsCartStatus(@Param("prdNo") int prdNo, @Param("isInCart") int isInCart);
     // 비교함에 있는 데이터 조회
     List<SavingsDto> selectSavingsInCart();
+
+    
 }
