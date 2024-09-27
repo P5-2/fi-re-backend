@@ -14,7 +14,7 @@
 
     <select id="hot"
             resultType="fi.re.firebackend.dto.finance.savings.SavingsDto">
-        SELECT prdNo, pname, type, bname, minRate, maxRate, subPeriod, subAmount, target, benefit, description, selectCount, keyword. InCart
+        SELECT prdNo, pname, type, bname, minRate, maxRate, subPeriod, subAmount, target, benefit, description, selectCount, keyword, InCart
         FROM savings
         order by selectCount desc
         limit 3

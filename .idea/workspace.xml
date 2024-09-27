@@ -4,19 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="81b6b348-47c7-4256-b841-565879dde739" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/cart/CartContoller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/cart/CartContoller.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/finance/savings/SavingsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/finance/savings/SavingsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/finance/fund/FundDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/finance/fund/FundDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/finance/savings/SavingsDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/finance/savings/SavingsDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/fund/FundDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/fund/FundDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/savings/SavingsDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/savings/SavingsDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/cart/CartService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/cart/CartService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/finance/fund/FundMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/finance/fund/FundMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/finance/savings/SavingsMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/finance/savings/SavingsMapper.xml" afterDir="false" />
-    </list>
+    <list default="true" id="81b6b348-47c7-4256-b841-565879dde739" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -211,7 +199,7 @@
       <workItem from="1727250398958" duration="272000" />
       <workItem from="1727252395829" duration="2217000" />
       <workItem from="1727254708499" duration="506000" />
-      <workItem from="1727397411644" duration="12000" />
+      <workItem from="1727397411644" duration="331000" />
     </task>
     <servers />
   </component>
