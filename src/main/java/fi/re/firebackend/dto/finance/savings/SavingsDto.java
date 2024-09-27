@@ -21,4 +21,5 @@ public class SavingsDto {
     private String description;
     private int selectCount;
     private String keyword;
+    private boolean InCart;
 }
