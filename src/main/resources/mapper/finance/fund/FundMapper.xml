@@ -7,14 +7,14 @@
     <select id="getFundById"
             parameterType="int"
             resultType="fi.re.firebackend.dto.finance.fund.FundDto">
-        select prdNo, pname, type, rate, dngrGrade, region, bseDt, selectCount, nav
+        select prdNo, pname, type, rate, dngrGrade, region, bseDt, selectCount, nav, InCart
         from fund
         where prdNo = #{prdNo}
     </select>
 
     <select id="hot"
             resultType="fi.re.firebackend.dto.finance.fund.FundDto">
-        select prdNo, pname, type, rate, dngrGrade, region, bseDt, selectCount, nav
+        select prdNo, pname, type, rate, dngrGrade, region, bseDt, selectCount, nav, InCart
         from fund
         order by selectCount desc
         limit 3
@@ -22,7 +22,7 @@
 
     <select id="all"
             resultType="fi.re.firebackend.dto.finance.fund.FundDto">
-        select prdNo, pname, type, rate, dngrGrade, region, bseDt, selectCount, nav
+        select prdNo, pname, type, rate, dngrGrade, region, bseDt, selectCount, nav, InCart
         from fund
     </select>
 
@@ -40,14 +40,19 @@
         FROM fund
     </select>
 
-    <!-- 장바구니 -->
+    <!-- 비교함 추가/삭제 -->
     <update id="updateFundCartStatus">
-        UPDATE fund SET isInCart = #{isInCart} WHERE prdNo = #{prdNo}
+        UPDATE fund SET InCart = #{InCart} WHERE prdNo = #{prdNo}
     </update>
 
-    <!-- 장바구니 목록 조회 -->
+    <!-- 비교함 목록 조회 -->
     <select id="selectFundsInCart" resultType="fi.re.firebackend.dto.finance.fund.FundDto">
         SELECT * FROM fund
-        WHERE isInCart = 1
+        WHERE InCart = 1
+    </select>
+
+    <!-- 현재 비교함 상태를 가져오는 쿼리 -->
+    <select id="getFundCartStatus" resultType="int">
+        SELECT InCart FROM fund WHERE prdNo = #{prdNo}
     </select>
 </mapper>
