@@ -12,10 +12,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +24,6 @@ public class RecommendationServiceImpl implements RecommendationService {
     private final DepositDao depositDao; // 예적금 레포지토리
     private final FundRcmdDao fundRcmdDao; // 펀드 레포지토리
 
-    private static final MathContext MATH_CONTEXT = new MathContext(10, RoundingMode.HALF_UP);
     @Autowired
     public RecommendationServiceImpl(ContentsBasedFilterService contentsBasedFilterService,
                                      ItemBasedFilterService itemBasedFilterService,
@@ -79,6 +74,12 @@ public class RecommendationServiceImpl implements RecommendationService {
         List<FundVo> recommendedFunds = itemBasedFilterService.recmdFundsBySelectCount(filteredFunds);
 
         return recommendedFunds.stream().limit(5).collect(Collectors.toList());
+    }
+
+    @Override
+    public MemberEntity getMemberInfo(String username){
+        MemberEntity user = depositDao.getMemberInfo(username);
+        return user;
     }
 
 }

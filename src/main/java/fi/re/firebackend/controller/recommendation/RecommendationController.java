@@ -1,5 +1,7 @@
 package fi.re.firebackend.controller.recommendation;
 
+import fi.re.firebackend.dto.recommendation.MemberEntity;
+import fi.re.firebackend.dto.recommendation.RcmdMemberDto;
 import fi.re.firebackend.dto.recommendation.filtering.DepositVo;
 import fi.re.firebackend.dto.recommendation.filtering.FundVo;
 import fi.re.firebackend.jwt.JwtTokenProvider;
@@ -67,5 +69,24 @@ public class RecommendationController {
         List<FundVo> recommendedFunds = recmdService.getRecmdedFunds(username);
         log.info("recommendedFunds: "+recommendedFunds);
         return new ResponseEntity<>(recommendedFunds, HttpStatus.OK);
+    }
+
+
+    //추천 서비스를 이용하는 유저 정보
+    @GetMapping("/member")
+    public ResponseEntity<MemberEntity> getMemberInfo(HttpServletRequest request) {
+        // 헤더에서 토큰 가져오기 (Bearer 접두어 제거 및 공백 제거)
+        String token = request.getHeader(JwtTokenProvider.httpHeaderKey);
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7).trim();
+        }
+
+        if (token == null || token.isEmpty()) {
+            return null;
+        }
+        //jwttokenprovider에서 받은 토큰으로 유저네임 가져오기
+        String username = jwtTokenProvider.getUserInfo(token);
+        MemberEntity memberInfo = recmdService.getMemberInfo(username);
+        return new ResponseEntity<>(memberInfo, HttpStatus.OK);
     }
 }

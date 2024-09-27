@@ -19,7 +19,7 @@ public class ContentsBasedFilterService {
         member.parseKeywords();
         List<String> memberKeyword = member.getKeywordList();
 
-        return depositsList.stream()
+        return depositsList.parallelStream()
                 .filter(deposit -> {
                     if (deposit.getDepositEntity().getType().equals("예금")) {
                         // 예금 필터(자산이 minAmount~maxAmount 사이에 있는지 확인)
@@ -42,7 +42,7 @@ public class ContentsBasedFilterService {
     // 위험도에 따른 펀드 필터링
     public List<FundVo> filterFund(MemberEntity member, List<FundVo> fundList) {
         // 위험도 범위에 따른 필터링
-        List<FundVo> filteredFunds = fundList.stream()
+        List<FundVo> filteredFunds = fundList.parallelStream()
                 .filter(fund -> fund.getDngrGrade() >= convertRiskPointToGrade(member.getRiskPoint()))
                 .collect(Collectors.toList());
         return filteredFunds;

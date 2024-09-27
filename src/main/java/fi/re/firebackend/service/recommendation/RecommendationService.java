@@ -13,4 +13,6 @@ public interface RecommendationService {
 
     // 펀드 추천
     List<FundVo> getRecmdedFunds(String username);
+
+    MemberEntity getMemberInfo(String username);
 }
