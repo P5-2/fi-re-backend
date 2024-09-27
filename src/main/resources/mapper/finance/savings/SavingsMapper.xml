@@ -7,14 +7,14 @@
     <select id="getSavingsById"
             parameterType="int"
             resultType="fi.re.firebackend.dto.finance.savings.SavingsDto">
-        SELECT prdNo, pname, type, bname, minRate, maxRate, subPeriod, subAmount, target, benefit, description, selectCount, keyword
+        SELECT prdNo, pname, type, bname, minRate, maxRate, subPeriod, subAmount, target, benefit, description, selectCount, keyword, InCart
         FROM savings
         where prdNo = #{prdNo}
     </select>
 
     <select id="hot"
             resultType="fi.re.firebackend.dto.finance.savings.SavingsDto">
-        SELECT prdNo, pname, type, bname, minRate, maxRate, subPeriod, subAmount, target, benefit, description, selectCount, keyword
+        SELECT prdNo, pname, type, bname, minRate, maxRate, subPeriod, subAmount, target, benefit, description, selectCount, keyword, InCart
         FROM savings
         order by selectCount desc
         limit 3
@@ -22,18 +22,35 @@
 
     <select id="all"
             resultType="fi.re.firebackend.dto.finance.savings.SavingsDto">
-        SELECT prdNo, pname, type, bname, minRate, maxRate, subPeriod, subAmount, target, benefit, description, selectCount, keyword
+        SELECT prdNo, pname, type, bname, minRate, maxRate, subPeriod, subAmount, target, benefit, description, selectCount, keyword, InCart
         FROM savings
     </select>
 
-    <!-- 장바구니 -->
+    <!-- type에 따른 목록 가져오기 -->
+    <select id="selectSavingsByType" parameterType="String" resultType="fi.re.firebackend.dto.finance.savings.SavingsDto">
+        SELECT
+            prdNo, pname, type, bname, minRate, maxRate, subPeriod,
+            subAmount, target, benefit, description, selectCount,
+            keyword, InCart
+        FROM
+            savings
+        WHERE
+            type = #{type}
+    </select>
+
+    <!-- 비교함 추가 및 삭제 -->
     <update id="updateSavingsCartStatus">
-        UPDATE savings SET isInCart = #{isInCart} WHERE prdNo = #{prdNo}
+        UPDATE savings SET InCart = #{InCart} WHERE prdNo = #{prdNo}
     </update>
 
-    <!-- 장바구니 목록 조회 -->
+    <!-- 비교함 목록 조회 -->
     <select id="selectSavingsInCart" resultType="fi.re.firebackend.dto.finance.savings.SavingsDto">
         SELECT * FROM savings
-        WHERE isInCart = 1
+        WHERE InCart = 1
+    </select>
+
+    <!-- 현재 비교함 상태를 가져오는 쿼리 -->
+    <select id="getSavingsCartStatus" resultType="int">
+        SELECT InCart FROM savings WHERE prdNo = #{prdNo}
     </select>
 </mapper>

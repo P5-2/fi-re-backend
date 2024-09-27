@@ -20,8 +20,15 @@ public interface SavingsDao {
     //에적금 전체 리스트
     List<SavingsDto> all();
 
+    // type에 따른 목록 가져오기
+    List<SavingsDto> selectSavingsByType(String type);
+
     // 비교함 담기
-    void updateSavingsCartStatus(@Param("prdNo") int prdNo, @Param("isInCart") int isInCart);
+    void updateSavingsCartStatus(@Param("prdNo") int prdNo, @Param("InCart") int InCart);
+
     // 비교함에 있는 데이터 조회
     List<SavingsDto> selectSavingsInCart();
+
+    // 비교함 상태 조회
+    int getSavingsCartStatus(@Param("prdNo") int prdNo);
 }
