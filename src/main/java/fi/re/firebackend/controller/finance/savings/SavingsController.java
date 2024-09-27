@@ -35,4 +35,9 @@ public class SavingsController {
         System.out.println("SavingsController getAllSavings()");
         return savingsDao.all();
     }
+
+    @GetMapping("/gettype")
+    public List<SavingsDto> getTypeSavings( String type) {
+        return savingsDao.selectSavingsByType(type);
+    }
 }

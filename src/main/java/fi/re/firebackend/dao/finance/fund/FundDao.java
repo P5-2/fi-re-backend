@@ -25,8 +25,11 @@ public interface FundDao {
     int countFunds(); // 총 펀드 개수
 
     // 비교함 담기
-    void updateFundCartStatus(@Param("prdNo") int prdNo, @Param("isInCart") int isInCart);
+    void updateFundCartStatus(@Param("prdNo") int prdNo, @Param("InCart") int InCart);
 
     // 비교함에 있는 데이터 조회
     List<FundDto> selectFundsInCart();
+
+    // 비교함 상태 조회
+    int getFundCartStatus(int prdNo);
 }

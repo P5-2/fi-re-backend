@@ -19,13 +19,13 @@ public class CartService {
         this.savingsDao = savingsDao;
     }
 
-    public void updateFundCartStatus(int prdNo, boolean isInCart) {
+    public void updateFundCartStatus(int prdNo, boolean InCart) {
         System.out.println("CartService updateFundCartStatus");
-        fundDao.updateFundCartStatus(prdNo, isInCart ? 1 : 0);
+        fundDao.updateFundCartStatus(prdNo, InCart ? 1 : 0);
     }
 
-    public void updateSavingCartStatus(int prdNo, boolean isInCart) {
-        savingsDao.updateSavingsCartStatus(prdNo, isInCart ? 1 : 0);
+    public void updateSavingCartStatus(int prdNo, boolean InCart) {
+        savingsDao.updateSavingsCartStatus(prdNo, InCart ? 1 : 0);
     }
 
     public List<FundDto> getFundsInCart() {
@@ -34,6 +34,14 @@ public class CartService {
 
     public List<SavingsDto> getSavingsInCart() {
         return savingsDao.selectSavingsInCart();
+    }
+
+    public boolean isSavingsInCart(int prdNo) {
+        return savingsDao.getSavingsCartStatus(prdNo) == 1;
+    }
+
+    public boolean isFundInCart(int prdNo) {
+        return fundDao.getFundCartStatus(prdNo) == 1;
     }
 
 }
