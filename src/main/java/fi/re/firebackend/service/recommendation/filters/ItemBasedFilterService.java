@@ -41,7 +41,7 @@ public class ItemBasedFilterService {
 
     // selectCount 상위 10개 상품을 기준으로 예적금 유사도 계산
     public List<DepositVo> recmdDepositsBySelectCount(List<DepositVo> allProducts) {
-        List<DepositVo> topProducts = allProducts.stream()
+        List<DepositVo> topProducts = allProducts.parallelStream()
                 .sorted((p1, p2) -> p2.getDepositEntity().getSelectCount() - p1.getDepositEntity().getSelectCount())
                 .limit(10)
                 .collect(Collectors.toList());
@@ -52,7 +52,7 @@ public class ItemBasedFilterService {
     // selectCount 상위 10개 펀드를 기준으로 유사도 계산
     public List<FundVo> recmdFundsBySelectCount(List<FundVo> allFunds) {
         // 수익률 기준으로 상위 10개 펀드 선택
-        List<FundVo> topFunds = allFunds.stream()
+        List<FundVo> topFunds = allFunds.parallelStream()
                 .sorted((f1, f2) -> f2.getRate().compareTo(f1.getRate())) // BigDecimal 비교는 compareTo 사용
                 .limit(10)
                 .collect(Collectors.toList());
@@ -68,7 +68,7 @@ public class ItemBasedFilterService {
 
         for (DepositVo targetProduct : targetProducts) {
             for (DepositVo product : allProducts) {
-                boolean alreadyAdded = similarities.stream()
+                boolean alreadyAdded = similarities.parallelStream()
                         .anyMatch(similarity -> similarity.getItem().equals(product));
 
                 if (!alreadyAdded) { // 이미 포함된 항목은 pass

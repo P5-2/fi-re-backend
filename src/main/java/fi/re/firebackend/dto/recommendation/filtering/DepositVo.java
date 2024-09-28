@@ -21,6 +21,7 @@ public class DepositVo {
 
     public DepositVo(DepositEntity depositEntity) {
         this.depositEntity = depositEntity;
+        //키워드 추출기
         KeywordExtractor keywordExtractor = new KeywordExtractor();
         parseSubAmount(depositEntity.getSubAmount()); // subAmount를 기반으로 minAmount와 maxAmount 파싱
         parseKeywords(depositEntity.getKeyword()); // String 으로 되어있는 키워드 분리

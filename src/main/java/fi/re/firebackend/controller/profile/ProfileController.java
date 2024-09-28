@@ -9,10 +9,12 @@ import fi.re.firebackend.service.profile.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
 
 @RestController
@@ -24,14 +26,14 @@ public class ProfileController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public ProfileController( ProfileService profileService, JwtTokenProvider jwtTokenProvider, NewsService newsService) {
+    public ProfileController(ProfileService profileService, JwtTokenProvider jwtTokenProvider, NewsService newsService) {
         this.profileService = profileService;
         this.jwtTokenProvider = jwtTokenProvider;
         this.newsService = newsService;
     }
 
     @GetMapping
-    public ResponseEntity<MemberDto> getProfile( HttpServletRequest request) {
+    public ResponseEntity<MemberDto> getProfile(HttpServletRequest request) {
 
         String token = request.getHeader(JwtTokenProvider.httpHeaderKey);
         if (token != null && token.startsWith("Bearer ")) {
@@ -65,4 +67,9 @@ public class ProfileController {
 
         return ResponseEntity.ok(newsDto);
     }
+
+    // 멤버의 goals 테이블에 요소가 있는지(목표 설정 여부 파악)
+
+    // 목표 금액 가져오기
+
 }

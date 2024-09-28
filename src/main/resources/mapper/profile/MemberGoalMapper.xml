@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fi.re.firebackend.dao.profile.MemberGoalDao">
+
+    <!-- 특정 회원의 예적금 정보 조회 -->
+    <select id="getGoalInfoByUsername" resultType="fi.re.firebackend.dto.profile.MemberGoalDto">
+        SELECT * FROM MemberGoals
+        WHERE username = #{username}
+    </select>
+
+    <!-- 예적금 정보 저장 -->
+    <insert id="insertMemberGoal" parameterType="fi.re.firebackend.dto.profile.MemberGoalDto">
+        INSERT INTO MemberGoals (username, fin_prdt_cd, prd_type, start_date, end_date, monthly_deposit, total_deposit, expected_interest, remaining_days)
+        VALUES (#{username}, #{finPrdtCd}, #{prdType}, #{startDate}, #{endDate}, #{monthlyDeposit}, #{totalDeposit}, #{expectedInterest}, #{remainingDays})
+    </insert>
+
+    <!-- 예적금 정보 수정 -->
+    <update id="updateMemberGoal" parameterType="fi.re.firebackend.dto.profile.MemberGoalDto">
+        UPDATE MemberGoals
+        SET fin_prdt_cd = #{finPrdtCd},
+            prd_type = #{prdType},
+            start_date = #{startDate},
+            end_date = #{endDate},
+            monthly_deposit = #{monthlyDeposit},
+            total_deposit = #{totalDeposit},
+            expected_interest = #{expectedInterest},
+            remaining_days = #{remainingDays}
+        WHERE username = #{username}
+    </update>
+
+    <!-- 예적금 정보 삭제 -->
+    <delete id="deleteMemberGoal" parameterType="Long">
+        DELETE FROM MemberGoals
+        WHERE username = #{username}
+    </delete>
+
+</mapper>
