@@ -1,7 +1,7 @@
 package fi.re.firebackend.controller.cart;
 
 import fi.re.firebackend.dto.finance.fund.FundDto;
-import fi.re.firebackend.dto.finance.savings.SavingsDto;
+import fi.re.firebackend.dto.finance.savings.SavingsDepositDto;
 import fi.re.firebackend.service.cart.CartService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,8 +46,8 @@ public class CartContoller {
     }
 
     @GetMapping("/savings")
-    public ResponseEntity<List<SavingsDto>> getSavingsInCart() {
-        List<SavingsDto> savingsInCart = cartService.getSavingsInCart();
+    public ResponseEntity<List<SavingsDepositDto>> getSavingsInCart() {
+        List<SavingsDepositDto> savingsInCart = cartService.getSavingsInCart();
         return ResponseEntity.ok(savingsInCart);
     }
 

@@ -6,14 +6,14 @@
 <mapper namespace="fi.re.firebackend.dao.finance.savings.SavingsDao">
     <select id="getSavingsById"
             parameterType="int"
-            resultType="fi.re.firebackend.dto.finance.savings.SavingsDto">
+            resultType="fi.re.firebackend.dto.finance.savings.SavingsDepositDto">
         SELECT prdNo, pname, type, bname, minRate, maxRate, subPeriod, subAmount, target, benefit, description, selectCount, keyword, InCart
         FROM savings
         where prdNo = #{prdNo}
     </select>
 
     <select id="hot"
-            resultType="fi.re.firebackend.dto.finance.savings.SavingsDto">
+            resultType="fi.re.firebackend.dto.finance.savings.SavingsDepositDto">
         SELECT prdNo, pname, type, bname, minRate, maxRate, subPeriod, subAmount, target, benefit, description, selectCount, keyword, InCart
         FROM savings
         order by selectCount desc
@@ -21,13 +21,13 @@
     </select>
 
     <select id="all"
-            resultType="fi.re.firebackend.dto.finance.savings.SavingsDto">
+            resultType="fi.re.firebackend.dto.finance.savings.SavingsDepositDto">
         SELECT prdNo, pname, type, bname, minRate, maxRate, subPeriod, subAmount, target, benefit, description, selectCount, keyword, InCart
         FROM savings
     </select>
 
     <!-- type에 따른 목록 가져오기 -->
-    <select id="selectSavingsByType" parameterType="String" resultType="fi.re.firebackend.dto.finance.savings.SavingsDto">
+    <select id="selectSavingsByType" parameterType="String" resultType="fi.re.firebackend.dto.finance.savings.SavingsDepositDto">
         SELECT
             prdNo, pname, type, bname, minRate, maxRate, subPeriod,
             subAmount, target, benefit, description, selectCount,
@@ -44,7 +44,7 @@
     </update>
 
     <!-- 비교함 목록 조회 -->
-    <select id="selectSavingsInCart" resultType="fi.re.firebackend.dto.finance.savings.SavingsDto">
+    <select id="selectSavingsInCart" resultType="fi.re.firebackend.dto.finance.savings.SavingsDepositDto">
         SELECT * FROM savings
         WHERE InCart = 1
     </select>

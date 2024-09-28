@@ -3,8 +3,7 @@ package fi.re.firebackend.service.cart;
 import fi.re.firebackend.dao.finance.fund.FundDao;
 import fi.re.firebackend.dao.finance.savings.SavingsDao;
 import fi.re.firebackend.dto.finance.fund.FundDto;
-import fi.re.firebackend.dto.finance.savings.SavingsDto;
-import org.springframework.beans.factory.annotation.Autowired;
+import fi.re.firebackend.dto.finance.savings.SavingsDepositDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,7 +31,7 @@ public class CartService {
         return fundDao.selectFundsInCart();
     }
 
-    public List<SavingsDto> getSavingsInCart() {
+    public List<SavingsDepositDto> getSavingsInCart() {
         return savingsDao.selectSavingsInCart();
     }
 
