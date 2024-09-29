@@ -16,8 +16,8 @@ public class ItemBasedFilterService {
     //https://commons.apache.org/sandbox/commons-text/jacoco/org.apache.commons.text.similarity/CosineSimilarity.java.html
     private static final MathContext MATH_CONTEXT = new MathContext(10, RoundingMode.HALF_UP);
 
-    // 코사인 유사도를 구하는 메서드
-    public BigDecimal cosineSimilarity(BigDecimal[] vec1, BigDecimal[] vec2) {
+    // 코사인 유사도를 구하는 메서드(원본 라이브러리를 가져와서 사용할 수 있을지 고민해보기)
+    public BigDecimal cosineSimilarity(final BigDecimal[] vec1, final BigDecimal[] vec2) {
         if (vec1 == null || vec2 == null || vec1.length != vec2.length) {
             throw new IllegalArgumentException("Vectors must not be null and must have the same length");
         }
@@ -40,7 +40,7 @@ public class ItemBasedFilterService {
     }
 
     // selectCount 상위 10개 상품을 기준으로 예적금 유사도 계산
-    public List<DepositVo> recmdDepositsBySelectCount(List<DepositVo> allProducts) {
+    public List<DepositVo> recmdDepositsBySelectCount(final List<DepositVo> allProducts) {
         List<DepositVo> topProducts = allProducts.stream()
                 .sorted((p1, p2) -> p2.getDepositEntity().getSelectCount() - p1.getDepositEntity().getSelectCount())
                 .limit(10)
@@ -50,7 +50,7 @@ public class ItemBasedFilterService {
     }
 
     // selectCount 상위 10개 펀드를 기준으로 유사도 계산
-    public List<FundVo> recmdFundsBySelectCount(List<FundVo> allFunds) {
+    public List<FundVo> recmdFundsBySelectCount(final List<FundVo> allFunds) {
         // 수익률 기준으로 상위 10개 펀드 선택
         List<FundVo> topFunds = allFunds.stream()
                 .sorted((f1, f2) -> f2.getRate().compareTo(f1.getRate())) // BigDecimal 비교는 compareTo 사용
@@ -63,7 +63,7 @@ public class ItemBasedFilterService {
 
 
     // 이율 및 금액을 이용한 예적금 유사도 계산
-    public List<DepositVo> recmdDeposits(List<DepositVo> targetProducts, List<DepositVo> allProducts) {
+    public List<DepositVo> recmdDeposits(final List<DepositVo> targetProducts, final List<DepositVo> allProducts) {
         List<Similarity<DepositVo>> similarities = new ArrayList<>();
 
         for (DepositVo targetProduct : targetProducts) {
@@ -91,7 +91,7 @@ public class ItemBasedFilterService {
     }
 
     // 이율 및 금액을 기반으로 예적금 유사도 계산
-    private BigDecimal calculateDepositSimilarity(DepositVo product1, DepositVo product2) {
+    private BigDecimal calculateDepositSimilarity(final DepositVo product1, final DepositVo product2) {
         // 이율 유사도 계산
         BigDecimal rateSimilarity = cosineSimilarity(
                 new BigDecimal[]{
@@ -121,7 +121,7 @@ public class ItemBasedFilterService {
     }
 
     // 수익률 및 위험 등급을 이용한 펀드 유사도 계산
-    public List<FundVo> recmdFunds(List<FundVo> targetFunds, List<FundVo> allFunds) {
+    public List<FundVo> recmdFunds(final List<FundVo> targetFunds, final List<FundVo> allFunds) {
         // 유사도를 저장할 리스트 초기화
         List<Similarity<FundVo>> similarities = new ArrayList<>();
 

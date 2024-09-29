@@ -42,7 +42,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         System.out.println("user: " + user);
 
         // 2. DB에서 모든 예적금 조회
-        List<DepositEntity> allSavings = depositDao.getAllDeposit();
+        List<DepositEntity> allSavings = depositDao.getAllDeposit(); //여기 가져오는 부분 변경하기 1. 예적금 분리되어있으므로 예금, 적금 따로 추천하도록 분리
 
         // 3. DepositEntity를 DepositVo로 변환
         List<DepositVo> depositVos = allSavings.stream()

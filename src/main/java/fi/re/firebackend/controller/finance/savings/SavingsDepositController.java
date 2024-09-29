@@ -48,22 +48,22 @@ public class SavingsDepositController {
         return savingsV1Dao.getAllSavings();
     }
 
-    @GetMapping("/savings/pageAll")
-    public Map<String, Object> getSavings(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        System.out.println("SavingsController getSavings()");
-        List<SavingsDepositDto> savings = savingsDepositService.getSavings(page, size);
-        int totalCount = savingsDepositService.getTotalSavingsCount();
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("savings", savings);
-        response.put("totalCount", totalCount);
-        response.put("totalPages", (int) Math.ceil((double) totalCount / size));
-        response.put("currentPage", page);
-
-        return response;
-    }
+//    @GetMapping("/savings/pageAll")
+//    public Map<String, Object> getSavings(
+//            @RequestParam(defaultValue = "1") int page,
+//            @RequestParam(defaultValue = "10") int size) {
+//        System.out.println("SavingsController getSavings()");
+//        List<SavingsDepositDto> savings = savingsDepositService.getSavings(page, size);
+//        int totalCount = savingsDepositService.getTotalSavingsCount();
+//
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("savings", savings);
+//        response.put("totalCount", totalCount);
+//        response.put("totalPages", (int) Math.ceil((double) totalCount / size));
+//        response.put("currentPage", page);
+//
+//        return response;
+//    }
     @GetMapping("/deposit/get")
     public SavingsDepositDto getDepositByCode(@RequestParam String finPrdtCd) {
         System.out.println("finPrdtCd : "+finPrdtCd);

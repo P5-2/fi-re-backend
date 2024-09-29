@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class ContentsBasedFilterService {
 
     // 예적금 상품의 필터링
-    public List<DepositVo> filterDeposits(MemberEntity member, List<DepositVo> depositsList) {
+    public List<DepositVo> filterDeposits(final MemberEntity member, final List<DepositVo> depositsList) {
         member.parseKeywords();
         List<String> memberKeyword = member.getKeywordList();
 
@@ -40,17 +40,16 @@ public class ContentsBasedFilterService {
 
 
     // 위험도에 따른 펀드 필터링
-    public List<FundVo> filterFund(MemberEntity member, List<FundVo> fundList) {
+    public List<FundVo> filterFund(final MemberEntity member, final List<FundVo> fundList) {
         // 위험도 범위에 따른 필터링
-        List<FundVo> filteredFunds = fundList.parallelStream()
+        return fundList.parallelStream()
                 .filter(fund -> fund.getDngrGrade() >= convertRiskPointToGrade(member.getRiskPoint()))
                 .collect(Collectors.toList());
-        return filteredFunds;
     }
 
 
     // 해당하는 키워드가 있는지 매칭
-    private boolean hasCommonKeyword(List<String> productKeywords, List<String> memberKeywords) {
+    private boolean hasCommonKeyword(final List<String> productKeywords, final List<String> memberKeywords) {
         for (String memberKeyword : memberKeywords) {
             if (productKeywords.contains(memberKeyword)) {
                 return true;
@@ -60,7 +59,7 @@ public class ContentsBasedFilterService {
     }
 
     // 위험도 변환
-    private int convertRiskPointToGrade(int riskPoint) {
+    private int convertRiskPointToGrade(final int riskPoint) {
         if (riskPoint >= 34) {
             return 1; // 매우 높은 위험 등급 펀드
         } else if (riskPoint >= 28) {

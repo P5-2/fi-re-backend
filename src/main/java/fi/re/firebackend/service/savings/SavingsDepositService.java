@@ -26,11 +26,11 @@ public class SavingsDepositService {
         this.depositV1Dao = depositV1Dao;
     }
 
-
-    public List<SavingsDepositDto> getSavings(int page, int size) {
-        int offset = (page - 1) * size;
-        return SavingsV1Dao.selectSavings(size, offset);
-    }
+//
+//    public List<SavingsDepositDto> getSavings(int page, int size) {
+//        int offset = (page - 1) * size;
+//        return SavingsV1Dao.selectSavings(size, offset);
+//    }
 
     public int getTotalSavingsCount() {
         return savingsV1Dao.countSavings();
