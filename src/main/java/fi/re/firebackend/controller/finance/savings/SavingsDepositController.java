@@ -4,6 +4,7 @@ import fi.re.firebackend.dao.finance.savings.DepositV1Dao;
 import fi.re.firebackend.dao.finance.savings.SavingsV1Dao;
 import fi.re.firebackend.dto.finance.savings.SavingsDepositDto;
 import fi.re.firebackend.service.savings.SavingsDepositService;
+import fi.re.firebackend.util.api.SavingsDepositApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/finance/savingsDeposit") //url 변경
 public class SavingsDepositController {
+
+    private final SavingsDepositApi savingsDepositApi;
     private SavingsV1Dao savingsV1Dao;
     private DepositV1Dao depositV1Dao;
 
@@ -24,9 +27,10 @@ public class SavingsDepositController {
     private final SavingsDepositService savingsDepositService;
 
     @Autowired
-    public SavingsDepositController(SavingsV1Dao savingsV1Dao, DepositV1Dao depositV1Dao, SavingsDepositService savingsDepositService) {
+    public SavingsDepositController(SavingsV1Dao savingsV1Dao, DepositV1Dao depositV1Dao, SavingsDepositApi savingsDepositApi,SavingsDepositService savingsDepositService) {
         this.savingsV1Dao = savingsV1Dao;
         this.depositV1Dao = depositV1Dao;
+        this.savingsDepositApi = savingsDepositApi;
         this.savingsDepositService = savingsDepositService;
     }
 
@@ -55,7 +59,6 @@ public class SavingsDepositController {
         System.out.println("SavingsController getSavings()");
         List<SavingsDepositDto> savings = savingsDepositService.getSavings(page, size);
         int totalCount = savingsDepositService.getTotalSavingsCount();
-
         Map<String, Object> response = new HashMap<>();
         response.put("savings", savings);
         response.put("totalCount", totalCount);
@@ -64,6 +67,7 @@ public class SavingsDepositController {
 
         return response;
     }
+
     @GetMapping("/deposit/get")
     public SavingsDepositDto getDepositByCode(@RequestParam String finPrdtCd) {
         System.out.println("finPrdtCd : "+finPrdtCd);

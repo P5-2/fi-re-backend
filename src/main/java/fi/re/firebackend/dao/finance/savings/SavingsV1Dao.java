@@ -21,7 +21,7 @@ public interface SavingsV1Dao {
     List<SavingsDepositDto> getAllSavings();
 
     // 페이지 네이션
-    List<FundDto> selectSavings(@Param("size") int size, @Param("offset") int offset);
+    List<SavingsDepositDto> selectSavings(@Param("size") int size, @Param("offset") int offset);
     int countSavings(); // 총 적금 개수
 
     //비교함에 적금 상품 담기

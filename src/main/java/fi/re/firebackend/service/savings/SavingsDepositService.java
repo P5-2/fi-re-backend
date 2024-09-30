@@ -29,7 +29,7 @@ public class SavingsDepositService {
 
     public List<SavingsDepositDto> getSavings(int page, int size) {
         int offset = (page - 1) * size;
-        return SavingsV1Dao.selectSavings(size, offset);
+        return savingsV1Dao.selectSavings(size, offset);
     }
 
     public int getTotalSavingsCount() {
