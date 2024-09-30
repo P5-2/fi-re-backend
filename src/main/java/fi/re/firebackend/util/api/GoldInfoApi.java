@@ -63,7 +63,7 @@ public class GoldInfoApi {
         rd.close();
         conn.disconnect();
         String result = sb.toString();
-        System.out.println(result);
+//        System.out.println(result);
 
         return result;
     }

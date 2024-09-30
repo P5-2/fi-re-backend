@@ -11,12 +11,15 @@
     <typeAliases>
         <package name="fi.re.firebackend.dto.gold" />
         <package name="fi.re.firebackend.dto.login"/>
+        <package name="fi.re.firebackend.dto."/>
         <package name="fi.re.firebackend.jwt.dto"/>
-
     </typeAliases>
 
     <mappers>
         <mapper resource="mapper/gold/GoldDao.xml"/>
         <mapper resource="mapper/login/Member.xml"/>
+        <mapper resource="mapper/recommendation/DepositDao.xml"/>
+        <mapper resource="mapper/recommendation/FundDao.xml"/>
     </mappers>
+
 </configuration>
