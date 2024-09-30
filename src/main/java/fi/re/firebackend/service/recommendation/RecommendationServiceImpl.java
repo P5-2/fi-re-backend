@@ -9,7 +9,8 @@ import fi.re.firebackend.dto.member.MemberDto;
 import fi.re.firebackend.dto.recommendation.MemberEntity;
 import fi.re.firebackend.dto.recommendation.MemberResponseDto;
 import fi.re.firebackend.dto.recommendation.SavingsDepositEntity;
-import fi.re.firebackend.dto.recommendation.SavingsDepositsDto;
+import fi.re.firebackend.dto.recommendation.SavingsDepositsResponseDto;
+import fi.re.firebackend.dto.recommendation.vo.FilteredSavingsDepositsVo;
 import fi.re.firebackend.dto.recommendation.vo.ProcessedSavingsDepositVo;
 import fi.re.firebackend.service.recommendation.filters.ContentsBasedFilterService;
 import fi.re.firebackend.service.recommendation.filters.ItemBasedFilterService;
@@ -35,7 +36,7 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     //적금 추천
     @Override
-    public List<SavingsDepositsDto> getRecmdedDeposits(String username) {
+    public SavingsDepositsResponseDto getRecmdedDeposits(String username) {
         // 1. username으로 유저 정보 가져오기
         MemberEntity user = convertToEntity(memberDao.findMember(username));
         log.info("user: " + user);
@@ -49,8 +50,13 @@ public class RecommendationServiceImpl implements RecommendationService {
                 .collect(Collectors.toList());
 
         // 4. 컨텐츠 기반 필터링
-        List<ProcessedSavingsDepositVo> filteredSavings = contentsBasedFilterService.filterProducts(user, depositVos);
-//        log.info("Filtered Savings: {}", (Throwable) filteredSavings); // 로깅 메시지 개선
+//        List<ProcessedSavingsDepositVo> filteredSavings = contentsBasedFilterService.filterProducts(user, depositVos);
+        ContentsBasedFilterService.FilteredProductsResult result = contentsBasedFilterService.filterProducts(user, depositVos);
+
+        List<ProcessedSavingsDepositVo> filteredSavings = result.getDeposits();
+        List<String> usedKeywords = result.getUsedKeywords();
+        log.info(usedKeywords);
+
 
         // 5. 기준으로 삼을 top3 적금 상품 가져오기
         List<ProcessedSavingsDepositVo> hotDeposits = depositDao.getHotDeposit().stream()
@@ -62,17 +68,17 @@ public class RecommendationServiceImpl implements RecommendationService {
 //        log.info("Recommended Deposits: {}", (Throwable) recommendedDeposits); // 로깅 메시지 개선
 
         // 보내기 전에 dto로 옮겨서 보내기
-        List<SavingsDepositsDto> resultDto = recommendedDeposits.stream()
-                .map(vo -> new SavingsDepositsDto())
+        List<FilteredSavingsDepositsVo> resultDto = recommendedDeposits.stream()
+                .map(vo -> new FilteredSavingsDepositsVo())
                 .collect(Collectors.toList());
 
 
-        return resultDto;
+        return new SavingsDepositsResponseDto(resultDto, usedKeywords);
     }
 
     //예금추천
     @Override
-    public List<SavingsDepositsDto> getRecmdedSavings(String username) {
+    public SavingsDepositsResponseDto getRecmdedSavings(String username) {
         // 1. username으로 유저 정보 가져오기
         MemberEntity user = convertToEntity(memberDao.findMember(username));
         log.info("user: " + user);
@@ -81,13 +87,17 @@ public class RecommendationServiceImpl implements RecommendationService {
         List<SavingsDepositEntity> allSavings = depositDao.getAllDeposit(); //여기 가져오는 부분 변경하기 1. 예적금 분리되어있으므로 예금, 적금 따로 추천하도록 분리
 
         // 3. DepositEntity를 ProcessedSavingsDepositVo 변환
-        List<ProcessedSavingsDepositVo> depositVos = allSavings.parallelStream()
+        List<ProcessedSavingsDepositVo> savingsVos = allSavings.parallelStream()
                 .map(ProcessedSavingsDepositVo::new)
                 .collect(Collectors.toList());
 
         // 4. 컨텐츠 기반 필터링
-        List<ProcessedSavingsDepositVo> filteredSavings = contentsBasedFilterService.filterProducts(user, depositVos);
-        log.info(filteredSavings);
+//        List<ProcessedSavingsDepositVo> filteredSavings = contentsBasedFilterService.filterProducts(user, depositVos);
+        ContentsBasedFilterService.FilteredProductsResult result = contentsBasedFilterService.filterProducts(user, savingsVos);
+
+        List<ProcessedSavingsDepositVo> filteredSavings = result.getDeposits();
+        List<String> usedKeywords = result.getUsedKeywords();
+        log.info(usedKeywords);
 
         // 5. 기준으로 삼을 예금 상품 가져오기
         List<ProcessedSavingsDepositVo> hotSavings = savingsDao.getHotSavings().stream()
@@ -99,11 +109,11 @@ public class RecommendationServiceImpl implements RecommendationService {
         log.info(recommendedDeposits);
 
         // 보내기 전에 dto로 옮겨서 보내기
-        List<SavingsDepositsDto> resultDto = recommendedDeposits.stream()
-                .map(vo -> new SavingsDepositsDto())
+        List<FilteredSavingsDepositsVo> resultDto = recommendedDeposits.stream()
+                .map(vo -> new FilteredSavingsDepositsVo())
                 .collect(Collectors.toList());
 
-        return resultDto;
+        return new SavingsDepositsResponseDto(resultDto, usedKeywords);
     }
 
     @Override
@@ -123,7 +133,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         // 5. 아이템 기반 추천
         List<FundDto> recommendedFunds = itemBasedFilterService.filteredFunds(hotFunds, filteredFunds)
                 .stream()
-                .sorted(Comparator.comparingDouble(this::calculateAverageRate)) // 평균 수익률로 정렬
+                .sorted(Comparator.comparingDouble(FundDto::getOneYRate).reversed()) // oneYRate 수익률 높은 순으로 정렬
                 .collect(Collectors.toList());
 
         return recommendedFunds;
@@ -173,16 +183,6 @@ public class RecommendationServiceImpl implements RecommendationService {
         memberEntity.parseKeywords();
 
         return memberEntity;
-    }
-
-    // 펀드 평균 수익률 계산
-    private double calculateAverageRate(FundDto fund) {
-        double threeMonthRate = fund.getRate();
-        double sixMonthRate = fund.getSixMRate();
-        double oneYearRate = fund.getOneYRate();
-
-        // 3개월, 6개월, 1년 수익률의 평균 계산
-        return (threeMonthRate + sixMonthRate + oneYearRate) / 3.0;
     }
 }
 

@@ -6,21 +6,32 @@ import fi.re.firebackend.dto.recommendation.vo.ProcessedSavingsDepositVo;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
 public class ContentsBasedFilterService {
 
     // 예적금 상품의 필터링
-    public List<ProcessedSavingsDepositVo> filterProducts(final MemberEntity member, final List<ProcessedSavingsDepositVo> depositsList) {
+    public FilteredProductsResult filterProducts(final MemberEntity member, final List<ProcessedSavingsDepositVo> depositsList) {
         member.parseKeywords();
         List<String> memberKeywords = member.getKeywordList() != null ? member.getKeywordList() : new ArrayList<>();
+        Set<String> usedKeywords = new HashSet<>();
 
-        return depositsList.parallelStream()
-                .filter(deposit -> isWithinAssetRange(member, deposit) || isWithinSalaryRange(member, deposit))
-                .filter(deposit -> hasCommonKeyword(deposit.getKeywords(), memberKeywords))
+        List<ProcessedSavingsDepositVo> filteredDeposits = depositsList.parallelStream()
+                .filter(deposit -> {
+                    boolean withinRange = isWithinAssetRange(member, deposit) || isWithinSalaryRange(member, deposit);
+                    if (withinRange) {
+                        // 키워드가 일치하는 경우 수집
+                        usedKeywords.addAll(deposit.getKeywords());
+                    }
+                    return withinRange && hasCommonKeyword(deposit.getKeywords(), memberKeywords);
+                })
                 .collect(Collectors.toList());
+
+        return new FilteredProductsResult(filteredDeposits, new ArrayList<>(usedKeywords));
     }
 
     // 자산 범위 체크
@@ -28,7 +39,7 @@ public class ContentsBasedFilterService {
         return deposit.getMaxLimit() > 0 && deposit.getMaxLimit() >= member.getAssets();
     }
 
-    // 급여 범위 체크(급여의 10~30% 수준 인지)
+    // 급여 범위 체크(급여의 10~30% 수준인지)
     private boolean isWithinSalaryRange(MemberEntity member, ProcessedSavingsDepositVo deposit) {
         if (deposit.getMaxLimit() > 0) { // 최대 한도가 있는 경우
             double salaryPercent = member.getSalary() * 0.1;
@@ -62,6 +73,25 @@ public class ContentsBasedFilterService {
             return 4; // 낮은 위험 등급 펀드
         } else {
             return 5; // 매우 낮은 위험 등급 펀드
+        }
+    }
+
+    // 필터링된 결과를 반환할 클래스
+    public static class FilteredProductsResult {
+        private List<ProcessedSavingsDepositVo> deposits;
+        private List<String> usedKeywords;
+
+        public FilteredProductsResult(List<ProcessedSavingsDepositVo> deposits, List<String> usedKeywords) {
+            this.deposits = deposits;
+            this.usedKeywords = usedKeywords;
+        }
+
+        public List<ProcessedSavingsDepositVo> getDeposits() {
+            return deposits;
+        }
+
+        public List<String> getUsedKeywords() {
+            return usedKeywords;
         }
     }
 }

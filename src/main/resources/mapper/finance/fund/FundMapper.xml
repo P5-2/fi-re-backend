@@ -17,8 +17,8 @@
             bseDt,
             selectCount,
             nav,
-            6MRate,
-            1YRate
+            6MRate as sixMRate,
+            1YRate as oneYRate
         FROM fund
         WHERE prdNo = #{prdNo}
     </select>
@@ -35,8 +35,8 @@
             bseDt,
             selectCount,
             nav,
-            6MRate,
-            1YRate
+            6MRate as sixMRate,
+            1YRate as oneYRate
         FROM fund
         ORDER BY selectCount DESC
             LIMIT 3
@@ -54,8 +54,8 @@
             bseDt,
             selectCount,
             nav,
-            6MRate,
-            1YRate
+            6MRate as sixMRate,
+            1YRate as oneYRate
         FROM fund
     </select>
 
@@ -71,8 +71,8 @@
             bseDt,
             selectCount,
             nav,
-            6MRate,
-            1YRate
+            6MRate as sixMRate,
+            1YRate as oneYRate
         FROM fund
         ORDER BY prdNo
             LIMIT #{size} OFFSET #{offset}
@@ -100,8 +100,8 @@
             bseDt,
             selectCount,
             nav,
-            6MRate,
-            1YRate
+            6MRate as sixMRate,
+            1YRate as oneYRate
         FROM fund
         WHERE InCart = 1
     </select>

@@ -1,4 +1,4 @@
-package fi.re.firebackend.dto.recommendation;
+package fi.re.firebackend.dto.recommendation.vo;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-public class SavingsDepositsDto {
+public class FilteredSavingsDepositsVo {
     private String finPrdtCd; // Financial Product Code
     private String korCoNm; // Bank Name
     private String finPrdtNm; // Financial Product Name
