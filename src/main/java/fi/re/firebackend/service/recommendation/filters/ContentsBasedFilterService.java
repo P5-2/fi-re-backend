@@ -1,12 +1,10 @@
 package fi.re.firebackend.service.recommendation.filters;
 
-
+import fi.re.firebackend.dto.finance.fund.FundDto;
 import fi.re.firebackend.dto.recommendation.MemberEntity;
-import fi.re.firebackend.dto.recommendation.filtering.DepositVo;
-import fi.re.firebackend.dto.recommendation.filtering.FundVo;
+import fi.re.firebackend.dto.recommendation.vo.ProcessedSavingsDepositVo;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,47 +13,41 @@ import java.util.stream.Collectors;
 public class ContentsBasedFilterService {
 
     // 예적금 상품의 필터링
-    public List<DepositVo> filterDeposits(final MemberEntity member, final List<DepositVo> depositsList) {
+    public List<ProcessedSavingsDepositVo> filterProducts(final MemberEntity member, final List<ProcessedSavingsDepositVo> depositsList) {
         member.parseKeywords();
-        List<String> memberKeyword = member.getKeywordList();
+        List<String> memberKeywords = member.getKeywordList() != null ? member.getKeywordList() : new ArrayList<>();
 
         return depositsList.parallelStream()
-                .filter(deposit -> {
-                    if (deposit.getDepositEntity().getType().equals("예금")) {
-                        // 예금 필터(자산이 minAmount~maxAmount 사이에 있는지 확인)
-                        return deposit.getMinAmount().compareTo(BigDecimal.valueOf(member.getAssets())) <= 0 &&
-                                deposit.getMaxAmount().compareTo(BigDecimal.valueOf(member.getAssets())) >= 0;
-                    } else if (deposit.getDepositEntity().getType().equals("적금")) {
-                        // 적금 필터(급여의 10~20%가 minAmount~maxAmount 사이에 있는지 확인)
-                        BigDecimal salaryPercent = BigDecimal.valueOf(member.getSalary()).multiply(BigDecimal.valueOf(0.1));
-                        BigDecimal salaryMaxPercent = BigDecimal.valueOf(member.getSalary()).multiply(BigDecimal.valueOf(0.2));
-                        return deposit.getMinAmount().compareTo(salaryPercent) <= 0 &&
-                                deposit.getMaxAmount().compareTo(salaryMaxPercent) >= 0;
-                    }
-                    return false;
-                })
-                .filter(deposit -> hasCommonKeyword(deposit.getDepositEntity().getKeywordList(), memberKeyword == null ? new ArrayList<>() : memberKeyword)) // 키워드 매칭
+                .filter(deposit -> isWithinAssetRange(member, deposit) || isWithinSalaryRange(member, deposit))
+                .filter(deposit -> hasCommonKeyword(deposit.getKeywords(), memberKeywords))
                 .collect(Collectors.toList());
     }
 
+    // 자산 범위 체크
+    private boolean isWithinAssetRange(MemberEntity member, ProcessedSavingsDepositVo deposit) {
+        return deposit.getMaxLimit() > 0 && deposit.getMaxLimit() >= member.getAssets();
+    }
+
+    // 급여 범위 체크(급여의 10~30% 수준 인지)
+    private boolean isWithinSalaryRange(MemberEntity member, ProcessedSavingsDepositVo deposit) {
+        if (deposit.getMaxLimit() > 0) { // 최대 한도가 있는 경우
+            double salaryPercent = member.getSalary() * 0.1;
+            double salaryMaxPercent = member.getSalary() * 0.3;
+            return deposit.getMaxLimit() >= salaryPercent && deposit.getMaxLimit() <= salaryMaxPercent;
+        }
+        return false;
+    }
 
     // 위험도에 따른 펀드 필터링
-    public List<FundVo> filterFund(final MemberEntity member, final List<FundVo> fundList) {
-        // 위험도 범위에 따른 필터링
+    public List<FundDto> filterFund(final MemberEntity member, final List<FundDto> fundList) {
         return fundList.parallelStream()
                 .filter(fund -> fund.getDngrGrade() >= convertRiskPointToGrade(member.getRiskPoint()))
                 .collect(Collectors.toList());
     }
 
-
     // 해당하는 키워드가 있는지 매칭
     private boolean hasCommonKeyword(final List<String> productKeywords, final List<String> memberKeywords) {
-        for (String memberKeyword : memberKeywords) {
-            if (productKeywords.contains(memberKeyword)) {
-                return true;
-            }
-        }
-        return false;
+        return memberKeywords.parallelStream().anyMatch(productKeywords::contains);
     }
 
     // 위험도 변환

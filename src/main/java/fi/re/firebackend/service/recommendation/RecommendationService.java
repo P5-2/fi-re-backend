@@ -1,18 +1,21 @@
 package fi.re.firebackend.service.recommendation;
 
-import fi.re.firebackend.dto.recommendation.MemberEntity;
-import fi.re.firebackend.dto.recommendation.filtering.DepositVo;
-import fi.re.firebackend.dto.recommendation.filtering.FundVo;
+import fi.re.firebackend.dto.finance.fund.FundDto;
+import fi.re.firebackend.dto.recommendation.MemberResponseDto;
+import fi.re.firebackend.dto.recommendation.SavingsDepositsDto;
 
 import java.util.List;
 
 
 public interface RecommendationService {
-    // 예적금 추천
-    List<DepositVo> getRecmdedDeposits(String username);
+    // 적금 추천
+    List<SavingsDepositsDto> getRecmdedDeposits(String username);
+
+    // 예금 추천
+    List<SavingsDepositsDto> getRecmdedSavings(String username);
 
     // 펀드 추천
-    List<FundVo> getRecmdedFunds(String username);
+    List<FundDto> getRecmdedFunds(String username);
 
-    MemberEntity getMemberInfo(String username);
+    MemberResponseDto getMemberInfo(String username);
 }
