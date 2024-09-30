@@ -17,5 +17,4 @@ public class FundDto {
     private String bseDt;
     private int selectCount;
     private double nav;
-    private boolean InCart;
 }
