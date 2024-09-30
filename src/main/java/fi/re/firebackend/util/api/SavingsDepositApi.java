@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.re.firebackend.dto.finance.savings.SavingsDepositDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -31,35 +32,38 @@ public class SavingsDepositApi {
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
 
-    private static final int DETAIL_PAGE = 1;
-    private static final int DETAIL_SIZE = 1;
 
+//    Json처리와 HTTP요청
     @Autowired
-    public SavingsDepositApi(ObjectMapper objectMapper, RestTemplate restTemplate) {
+    private SavingsDepositApi(ObjectMapper objectMapper, RestTemplate restTemplate) {
         this.objectMapper = objectMapper;
         this.restTemplate = restTemplate;
     }
 
-    public List<SavingsDepositDto> getSavingsList(String topFinGrpNo, int page, int size) throws IOException {
+
+    //적금 상품 목록 조회
+    public List<SavingsDepositDto> getAllSavings(String topFinGrpNo, int page, int size) throws IOException {
         String url = buildUrl(SAVINGS_API_URL, topFinGrpNo, page, size, null);
         return getProductList(url);
     }
 
-    public List<SavingsDepositDto> getDepositList(String topFinGrpNo, int page, int size) throws IOException {
+    //예금 상품 목록 조회
+    public List<SavingsDepositDto> getAllDeposit(String topFinGrpNo, int page, int size) throws IOException {
         String url = buildUrl(DEPOSIT_API_URL, topFinGrpNo, page, size, null);
         return getProductList(url);
     }
 
-    public SavingsDepositDto getSavingsDetails(String topFinGrpNo, String finPrdtCd) throws IOException {
-        String url = buildUrl(SAVINGS_API_URL, topFinGrpNo, DETAIL_PAGE, DETAIL_SIZE, finPrdtCd);
+    public SavingsDepositDto getSavingsByCode(String topFinGrpNo, int page, int size, String finPrdtCd) throws IOException {
+        String url = buildUrl(SAVINGS_API_URL, topFinGrpNo, page, size, finPrdtCd);
         return getProductDetails(url);
     }
 
-    public SavingsDepositDto getDepositDetails(String topFinGrpNo, String finPrdtCd) throws IOException {
-        String url = buildUrl(DEPOSIT_API_URL, topFinGrpNo, DETAIL_PAGE, DETAIL_SIZE, finPrdtCd);
+    public SavingsDepositDto getDepositByCode(String topFinGrpNo, int page, int size, String finPrdtCd) throws IOException {
+        String url = buildUrl(DEPOSIT_API_URL, topFinGrpNo, page, size, finPrdtCd);
         return getProductDetails(url);
     }
 
+    //URL 동적 생성
     private String buildUrl(String baseUrl, String topFinGrpNo, int page, int size, String finPrdtCd) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl)
                 .queryParam("auth", AUTH_KEY)
@@ -67,6 +71,7 @@ public class SavingsDepositApi {
                 .queryParam("pageNo", page)
                 .queryParam("numOfRows", size);
 
+        //null check & empty check
         if (finPrdtCd != null && !finPrdtCd.isEmpty()) {
             builder.queryParam("finPrdtCd", finPrdtCd);
         }
@@ -87,7 +92,15 @@ public class SavingsDepositApi {
         JsonNode root = objectMapper.readTree(response.getBody());
         JsonNode baseInfo = root.path("result").path("baseInfo");
 
-        return objectMapper.treeToValue(baseInfo, SavingsDepositDto.class);
+        if (baseInfo.isArray() && baseInfo.size() > 0) {
+            return objectMapper.treeToValue(baseInfo.get(0), SavingsDepositDto.class);
+        } else if (!baseInfo.isArray()) {
+            return objectMapper.treeToValue(baseInfo, SavingsDepositDto.class);
+        } else {
+            throw new IOException("No product details found");
+        }
+
+//        return objectMapper.treeToValue(baseInfo, SavingsDepositDto.class);
     }
 }
 

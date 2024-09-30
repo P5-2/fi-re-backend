@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/finance/savingsDeposit") //url 변경
+@RequestMapping("/finance") //url 변경
 public class SavingsDepositController {
 
     private final SavingsDepositApi savingsDepositApi;
@@ -55,17 +55,8 @@ public class SavingsDepositController {
     @GetMapping("/savings/pageAll")
     public Map<String, Object> getSavings(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        System.out.println("SavingsController getSavings()");
-        List<SavingsDepositDto> savings = savingsDepositService.getSavings(page, size);
-        int totalCount = savingsDepositService.getTotalSavingsCount();
-        Map<String, Object> response = new HashMap<>();
-        response.put("savings", savings);
-        response.put("totalCount", totalCount);
-        response.put("totalPages", (int) Math.ceil((double) totalCount / size));
-        response.put("currentPage", page);
-
-        return response;
+            @RequestParam(defaultValue = "5") int size) {
+        return savingsDepositService.getSavings(page, size);
     }
 
     @GetMapping("/deposit/get")
@@ -89,18 +80,8 @@ public class SavingsDepositController {
     @GetMapping("/deposit/pageAll")
     public Map<String, Object> getDeposit(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        System.out.println("SavingsController getDeposit()");
-        List<SavingsDepositDto> deposit = savingsDepositService.getDeposit(page, size);
-        int totalCount = savingsDepositService.getTotalDepositCount();
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("deposit", deposit);
-        response.put("totalCount", totalCount);
-        response.put("totalPages", (int) Math.ceil((double) totalCount / size));
-        response.put("currentPage", page);
-
-        return response;
+            @RequestParam(defaultValue = "5") int size) {
+        return savingsDepositService.getDeposit(page, size);
     }
 
 }
