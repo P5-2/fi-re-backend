@@ -43,7 +43,6 @@ public class RecommendationController {
 
         //jwttokenprovider에서 받은 토큰으로 유저네임 가져오기
         String username = jwtTokenProvider.getUserInfo(token);
-        log.info("username: " + username + "token: " + token);
         SavingsDepositsResponseDto recommendedDeposits = recmdService.getRecmdedDeposits(username);
         log.info("recommendedDeposits : " + recommendedDeposits.toString());
         return new ResponseEntity<>(recommendedDeposits, HttpStatus.OK);
@@ -63,10 +62,9 @@ public class RecommendationController {
 
         //jwttokenprovider에서 받은 토큰으로 유저네임 가져오기
         String username = jwtTokenProvider.getUserInfo(token);
-        log.info("username: " + username + "token: " + token);
-        SavingsDepositsResponseDto recommendedDeposits = recmdService.getRecmdedSavings(username);
-        log.info("recommendedDeposits : " + recommendedDeposits.toString());
-        return new ResponseEntity<>(recommendedDeposits, HttpStatus.OK);
+        SavingsDepositsResponseDto recommendedSavings = recmdService.getRecmdedSavings(username);
+        log.info("recommendedSavings : " + recommendedSavings.toString());
+        return new ResponseEntity<>(recommendedSavings, HttpStatus.OK);
     }
 
 
@@ -85,9 +83,7 @@ public class RecommendationController {
         }
         //jwttokenprovider에서 받은 토큰으로 유저네임 가져오기
         String username = jwtTokenProvider.getUserInfo(token);
-        log.info("username: " + username + "token: " + token);
         List<FundDto> recommendedFunds = recmdService.getRecmdedFunds(username);
-        log.info("recommendedFunds: " + recommendedFunds);
         return new ResponseEntity<>(recommendedFunds, HttpStatus.OK);
     }
 
@@ -107,7 +103,6 @@ public class RecommendationController {
         //jwttokenprovider에서 받은 토큰으로 유저네임 가져오기
         String username = jwtTokenProvider.getUserInfo(token);
         MemberResponseDto memberInfo = recmdService.getMemberInfo(username);
-        log.info("memberInfo: " + memberInfo);
         return new ResponseEntity<>(memberInfo, HttpStatus.OK);
     }
 }

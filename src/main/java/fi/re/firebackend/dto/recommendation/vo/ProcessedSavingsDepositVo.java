@@ -62,6 +62,12 @@ public class ProcessedSavingsDepositVo {
             keywordList.addAll(extractKeywords(entity.getEtcNote()));
         }
 
+        if(this.saveTrm < 12){
+            keywordList.add("단기");
+        }else{
+            keywordList.add("장기");
+        }
+
         return keywordList;
     }
 
@@ -70,7 +76,7 @@ public class ProcessedSavingsDepositVo {
         List<String> keywordList = new ArrayList<>();
 
         // 찾고자 하는 키워드 정규 표현식
-        String regex = "(?i)(가입기간별|만기후|최고|우대이율|가입금액|가입기간|이자지급방식|실명의|개인|법인|여성|제한없음|영업점|인터넷|스마트폰|기타|최소가입금액|한도|우대요건|혜택)";
+        String regex = "(?i)(만기|우대이율|개인|법인|여성|영업점|인터넷|스마트폰|소액)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(text);
 

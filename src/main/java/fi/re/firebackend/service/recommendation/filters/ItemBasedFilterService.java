@@ -70,12 +70,12 @@ public class ItemBasedFilterService {
     private double calculateFundSimilarity(final FundDto fund1, final FundDto fund2) {
         return calculateSimilarity(
                 fund1.getRate(),
-                fund2.getRate(),
                 fund1.getDngrGrade(),
+                fund2.getRate(),
                 fund2.getDngrGrade(),
                 fund1.getSixMRate(),
-                fund2.getSixMRate(),
                 fund1.getOneYRate(),
+                fund2.getSixMRate(),
                 fund2.getOneYRate()
         );
     }

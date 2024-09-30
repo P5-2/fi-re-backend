@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,13 +51,10 @@ public class RecommendationServiceImpl implements RecommendationService {
                 .collect(Collectors.toList());
 
         // 4. 컨텐츠 기반 필터링
-//        List<ProcessedSavingsDepositVo> filteredSavings = contentsBasedFilterService.filterProducts(user, depositVos);
         ContentsBasedFilterService.FilteredProductsResult result = contentsBasedFilterService.filterProducts(user, depositVos);
 
-        List<ProcessedSavingsDepositVo> filteredSavings = result.getDeposits();
+        List<ProcessedSavingsDepositVo> filteredDeposits = result.getDeposits();
         List<String> usedKeywords = result.getUsedKeywords();
-        log.info(usedKeywords);
-
 
         // 5. 기준으로 삼을 top3 적금 상품 가져오기
         List<ProcessedSavingsDepositVo> hotDeposits = depositDao.getHotDeposit().stream()
@@ -64,14 +62,10 @@ public class RecommendationServiceImpl implements RecommendationService {
                 .collect(Collectors.toList());
 
         // 6. 아이템 기반 추천
-        List<ProcessedSavingsDepositVo> recommendedDeposits = itemBasedFilterService.filteringSavingsDeposits(hotDeposits, filteredSavings);
-//        log.info("Recommended Deposits: {}", (Throwable) recommendedDeposits); // 로깅 메시지 개선
+        List<ProcessedSavingsDepositVo> recommendedDeposits = itemBasedFilterService.filteringSavingsDeposits(hotDeposits, filteredDeposits);
 
         // 보내기 전에 dto로 옮겨서 보내기
-        List<FilteredSavingsDepositsVo> resultDto = recommendedDeposits.stream()
-                .map(vo -> new FilteredSavingsDepositsVo())
-                .collect(Collectors.toList());
-
+        List<FilteredSavingsDepositsVo> resultDto = convertToFilteredVo(recommendedDeposits);
 
         return new SavingsDepositsResponseDto(resultDto, usedKeywords);
     }
@@ -84,7 +78,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         log.info("user: " + user);
 
         // 2. DB에서 모든 예금 조회
-        List<SavingsDepositEntity> allSavings = depositDao.getAllDeposit(); //여기 가져오는 부분 변경하기 1. 예적금 분리되어있으므로 예금, 적금 따로 추천하도록 분리
+        List<SavingsDepositEntity> allSavings = savingsDao.getAllSavings();
 
         // 3. DepositEntity를 ProcessedSavingsDepositVo 변환
         List<ProcessedSavingsDepositVo> savingsVos = allSavings.parallelStream()
@@ -92,27 +86,22 @@ public class RecommendationServiceImpl implements RecommendationService {
                 .collect(Collectors.toList());
 
         // 4. 컨텐츠 기반 필터링
-//        List<ProcessedSavingsDepositVo> filteredSavings = contentsBasedFilterService.filterProducts(user, depositVos);
         ContentsBasedFilterService.FilteredProductsResult result = contentsBasedFilterService.filterProducts(user, savingsVos);
 
         List<ProcessedSavingsDepositVo> filteredSavings = result.getDeposits();
         List<String> usedKeywords = result.getUsedKeywords();
-        log.info(usedKeywords);
 
         // 5. 기준으로 삼을 예금 상품 가져오기
         List<ProcessedSavingsDepositVo> hotSavings = savingsDao.getHotSavings().stream()
                 .map(ProcessedSavingsDepositVo::new)
+                .distinct()
                 .collect(Collectors.toList());
 
         // 6. 아이템 기반 추천
-        List<ProcessedSavingsDepositVo> recommendedDeposits = itemBasedFilterService.filteringSavingsDeposits(hotSavings, filteredSavings);
-        log.info(recommendedDeposits);
+        List<ProcessedSavingsDepositVo> recommendedSavings = itemBasedFilterService.filteringSavingsDeposits(hotSavings, filteredSavings);
 
         // 보내기 전에 dto로 옮겨서 보내기
-        List<FilteredSavingsDepositsVo> resultDto = recommendedDeposits.stream()
-                .map(vo -> new FilteredSavingsDepositsVo())
-                .collect(Collectors.toList());
-
+        List<FilteredSavingsDepositsVo> resultDto = convertToFilteredVo(recommendedSavings);
         return new SavingsDepositsResponseDto(resultDto, usedKeywords);
     }
 
@@ -133,6 +122,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         // 5. 아이템 기반 추천
         List<FundDto> recommendedFunds = itemBasedFilterService.filteredFunds(hotFunds, filteredFunds)
                 .stream()
+                .distinct()
                 .sorted(Comparator.comparingDouble(FundDto::getOneYRate).reversed()) // oneYRate 수익률 높은 순으로 정렬
                 .collect(Collectors.toList());
 
@@ -183,6 +173,33 @@ public class RecommendationServiceImpl implements RecommendationService {
         memberEntity.parseKeywords();
 
         return memberEntity;
+    }
+
+    // ProcessedSavingsDepositVo 리스트를 FilteredSavingsDepositsVo 리스트로 변환하는 메서드 추가
+    public List<FilteredSavingsDepositsVo> convertToFilteredVo(List<ProcessedSavingsDepositVo> processedList) {
+        return processedList.stream()
+                .distinct()
+                .sorted(Comparator.comparingDouble(ProcessedSavingsDepositVo::getIntrRate2).reversed())
+                .map(this::convertToFilteredVo).collect(Collectors.toList());
+    }
+
+    // 개별 ProcessedSavingsDepositVo를 FilteredSavingsDepositsVo로 변환하는 메서드
+    private FilteredSavingsDepositsVo convertToFilteredVo(ProcessedSavingsDepositVo processedVo) {
+        FilteredSavingsDepositsVo filteredVo = new FilteredSavingsDepositsVo();
+
+        filteredVo.setFinPrdtCd(processedVo.getFinPrdtCd());
+        filteredVo.setKorCoNm(processedVo.getKorCoNm());
+        filteredVo.setFinPrdtNm(processedVo.getFinPrdtNm());
+        filteredVo.setJoinWay(processedVo.getJoinWay());
+        filteredVo.setKeywords(processedVo.getKeywords());
+        filteredVo.setMaxLimit(BigDecimal.valueOf(processedVo.getMaxLimit())); // double -> BigDecimal
+        filteredVo.setIntrRateTypeNm(processedVo.getIntrRateTypeNm());
+        filteredVo.setSaveTrm(processedVo.getSaveTrm());
+        filteredVo.setIntrRate(BigDecimal.valueOf(processedVo.getIntrRate()));
+        filteredVo.setIntrRate2(BigDecimal.valueOf(processedVo.getIntrRate2()));
+        filteredVo.setSelectCount(processedVo.getSelectCount());
+
+        return filteredVo;
     }
 }
 
