@@ -31,6 +31,9 @@ public class SavingsDepositApi {
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
 
+    private static final int DETAIL_PAGE = 1;
+    private static final int DETAIL_SIZE = 1;
+
     @Autowired
     public SavingsDepositApi(ObjectMapper objectMapper, RestTemplate restTemplate) {
         this.objectMapper = objectMapper;
@@ -48,12 +51,12 @@ public class SavingsDepositApi {
     }
 
     public SavingsDepositDto getSavingsDetails(String topFinGrpNo, String finPrdtCd) throws IOException {
-        String url = buildUrl(SAVINGS_API_URL, topFinGrpNo, 1, 1, finPrdtCd);
+        String url = buildUrl(SAVINGS_API_URL, topFinGrpNo, DETAIL_PAGE, DETAIL_SIZE, finPrdtCd);
         return getProductDetails(url);
     }
 
     public SavingsDepositDto getDepositDetails(String topFinGrpNo, String finPrdtCd) throws IOException {
-        String url = buildUrl(DEPOSIT_API_URL, topFinGrpNo, 1, 1, finPrdtCd);
+        String url = buildUrl(DEPOSIT_API_URL, topFinGrpNo, DETAIL_PAGE, DETAIL_SIZE, finPrdtCd);
         return getProductDetails(url);
     }
 
