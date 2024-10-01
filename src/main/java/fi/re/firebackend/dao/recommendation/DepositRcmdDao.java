@@ -1,6 +1,5 @@
 package fi.re.firebackend.dao.recommendation;
 
-import fi.re.firebackend.dto.finance.savings.SavingsDepositDto;
 import fi.re.firebackend.dto.recommendation.SavingsDepositEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
