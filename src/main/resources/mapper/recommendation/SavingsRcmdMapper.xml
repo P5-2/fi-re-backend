@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="fi.re.firebackend.dao.recommendation.SavingsRcmdDao">
+
+    <select id="getSavingsByCode" resultType="fi.re.firebackend.dto.recommendation.SavingsDepositEntity">
+        SELECT finPrdtCd,
+               bankName AS korCoNm,
+               finPrdtNm,
+               joinWay,
+               spclCnd,
+               joinMember,
+               etcNote,
+               maxLimit,
+               intrRateTypeNm,
+               saveTrm,
+               minRate  AS intrRate,
+               maxRate  AS intrRate2
+        FROM savingsV1
+        WHERE finPrdtCd = #{finPrdtCd}
+    </select>
+
+    <select id="getHotSavings" resultType="fi.re.firebackend.dto.recommendation.SavingsDepositEntity">
+        SELECT finPrdtCd,
+               bankName AS korCoNm,
+               finPrdtNm,
+               joinWay,
+               spclCnd,
+               joinMember,
+               etcNote,
+               maxLimit,
+               intrRateTypeNm,
+               saveTrm,
+               minRate  AS intrRate,
+               maxRate  AS intrRate2
+        FROM savingsV1
+        ORDER BY selectCount DESC LIMIT 3
+    </select>
+
+    <select id="getAllSavings" resultType="fi.re.firebackend.dto.recommendation.SavingsDepositEntity">
+        SELECT finPrdtCd,
+               bankName AS korCoNm,
+               finPrdtNm,
+               joinWay,
+               spclCnd,
+               joinMember,
+               etcNote,
+               maxLimit,
+               intrRateTypeNm,
+               saveTrm,
+               minRate  AS intrRate,
+               maxRate  AS intrRate2
+        FROM savingsV1
+    </select>
+
+</mapper>

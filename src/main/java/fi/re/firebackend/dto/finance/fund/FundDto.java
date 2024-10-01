@@ -17,5 +17,6 @@ public class FundDto {
     private String bseDt;
     private int selectCount;
     private double nav;
-    private boolean InCart;
+    private double sixMRate;
+    private double oneYRate;
 }
