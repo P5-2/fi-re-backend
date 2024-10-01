@@ -65,7 +65,9 @@ public class RecommendationServiceImpl implements RecommendationService {
         List<ProcessedSavingsDepositVo> recommendedDeposits = itemBasedFilterService.filteringSavingsDeposits(hotDeposits, filteredDeposits);
 
         // 보내기 전에 dto로 옮겨서 보내기
-        List<FilteredSavingsDepositsVo> resultDto = convertToFilteredVo(recommendedDeposits);
+        List<FilteredSavingsDepositsVo> resultDto = convertToFilteredVo(recommendedDeposits).stream()
+                .limit(10)
+                .collect(Collectors.toList());
 
         return new SavingsDepositsResponseDto(resultDto, usedKeywords);
     }
@@ -101,7 +103,9 @@ public class RecommendationServiceImpl implements RecommendationService {
         List<ProcessedSavingsDepositVo> recommendedSavings = itemBasedFilterService.filteringSavingsDeposits(hotSavings, filteredSavings);
 
         // 보내기 전에 dto로 옮겨서 보내기
-        List<FilteredSavingsDepositsVo> resultDto = convertToFilteredVo(recommendedSavings);
+        List<FilteredSavingsDepositsVo> resultDto = convertToFilteredVo(recommendedSavings).stream()
+                .limit(10)
+                .collect(Collectors.toList());
         return new SavingsDepositsResponseDto(resultDto, usedKeywords);
     }
 
@@ -124,6 +128,7 @@ public class RecommendationServiceImpl implements RecommendationService {
                 .stream()
                 .distinct()
                 .sorted(Comparator.comparingDouble(FundDto::getOneYRate).reversed()) // oneYRate 수익률 높은 순으로 정렬
+                .limit(10)
                 .collect(Collectors.toList());
 
         return recommendedFunds;
