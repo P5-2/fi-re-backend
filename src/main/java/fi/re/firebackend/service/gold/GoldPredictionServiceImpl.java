@@ -3,12 +3,14 @@ package fi.re.firebackend.service.gold;
 import fi.re.firebackend.dao.gold.GoldDao;
 import fi.re.firebackend.dto.gold.GoldPredicted;
 import fi.re.firebackend.util.goldPredict.GoldPriceExpectation;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class GoldPredictionServiceImpl implements GoldPredictionService {
 
+    private static final Logger log = Logger.getLogger(GoldPredictionServiceImpl.class);
     private final GoldService goldService;
     GoldPriceExpectation goldPriceExpectation;
     GoldDao goldDao;
@@ -74,7 +77,18 @@ public class GoldPredictionServiceImpl implements GoldPredictionService {
 
     // 예측된 금값 받아오는 함수
     @Override
-    public List<GoldPredicted> getFutureGoldPrice(String today) {
+    public List<GoldPredicted> getFutureGoldPrice() {
+        String today = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
+        String recentPBasDt = goldDao.getLastPBasDt();
+        if(recentPBasDt == null || Integer.parseInt(recentPBasDt) < Integer.parseInt(today)){
+            try {
+                this.saveGoldPredictData();
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                return new ArrayList<>();
+            }
+        }
+        //db에 저장된 날짜가 오늘 날짜보다 미래거나 같으면
         return goldDao.getGoldPredictData(today);
     }
 
