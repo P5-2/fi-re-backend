@@ -42,4 +42,12 @@
         SELECT InCart FROM savingsV1 WHERE finPrdtCd = #{finPrdtCd}
     </select>
 
+
+    <insert id="insertOrUpdateSavings" parameterType="fi.re.firebackend.dto.finance.savings.SavingsDepositDto">
+        INSERT INTO savingsV1 (finPrdtCd, bankName, finPrdtNm, joinWay, spclCnd, joinMember, etcNote, maxLimit, intrRateTypeNm, saveTrm, minRate, maxRate)
+        VALUES (#{finPrdtCd}, #{korCoNm}, #{finPrdtNm}, #{joinWay}, #{spclCnd}, #{joinMember}, #{etcNote}, #{maxLimit}, #{intrRateTypeNm}, #{saveTrm}, #{intrRate}, #{intrRate2})
+
+    </insert>
+
+
 </mapper>

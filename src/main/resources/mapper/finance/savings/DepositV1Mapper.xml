@@ -49,4 +49,9 @@
     </select>
 
 
+    <insert id="insertOrUpdateDeposit" parameterType="fi.re.firebackend.dto.finance.savings.SavingsDepositDto">
+        INSERT INTO depositV1 (finPrdtCd, bankName, finPrdtNm, joinWay, spclCnd, joinMember, etcNote, maxLimit, intrRateTypeNm, saveTrm, minRate, maxRate)
+        VALUES (#{finPrdtCd}, #{korCoNm}, #{finPrdtNm}, #{joinWay}, #{spclCnd}, #{joinMember}, #{etcNote}, #{maxLimit}, #{intrRateTypeNm}, #{saveTrm}, #{intrRate}, #{intrRate2})
+    </insert>
+
 </mapper>

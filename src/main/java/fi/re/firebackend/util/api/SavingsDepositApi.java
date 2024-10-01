@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.re.firebackend.dto.finance.savings.SavingsDepositDto;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,10 +19,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.util.List;
 
+
 @Component
 @PropertySource({"classpath:/application.properties"})
 public class SavingsDepositApi {
 
+    private static final Logger log = LoggerFactory.getLogger(SavingsDepositApi.class);
     @Value("${savings.url}")
     private String SAVINGS_API_URL;
 
@@ -43,46 +48,68 @@ public class SavingsDepositApi {
 
     //적금 상품 목록 조회
     public List<SavingsDepositDto> getAllSavings(String topFinGrpNo, int page, int size) throws IOException {
-        String url = buildUrl(SAVINGS_API_URL, topFinGrpNo, page, size, null);
+        String url = buildUrl(SAVINGS_API_URL, topFinGrpNo, page, size);
+
         return getProductList(url);
     }
 
     //예금 상품 목록 조회
     public List<SavingsDepositDto> getAllDeposit(String topFinGrpNo, int page, int size) throws IOException {
-        String url = buildUrl(DEPOSIT_API_URL, topFinGrpNo, page, size, null);
-        return getProductList(url);
+        String url = buildUrl(DEPOSIT_API_URL, topFinGrpNo, page, size);
+//        String url = "https://finlife.fss.or.kr/finlifeapi/depositProductsSearch.json?auth=775c4db3fbe78868197e38b7919f9212&topFinGrpNo=020000&pageNo=1&options=intr_rate&options=intr_rate2";
+//
+//        //return getProductList(url);
+//
+//        System.out.println("------------------------- 1");
+
+        //String str = restTemplate.getForObject(url, String.class);
+        //System.out.println(str);
+
+        List<SavingsDepositDto> list = getProductList(url);
+//        for (SavingsDepositDto dto : list) {
+//            System.out.println(dto);
+//        }
+//        System.out.println(list.toString());
+
+        System.out.println("------------------------- 2");
+        return list;
     }
 
-    public SavingsDepositDto getSavingsByCode(String topFinGrpNo, int page, int size, String finPrdtCd) throws IOException {
-        String url = buildUrl(SAVINGS_API_URL, topFinGrpNo, page, size, finPrdtCd);
+    public SavingsDepositDto getSavingsByCode(String topFinGrpNo, int page, int size) throws IOException {
+        String url = buildUrl(SAVINGS_API_URL, topFinGrpNo, page, size);
         return getProductDetails(url);
     }
 
-    public SavingsDepositDto getDepositByCode(String topFinGrpNo, int page, int size, String finPrdtCd) throws IOException {
-        String url = buildUrl(DEPOSIT_API_URL, topFinGrpNo, page, size, finPrdtCd);
+    public SavingsDepositDto getDepositByCode(String topFinGrpNo, int page, int size) throws IOException {
+        String url = buildUrl(DEPOSIT_API_URL, topFinGrpNo, page, size);
         return getProductDetails(url);
     }
 
     //URL 동적 생성
-    private String buildUrl(String baseUrl, String topFinGrpNo, int page, int size, String finPrdtCd) {
+    private String buildUrl(String baseUrl, String topFinGrpNo, int page, int size) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(baseUrl)
                 .queryParam("auth", AUTH_KEY)
                 .queryParam("topFinGrpNo", topFinGrpNo)
                 .queryParam("pageNo", page)
                 .queryParam("numOfRows", size);
 
-        //null check & empty check
-        if (finPrdtCd != null && !finPrdtCd.isEmpty()) {
-            builder.queryParam("finPrdtCd", finPrdtCd);
-        }
-
         return builder.build().toUriString();
     }
 
     private List<SavingsDepositDto> getProductList(String url) throws IOException {
+
+        System.out.println("------------------------ getProductList 진입");
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+        System.out.println(">>> getProductList");
+//        System.out.println(response);
+//        System.out.println(response.getBody());
+
         JsonNode root = objectMapper.readTree(response.getBody());
+        //------------------
         JsonNode baseList = root.path("result").path("baseList");
+
+        log.info(String.valueOf(baseList));
 
         return objectMapper.readValue(baseList.toString(), new TypeReference<List<SavingsDepositDto>>() {});
     }

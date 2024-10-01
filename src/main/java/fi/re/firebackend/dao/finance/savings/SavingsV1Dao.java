@@ -32,5 +32,10 @@ public interface SavingsV1Dao {
 
     // 비교함 상태 조회
     int getSavingsCartStatus(@Param("prdNo") int prdNo);
+
+    void insertOrUpdateSavings(SavingsDepositDto savings);
+
+    // 금융그룹별 적금 상품 조회를 위한 메서드 추가
+    List<SavingsDepositDto> getSavingsByTopFinGrpNo(@Param("topFinGrpNo") String topFinGrpNo);
 }
 

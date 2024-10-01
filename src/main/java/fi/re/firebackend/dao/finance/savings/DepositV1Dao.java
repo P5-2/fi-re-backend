@@ -29,4 +29,9 @@ public interface DepositV1Dao {
     List<SavingsDepositDto> getDepositsInCart();
     // 비교함 상태 조회
     int getDepositCartStatus(@Param("prdNo") int prdNo);
+
+    void insertOrUpdateSavings(SavingsDepositDto savings);
+
+    // 금융그룹별 적금 상품 조회를 위한 메서드 추가
+    List<SavingsDepositDto> getSavingsByTopFinGrpNo(@Param("topFinGrpNo") String topFinGrpNo);
 }

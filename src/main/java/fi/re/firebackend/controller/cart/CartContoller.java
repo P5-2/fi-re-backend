@@ -20,6 +20,7 @@ public class CartContoller {
 
     @GetMapping(value = "/savings/add", produces = "text/plain;charset=UTF-8")
     public ResponseEntity<String> addSavingToCart(@RequestParam int prdNo) {
+
         // 상품이 이미 장바구니에 있는지 확인
         if (cartService.isSavingsInCart(prdNo)) {
             // 이미 장바구니에 있는 경우
