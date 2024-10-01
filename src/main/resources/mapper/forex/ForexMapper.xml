@@ -18,12 +18,12 @@
 
     <select id="selectExchangeRateByDate" parameterType="java.time.LocalDate"
             resultType="fi.re.firebackend.dto.forex.ForexResponseDto">
-        SELECT er.searchdate    AS searchDate,   -- 통화 코드
-               er.cur_unit      AS curUnit,   -- 통화 코드
-               erc.cur_nm       AS curNm,     -- 국가/통화명
-               er.deal_bas_r    AS dealBasR,  -- 매매 기준율
-               er.ttb           AS ttb,       -- 전신환(송금) 받으실때
-               er.tts           AS tts       -- 전신환(송금) 보내실때
+        SELECT er.searchdate AS searchDate, -- 통화 코드
+               er.cur_unit   AS curUnit,    -- 통화 코드
+               erc.cur_nm    AS curNm,      -- 국가/통화명
+               er.deal_bas_r AS dealBasR,   -- 매매 기준율
+               er.ttb        AS ttb,        -- 전신환(송금) 받으실때
+               er.tts        AS tts         -- 전신환(송금) 보내실때
         FROM exchange_rate er
                  JOIN
              exchange_rate_category erc
@@ -44,6 +44,11 @@
         FROM exchange_rate
         WHERE searchdate = #{searchDate}
           AND cur_unit = #{curUnit}
+    </select>
+
+    <select id="recentDate" resultType="java.time.LocalDate">
+        SELECT MAX(searchdate)
+        FROM exchange_rate
     </select>
 
     <update id="updateExchangeRate" parameterType="fi.re.firebackend.dto.forex.ForexEntity">

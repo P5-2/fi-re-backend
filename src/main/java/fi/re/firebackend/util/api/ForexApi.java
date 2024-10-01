@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -59,6 +60,9 @@ public class ForexApi {
                     date = date.minusDays(1);
                     log.info("no data at " + date + " minus one day earlier");
                 }
+            } catch (UnknownHostException e){
+                log.error("network error: " + e.getMessage());
+                return new ForexWrapper(forexList, date);
             } catch (IOException | ParseException e) {
                 log.error("API 요청 중 오류 발생: " + e.getMessage());
                 retryCount--; // 재시도 횟수 감소
