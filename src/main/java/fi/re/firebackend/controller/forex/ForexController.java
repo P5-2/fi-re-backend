@@ -40,16 +40,4 @@ public class ForexController {
             throw new RuntimeException(e);
         }
     }
-
-//    @GetMapping("/test")
-//    public ResponseEntity<String> getExchangeRateTest() throws IOException, ParseException {
-//        LocalDate today = LocalDate.now();
-//        try {
-//            forexService.setForexDataFromApi(today);
-//        } catch (IOException | ParseException e) {
-//            throw new RuntimeException(e);
-//        }
-//        String res = forexService.getExchangeRateByDate(today).toString();
-//        return ResponseEntity.ok(res == null ? "null" : res);
-//    }
 }
