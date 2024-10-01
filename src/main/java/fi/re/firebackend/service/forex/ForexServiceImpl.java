@@ -50,8 +50,9 @@ public class ForexServiceImpl implements ForexService {
         } else {
             // API 호출 및 DB 저장 후 환율 정보를 반환
             ForexWrapper forexRes = setForexDataFromApi(date);
-            if (forexRes == null || forexRes.getForexData().isEmpty() || forexRes.getSearchDate() == null) {
-                log.info("forexRes is null");
+
+            if (forexRes == null) {
+                log.info("forexRes is null, get "+forexDao.recentDate());
                 return getExchangeRateByDate(forexDao.recentDate()); // 가장 최근 날짜의 환율 반환
             }
             return getExchangeRateByDate(forexRes.getSearchDate());
@@ -69,7 +70,7 @@ public class ForexServiceImpl implements ForexService {
         // 오늘날짜로 api 가져오기
         ForexWrapper forexResult = forexApi.getForexData(searchDate);
         List<ForexDto> forexDtoList = forexResult.getForexData();
-        log.info("forex res: " + forexDtoList + " forex Date : " + forexResult.getSearchDate());
+
         if (!forexDtoList.isEmpty()) {
             for (ForexDto forex : forexDtoList) {
                 saveExchangeRate(forex, forexResult.getSearchDate().format(formatter));
