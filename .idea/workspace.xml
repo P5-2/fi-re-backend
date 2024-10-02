@@ -5,20 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="81b6b348-47c7-4256-b841-565879dde739" name="Changes" comment="Chore: 하드코딩된 값 수정">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/02adac62-4f61-461a-b10e-6d50e73a60d7.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/02adac62-4f61-461a-b10e-6d50e73a60d7.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/cart/CartContoller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/cart/CartContoller.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/finance/savings/SavingsDepositController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/finance/savings/SavingsDepositController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/finance/savings/DepositV1Dao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/finance/savings/DepositV1Dao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/finance/savings/SavingsV1Dao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/finance/savings/SavingsV1Dao.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/savings/SavingsDepositDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/savings/SavingsDepositDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/savings/SavingsDepositService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/savings/SavingsDepositService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/util/api/SavingsDepositApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/util/api/SavingsDepositApi.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/finance/savings/DepositV1Mapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/finance/savings/DepositV1Mapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/finance/savings/SavingsV1Mapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/finance/savings/SavingsV1Mapper.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -249,7 +238,8 @@
       <workItem from="1727482613386" duration="9971000" />
       <workItem from="1727611679064" duration="680000" />
       <workItem from="1727655885931" duration="43794000" />
-      <workItem from="1727741515905" duration="26257000" />
+      <workItem from="1727741515905" duration="28086000" />
+      <workItem from="1727828672452" duration="11105000" />
     </task>
     <task id="LOCAL-00001" summary="Fix: typo error fix">
       <option name="closed" value="true" />
