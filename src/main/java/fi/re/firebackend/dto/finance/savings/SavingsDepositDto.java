@@ -9,22 +9,19 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@Getter
-@Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SavingsDepositDto {
 
     @JsonProperty("fin_prdt_cd")
-    private String finPrdtCd;//Financial Product Code
+    private String finPrdtCd; //Financial Product Code
 
     @JsonProperty("kor_co_nm")
-    private String korCoNm;
+    private String korCoNm; //bankName
 
-    @JsonProperty("fin_prdt_nm")//bankName
-    private String finPrdtNm;
+    @JsonProperty("fin_prdt_nm")
+    private String finPrdtNm; //Financial Product Name
 
-    @JsonProperty("join_way")//Financial Product Name
+    @JsonProperty("join_way")
     private String joinWay; // 가입방법
 
     @JsonProperty("spcl_cnd")
@@ -37,20 +34,14 @@ public class SavingsDepositDto {
     private String etcNote; //기타 유의사항
 
     @JsonProperty("max_limit")
-    private long maxLimit; //최대한도
+    private Long maxLimit; //최대한도
 
-    @JsonProperty("intr_rate_type_nm")
-    private String intrRateTypeNm; //저축 금리 유형명(단리 or 복리)
+    //maxLimit이 null인 경우 처리
+//maxLimit이 null인 경우 처리를 위해 SavingsDepositDto의 maxLimit 필드 타입을 Long으로 변경하고 (primitive type long 대신)
 
-    @JsonProperty("save_trm")
-    private String saveTrm; //저축 기간
-
-    @JsonProperty("intr_rate")
-    private String intrRate; //minRate 기본금리
-
-    @JsonProperty("intr_rate2")
-    private String intrRate2; //maxRate 최고금리
-
+    private String productType; // "SAVINGS" 또는 "DEPOSIT"
+    // savings or deposit 구분 어떻게 할건지 생각해서 처리
 }
+
 
 
