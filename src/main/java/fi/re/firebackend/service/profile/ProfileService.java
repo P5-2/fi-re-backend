@@ -57,8 +57,8 @@ public class ProfileService {
     }
 
     // 특정 사용자의 예적금 삭제
-    public boolean deleteMemberSavings(String username, String prdNo) {
-        int rowsAffected = profileDao.deleteMemberSavings(username, prdNo);
+    public boolean deleteMemberSavings(String username, String finPrdtCd) {
+        int rowsAffected = profileDao.deleteMemberSavings(username, finPrdtCd);
         return rowsAffected > 0;  // 삭제 성공 여부 반환
     }
 }

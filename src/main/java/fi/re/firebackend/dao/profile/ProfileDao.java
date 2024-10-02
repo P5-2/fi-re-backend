@@ -25,5 +25,5 @@ public interface ProfileDao {
     int updateMemberSavings(MemberSavingsEntity memberSavingsEntity);
 
     // 멤버의 예적금 삭제하기
-    int deleteMemberSavings(@Param("username") String username, @Param("prdNo") String prdNo);
+    int deleteMemberSavings(@Param("username") String username, @Param("finPrdtCd") String finPrdtCd);
 }

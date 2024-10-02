@@ -60,7 +60,7 @@
         DELETE
         FROM MemberSavings
         WHERE username = #{username}
-          AND prdNo = #{prdNo}
+          AND finPrdtCd = #{finPrdtCd}
     </delete>
 
 </mapper>
