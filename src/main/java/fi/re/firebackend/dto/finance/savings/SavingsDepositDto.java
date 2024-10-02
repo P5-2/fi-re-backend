@@ -39,7 +39,10 @@ public class SavingsDepositDto {
     //maxLimit이 null인 경우 처리
 //maxLimit이 null인 경우 처리를 위해 SavingsDepositDto의 maxLimit 필드 타입을 Long으로 변경하고 (primitive type long 대신)
 
-    private String productType; // "SAVINGS" 또는 "DEPOSIT"
+    @JsonProperty("prdt_div")
+    private String prdtDiv; // "S" 또는 "D" savings or deposit 구분
+
+//    private String productType; // "SAVINGS" 또는 "DEPOSIT"
     // savings or deposit 구분 어떻게 할건지 생각해서 처리
 }
 
