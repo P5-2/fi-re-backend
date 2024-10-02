@@ -23,4 +23,5 @@ public class MemberSavingsResponseDto { // 서버에서 응답해주는 내용
     private int savedAmount; // 지금까지 저금한 금액
     private int monthlyDeposit; // 이번 달 입금 금액
     private String bankname;
+    private int targetAmount; //목표 금액
 }

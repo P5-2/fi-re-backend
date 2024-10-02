@@ -7,6 +7,7 @@ import fi.re.firebackend.dto.profile.MemberSavingsRequestDto;
 import fi.re.firebackend.dto.profile.MemberSavingsEntity;
 import fi.re.firebackend.dto.profile.MemberSavingsResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProfileService {
+    private static final Logger log = Logger.getLogger(ProfileService.class);
     private final MemberDaotwo memberDaotwo;
     private final ProfileDao profileDao;
 
@@ -42,8 +44,8 @@ public class ProfileService {
                 .endDate(endDate)
                 .savedAmount(memberSavingsRequestDto.getSavedAmount())
                 .monthlyDeposit(memberSavingsRequestDto.getMonthlyDeposit())
+                .targetAmount(memberSavingsRequestDto.getTargetAmount())
                 .build();
-
         // 멤버 예적금 테이블에 저장
         return profileDao.insertMemberSavings(memberSavingsEntity);
     }

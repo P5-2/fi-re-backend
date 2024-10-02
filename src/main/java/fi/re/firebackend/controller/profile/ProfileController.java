@@ -8,6 +8,7 @@ import fi.re.firebackend.dto.profile.MemberSavingsResponseDto;
 import fi.re.firebackend.jwt.JwtTokenProvider;
 import fi.re.firebackend.service.news.NewsService;
 import fi.re.firebackend.service.profile.ProfileService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.util.List;
 @RequestMapping("/profile")
 public class ProfileController {
 
+    private static final Logger log = Logger.getLogger(ProfileController.class);
     private final ProfileService profileService;
     private final NewsService newsService;
     private final JwtTokenProvider jwtTokenProvider;
@@ -117,7 +119,6 @@ public class ProfileController {
 
         // 예적금 추가 로직 실행
         int result = profileService.addMemberSavings(username, memberSavingsRequestDto);
-
         if (result > 0) {
             return ResponseEntity.ok("Success");
         } else {

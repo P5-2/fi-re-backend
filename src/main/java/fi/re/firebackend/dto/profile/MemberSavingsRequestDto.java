@@ -16,4 +16,5 @@ public class MemberSavingsRequestDto { // 프론트에서 서버로 요청 보�
     private int savedAmount; // 지금까지 저금한 금액
     private int monthlyDeposit; // 이번 달 입금 금액
     private int saveTrm; // 가입 기간(이거랑 가입일 이용해서 enddate 구하면 됨)
+    private int targetAmount; //목표 금액
 }
