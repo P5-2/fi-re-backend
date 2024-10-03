@@ -30,7 +30,7 @@ public class ForexServiceImpl implements ForexService {
     final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     // 오늘 날짜로(12시 전이면 어제 날짜로 api에서 불러와서 저장하는 함수)
-    @Scheduled(cron = "0 0/5 15 * * MON-FRI", zone = "Asia/Seoul") //월~금 초 분 시 일 월 요일 12시 정각에 업데이트(영업일 11시 전후로 업데이트되므로)
+    @Scheduled(cron = "0 0 12 * * ?", zone = "Asia/Seoul")    //월~금 초 분 시 일 월 요일 12시 정각에 업데이트(영업일 11시 전후로 업데이트되므로)
     public void setForexFromApi() throws IOException, ParseException {
         LocalDate todayDate = isBeforeNoon(LocalDate.now());
         setForexDataFromApi(todayDate);
