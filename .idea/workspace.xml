@@ -4,27 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="81b6b348-47c7-4256-b841-565879dde739" name="Changes" comment="Fix: 변경된 값에 따른 로직 변경">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/02adac62-4f61-461a-b10e-6d50e73a60d7.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/02adac62-4f61-461a-b10e-6d50e73a60d7.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/cart/CartContoller.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/cart/CartContoller.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/finance/savings/SavingsDepositController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/finance/savings/SavingsDepositController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/finance/savings/DepositV1Dao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/finance/savings/SavingsDao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/finance/savings/SavingsDepositDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/finance/savings/SavingsDepositDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/finance/savings/SavingsV1Dao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/savings/OptionalDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/savings/OptionalDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/savings/SavingsDepositDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/savings/SavingsDepositDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/savings/SavingsDepositWithOptionsDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/savings/SavingsDepositWithOptionsDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/cart/CartService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/cart/CartService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/savings/SavingsDepositService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/savings/SavingsDepositService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/util/api/SavingsDepositApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/util/api/SavingsDepositApi.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/finance/savings/DepositV1Mapper.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/finance/savings/SavingsDepositMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/finance/savings/SavingsDepositMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/finance/savings/SavingsMapper.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/finance/savings/SavingsV1Mapper.xml" beforeDir="false" />
-    </list>
+    <list default="true" id="81b6b348-47c7-4256-b841-565879dde739" name="Changes" comment="Fix: 변경된 값에 따른 로직 변경" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -256,7 +236,7 @@
       <workItem from="1727655885931" duration="43794000" />
       <workItem from="1727741515905" duration="28086000" />
       <workItem from="1727828672452" duration="30073000" />
-      <workItem from="1727932952234" duration="18354000" />
+      <workItem from="1727932952234" duration="18772000" />
     </task>
     <task id="LOCAL-00001" summary="Fix: typo error fix">
       <option name="closed" value="true" />
@@ -306,7 +286,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727858464412</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Fix: 변경된 값에 따른 로직 변경">
+      <option name="closed" value="true" />
+      <created>1727959329823</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1727959329823</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
