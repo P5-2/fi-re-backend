@@ -1,17 +1,17 @@
 package fi.re.firebackend.dto.finance.savings;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
+@Getter
+@Setter
+@ToString
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class SavingsDepositWithOptionsDto {
-    private SavingsDepositDto product;
+    private SavingsDepositDto savingsDeposit;
     private List<OptionalDto> options;
 }

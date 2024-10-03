@@ -1,22 +1,14 @@
 package fi.re.firebackend.controller.finance.savings;
 
-import fi.re.firebackend.dao.finance.savings.DepositV1Dao;
-import fi.re.firebackend.dao.finance.savings.SavingsV1Dao;
-import fi.re.firebackend.dto.finance.savings.SavingsDepositDto;
+import fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto;
 import fi.re.firebackend.service.savings.SavingsDepositService;
 import fi.re.firebackend.util.api.SavingsDepositApi;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -25,83 +17,58 @@ import java.util.Map;
 @RequestMapping("/finance") //url 변경
 public class SavingsDepositController {
 
-    private static final Logger log = LoggerFactory.getLogger(SavingsDepositController.class);
-    private final SavingsDepositApi savingsDepositApi;
-    private SavingsV1Dao savingsV1Dao;
-    private DepositV1Dao depositV1Dao;
-
     //SavingsService 연결
     private final SavingsDepositService savingsDepositService;
 
     @Autowired
-    public SavingsDepositController(SavingsV1Dao savingsV1Dao, DepositV1Dao depositV1Dao, SavingsDepositApi savingsDepositApi,SavingsDepositService savingsDepositService) {
-        this.savingsV1Dao = savingsV1Dao;
-        this.depositV1Dao = depositV1Dao;
-        this.savingsDepositApi = savingsDepositApi;
+    public SavingsDepositController(SavingsDepositService savingsDepositService) {
         this.savingsDepositService = savingsDepositService;
     }
 
-    @GetMapping("/savings/get")
-    public SavingsDepositDto getSavingsByCode(@RequestParam String finPrdtCd) {
-        System.out.println("finPrdt : "+finPrdtCd);
-        return savingsV1Dao.getSavingsByCode(finPrdtCd);
+    //예적금 상세페이지
+    @GetMapping("/{finPrdtCd}")
+    public ResponseEntity<SavingsDepositWithOptionsDto> getProductDetail(@PathVariable String finPrdtCd) {
+        return ResponseEntity.ok(savingsDepositService.getProductDetail(finPrdtCd));
+    }
+    //Hot3 list
+    @GetMapping("/hot")
+    public ResponseEntity<List<SavingsDepositWithOptionsDto>> getHotProducts(
+            @RequestParam(required = false) String prdtDiv) {
+        return ResponseEntity.ok(savingsDepositService.getHotProducts(prdtDiv));
     }
 
-    @GetMapping("/savings/hot")
-    public List<SavingsDepositDto> getHotSavings() {
-        System.out.println("SavingsController getHotSavings()");
-        return savingsV1Dao.getHotSavings();
-    }
-
-
-    @GetMapping("/deposit/get")
-    public SavingsDepositDto getDepositByCode(@RequestParam String finPrdtCd) {
-        System.out.println("finPrdtCd : "+finPrdtCd);
-        return depositV1Dao.getDepositByCode(finPrdtCd);
-    }
-
-    @GetMapping("/deposit/hot")
-    public List<SavingsDepositDto> getHotDeposit() {
-        System.out.println("SavingsController getHotDeposit()");
-        return depositV1Dao.getHotDeposit();
-    }
-
+    //페이지네이션(모든 상품 가져오기)
     @GetMapping("/pageAll")
     public ResponseEntity<Map<String, Object>> getAllProducts(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size) {
-
-        savingsDepositService.updateSavingsAndDepositData();
-
-        log.info("page = {} size = {}", page, size);
-
-        Map<String, Object> response = savingsDepositService.getAllProducts(page, size);
-
-        Iterator<String> it = response.keySet().iterator();
-        while (it.hasNext()) {
-            String key = it.next();
-            System.out.println("key : "+key);
-
-            if(response.get(key) instanceof SavingsDepositDto) {
-                SavingsDepositDto s = (SavingsDepositDto) response.get(key);
-                System.out.println(s.toString());
-            }
-        }
-
-        return ResponseEntity.ok(response);
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String productType) {
+        return ResponseEntity.ok(savingsDepositService.getAllProducts(page, size, productType));
     }
+}
 
 
-    //    @GetMapping("/savings/all")
-//    public List<SavingsDepositDto> getAllSavings() {
-//        System.out.println("SavingsController getAllSavings()");
-//        return savingsV1Dao.getAllSavings();
+//    @GetMapping("/savings/get")
+//    public SavingsDepositDto getSavingsByCode(@RequestParam String finPrdtCd) {
+//        System.out.println("finPrdt : "+finPrdtCd);
+//        return savingsV1Dao.getSavingsByCode(finPrdtCd);
 //    }
 
-//    @GetMapping("/deposit/all")
-//    public List<SavingsDepositDto> getAllDeposit() {
-//        System.out.println("SavingsController getAllDeposit()");
-//        return depositV1Dao.getAllDeposit();
+
+//    @GetMapping("/savings/hot")
+//    public List<SavingsDepositDto> getHotSavings() {
+//        System.out.println("SavingsController getHotSavings()");
+//        return savingsV1Dao.getHotSavings();
+//    }
+
+
+//    @GetMapping("/pageAll")
+//    public ResponseEntity<Map<String, Object>> getAllProducts(
+//            @RequestParam(defaultValue = "1") int page,
+//            @RequestParam(defaultValue = "5") int size) {
+//        savingsDepositService.updateSavingsAndDepositData();
+//        Map<String, Object> response = savingsDepositService.getAllProducts(page, size);
+//        return ResponseEntity.ok(response);
 //    }
 
 //    @GetMapping("/deposit/pageAll")
@@ -112,4 +79,3 @@ public class SavingsDepositController {
 //    }
 
 
-}

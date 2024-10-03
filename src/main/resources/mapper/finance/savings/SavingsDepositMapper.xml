@@ -3,8 +3,8 @@
 <mapper namespace="fi.re.firebackend.dao.finance.savings.SavingsDepositDao">
 
     <!-- 공통 resultMap -->
-    <resultMap id="productWithOptionsResultMap" type="fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto">
-        <association property="product" javaType="fi.re.firebackend.dto.finance.savings.SavingsDepositDto">
+    <resultMap id="savingsDepositWithOptionsResultMap" type="fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto">
+        <association property="savingsDeposit" javaType="fi.re.firebackend.dto.finance.savings.SavingsDepositDto">
             <id property="finPrdtCd" column="fin_prdt_cd"/>
             <result property="korCoNm" column="kor_co_nm"/>
             <result property="finPrdtNm" column="fin_prdt_nm"/>
@@ -24,39 +24,40 @@
     </resultMap>
 
 <!--    예적금 상품 상세 정보 조회-->
-    <select id="getProductDetail" resultMap="productWithOptionsResultMap">
-        SELECT p.*, o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2
-        FROM financial_products p
-                 LEFT JOIN product_options o ON p.fin_prdt_cd = o.fin_prdt_cd
-        WHERE p.fin_prdt_cd = #{finPrdtCd}
+    <select id="getProductDetail" parameterType="string" resultMap="savingsDepositWithOptionsResultMap">
+        SELECT s.*, o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2
+        FROM savingsDeposit s
+                 LEFT JOIN savingsDeposit_options o ON s.fin_prdt_cd = o.fin_prdt_cd
+        WHERE s.fin_prdt_cd = #{finPrdtCd}
     </select>
 
-<!--    예적금 Hot 리스트 조회-->
-    <select id="getHotProducts" resultMap="productWithOptionsResultMap">
-        SELECT p.*, o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2
-        FROM financial_products p
-                 LEFT JOIN product_options o ON p.fin_prdt_cd = o.fin_prdt_cd
-        WHERE p.prdt_div = #{prdtDiv}
-        ORDER BY p.selectCount DESC
+
+<!--    예적금 Hot3 리스트 조회-->
+    <select id="getHotProducts" parameterType="string" resultMap="savingsDepositWithOptionsResultMap">
+        SELECT s.*, o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2
+        FROM savingsDeposit s
+                 LEFT JOIN savingsDeposit_options o ON s.fin_prdt_cd = o.fin_prdt_cd
+        WHERE s.prdt_div = #{prdtDiv}
+        ORDER BY s.selectCount DESC
             LIMIT 3
     </select>
 
 <!--    전체 예적금 상품 리스트 조회(페이지 네이션 포함)-->
-    <select id="getAllProducts" resultMap="productWithOptionsResultMap">
-        SELECT p.*, o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2
-        FROM financial_products p
-        LEFT JOIN product_options o ON p.fin_prdt_cd = o.fin_prdt_cd
+    <select id="getAllProducts" parameterType="map" resultMap="savingsDepositWithOptionsResultMap">
+        SELECT s.*, o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2
+        FROM savingsDeposit s
+        LEFT JOIN savingsDeposit_options o ON s.fin_prdt_cd = o.fin_prdt_cd
         <where>
             <if test="prdtDiv != null and prdtDiv != ''">
-                p.prdt_div = #{prdtDiv}
+                s.prdt_div = #{prdtDiv}
             </if>
         </where>
-        ORDER BY p.fin_prdt_cd
+        ORDER BY s.fin_prdt_cd
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
-    <select id="getTotalProductCount" resultType="int">
-        SELECT COUNT(*) FROM financial_products
+    <select id="getTotalProductCount" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM savingsDeposit
         <where>
             <if test="prdtDiv != null and prdtDiv != ''">
                 prdt_div = #{prdtDiv}
@@ -66,50 +67,50 @@
 
     <!-- 상품 정보 업데이트 또는 삽입 -->
     <insert id="insertProduct" parameterType="fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto">
-        INSERT INTO financial_products (
+        INSERT INTO savingsDeposit (
         fin_prdt_cd, kor_co_nm, fin_prdt_nm, join_way, spcl_cnd,
         join_member, etc_note, max_limit, prdt_div
         ) VALUES (
-        #{product.finPrdtCd}, #{product.korCoNm}, #{product.finPrdtNm}, #{product.joinWay}, #{product.spclCnd},
-        #{product.joinMember}, #{product.etcNote}, #{product.maxLimit}, #{product.prdtDiv}
+        #{savingsDeposit.finPrdtCd}, #{savingsDeposit.korCoNm}, #{savingsDeposit.finPrdtNm}, #{savingsDeposit.joinWay}, #{savingsDeposit.spclCnd},
+        #{savingsDeposit.joinMember}, #{savingsDeposit.etcNote}, #{savingsDeposit.maxLimit}, #{savingsDeposit.prdtDiv}
         )
-        <foreach collection="options" item="option" separator=";">
-            INSERT INTO product_options (
+        <foreach collection="options" item="option" separator=",">
+            INSERT INTO savingsDeposit_options (
             fin_prdt_cd, intr_rate_type_nm, save_trm, intr_rate, intr_rate2
             ) VALUES (
-            #{product.finPrdtCd}, #{option.intrRateTypeNm}, #{option.saveTrm}, #{option.intrRate}, #{option.intrRate2}
+            #{savingsDeposit.finPrdtCd}, #{option.intrRateTypeNm}, #{option.saveTrm}, #{option.intrRate}, #{option.intrRate2}
             )
         </foreach>
     </insert>
 
     <update id="updateProduct" parameterType="fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto">
-        UPDATE financial_products
+        UPDATE savingsDeposit
         SET
-        kor_co_nm = #{product.korCoNm},
-        fin_prdt_nm = #{product.finPrdtNm},
-        join_way = #{product.joinWay},
-        spcl_cnd = #{product.spclCnd},
-        join_member = #{product.joinMember},
-        etc_note = #{product.etcNote},
-        max_limit = #{product.maxLimit},
-        prdt_div = #{product.prdtDiv}
-        WHERE fin_prdt_cd = #{product.finPrdtCd};
+        kor_co_nm = #{savingsDeposit.korCoNm},
+        fin_prdt_nm = #{savingsDeposit.finPrdtNm},
+        join_way = #{savingsDeposit.joinWay},
+        spcl_cnd = #{savingsDeposit.spclCnd},
+        join_member = #{savingsDeposit.joinMember},
+        etc_note = #{savingsDeposit.etcNote},
+        max_limit = #{savingsDeposit.maxLimit},
+        prdt_div = #{savingsDeposit.prdtDiv}
+        WHERE fin_prdt_cd = #{savingsDeposit.finPrdtCd};
 
-        DELETE FROM product_options WHERE fin_prdt_cd = #{product.finPrdtCd};
+        DELETE FROM savingsDeposit_options WHERE fin_prdt_cd = #{savingsDeposit.finPrdtCd};
 
         <foreach collection="options" item="option" separator=";">
-            INSERT INTO product_options (
+            INSERT INTO savingsDeposit_options (
             fin_prdt_cd, intr_rate_type_nm, save_trm, intr_rate, intr_rate2
             ) VALUES (
-            #{product.finPrdtCd}, #{option.intrRateTypeNm}, #{option.saveTrm}, #{option.intrRate}, #{option.intrRate2}
+            #{savingsDeposit.finPrdtCd}, #{option.intrRateTypeNm}, #{option.saveTrm}, #{option.intrRate}, #{option.intrRate2}
             )
         </foreach>
     </update>
 
-    <select id="checkProductExists" resultType="boolean">
-        SELECT COUNT(*) > 0 FROM financial_products WHERE fin_prdt_cd = #{finPrdtCd}
+    <select id="checkProductExists" parameterType="string" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM savingsDeposit WHERE fin_prdt_cd = #{finPrdtCd}
     </select>
-
+</mapper>
 
 
     <!-- 5. 비교함에 상품 추가 -->
@@ -133,4 +134,3 @@
 <!--        WHERE fin_prdt_cd = #{finPrdtCd}-->
 <!--    </select>-->
 
-</mapper>

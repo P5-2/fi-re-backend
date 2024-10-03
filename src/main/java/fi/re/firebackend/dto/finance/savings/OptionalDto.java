@@ -2,10 +2,11 @@ package fi.re.firebackend.dto.finance.savings;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Getter
+@Setter
+@ToString
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

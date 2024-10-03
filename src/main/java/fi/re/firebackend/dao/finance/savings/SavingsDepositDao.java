@@ -16,7 +16,7 @@ public interface SavingsDepositDao {
     SavingsDepositWithOptionsDto getProductDetail(@Param("finPrdtCd") String finPrdtCd);
 
     //예적금 Hot 리스트
-    List<SavingsDepositWithOptionsDto> getHotProducts(@Param("prdtDiv") String productType, @Param("limit") int limit);
+    List<SavingsDepositWithOptionsDto> getHotProducts(@Param("prdtDiv") String prdtDiv, @Param("limit") int limit);
 
     //예적금 전체 리스트(페이지네이션 포함)
     List<SavingsDepositWithOptionsDto> getAllProducts(@Param("offset") int offset, @Param("limit") int limit, @Param("prdtDiv") String prdtDiv);
