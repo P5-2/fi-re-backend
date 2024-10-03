@@ -17,7 +17,7 @@ public class FinanceWordService {
     public FinanceWordService(FinanceWordApi financeWordApi, FinanceWordDao financeWordDao) throws IOException, ParserConfigurationException, SAXException {
         this.financeWordApi = financeWordApi;
         this.financeWordDao = financeWordDao;
-        System.out.println("financeword 수: "+financeWordDao.count());
+//        System.out.println("financeword 수: "+financeWordDao.count());
         //finacneWord DB 초기화
         if(financeWordDao.count() == 0){ //db데이터가 비어있으면 데이터 넣기
             for(FinanceWordDto financeWord : this.financeWordApi.getFinanceWordData()){
