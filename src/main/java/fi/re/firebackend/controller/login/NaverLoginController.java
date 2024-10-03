@@ -2,6 +2,7 @@ package fi.re.firebackend.controller.login;
 
 import fi.re.firebackend.dto.login.NaverTokenDto;
 import fi.re.firebackend.dto.login.TokenResponseDto;
+import fi.re.firebackend.dto.login.UserResponseDto;
 import fi.re.firebackend.jwt.JwtTokenProvider;
 import fi.re.firebackend.jwt.dto.TokenDto;
 import fi.re.firebackend.service.login.NaverLoginService;
@@ -41,9 +42,9 @@ public class NaverLoginController {
         return ResponseEntity.status(HttpStatus.OK).body(tokenResponseDto);
     }
 
-    @GetMapping("/findname")
+    @GetMapping("/finduser")
     public ResponseEntity<?> findName(HttpServletRequest request) {
-        System.out.println("findName");
+        System.out.println("finduser");
 
         // 헤더에서 토큰 가져오기 (Bearer 접두어 제거 및 공백 제거)
         String token = request.getHeader(JwtTokenProvider.httpHeaderKey);
@@ -60,8 +61,8 @@ public class NaverLoginController {
         // 사용자 닉네임 가져오기
         String nickName = service.findName(username);
 
-        // 닉네임 반환
-        return ResponseEntity.status(HttpStatus.OK).body(nickName);
+        // DTO 생성 후 반환
+        UserResponseDto userResponseDTO = new UserResponseDto(username, nickName);
+        return ResponseEntity.status(HttpStatus.OK).body(userResponseDTO);
     }
-
 }
