@@ -1,102 +1,75 @@
 package fi.re.firebackend.controller.finance.savings;
 
-import fi.re.firebackend.dao.finance.savings.DepositV1Dao;
-import fi.re.firebackend.dao.finance.savings.SavingsV1Dao;
-import fi.re.firebackend.dto.finance.savings.SavingsDepositDto;
+import fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto;
 import fi.re.firebackend.service.savings.SavingsDepositService;
+import fi.re.firebackend.util.api.SavingsDepositApi;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
-@RequestMapping("/finance/savingsDeposit") //url 변경
-public class SavingsDepositController {
-    private SavingsV1Dao savingsV1Dao;
-    private DepositV1Dao depositV1Dao;
 
+@RestController
+@RequestMapping("/finance") //url 변경
+public class SavingsDepositController {
+
+    private static final Logger log = LoggerFactory.getLogger(SavingsDepositController.class);
     //SavingsService 연결
     private final SavingsDepositService savingsDepositService;
+    private final SavingsDepositApi savingsDepositApi;
 
     @Autowired
-    public SavingsDepositController(SavingsV1Dao savingsV1Dao, DepositV1Dao depositV1Dao, SavingsDepositService savingsDepositService) {
-        this.savingsV1Dao = savingsV1Dao;
-        this.depositV1Dao = depositV1Dao;
+    public SavingsDepositController(SavingsDepositService savingsDepositService, SavingsDepositApi savingsDepositApi) {
         this.savingsDepositService = savingsDepositService;
+        this.savingsDepositApi = savingsDepositApi;
     }
 
-    @GetMapping("/savings/get")
-    public SavingsDepositDto getSavingsByCode(@RequestParam String finPrdtCd) {
-        System.out.println("finPrdt : "+finPrdtCd);
-        return savingsV1Dao.getSavingsByCode(finPrdtCd);
+    //예적금 상세페이지
+    @GetMapping("/{finPrdtCd}")
+    public ResponseEntity<SavingsDepositWithOptionsDto> getProductDetail(@PathVariable String finPrdtCd) {
+        return ResponseEntity.ok(savingsDepositService.getProductDetail(finPrdtCd));
+    }
+    //Hot3 list
+    @GetMapping("/hot")
+    public ResponseEntity<List<SavingsDepositWithOptionsDto>> getHotProducts(
+            @RequestParam(required = false) String prdtDiv) {
+        return ResponseEntity.ok(savingsDepositService.getHotProducts(prdtDiv));
     }
 
-    @GetMapping("/savings/hot")
-    public List<SavingsDepositDto> getHotSavings() {
-        System.out.println("SavingsController getHotSavings()");
-        return savingsV1Dao.getHotSavings();
-    }
-
-    @GetMapping("/savings/all")
-    public List<SavingsDepositDto> getAllSavings() {
-        System.out.println("SavingsController getAllSavings()");
-        return savingsV1Dao.getAllSavings();
-    }
-
-//    @GetMapping("/savings/pageAll")
-//    public Map<String, Object> getSavings(
-//            @RequestParam(defaultValue = "1") int page,
-//            @RequestParam(defaultValue = "10") int size) {
-//        System.out.println("SavingsController getSavings()");
-//        List<SavingsDepositDto> savings = savingsDepositService.getSavings(page, size);
-//        int totalCount = savingsDepositService.getTotalSavingsCount();
-//
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("savings", savings);
-//        response.put("totalCount", totalCount);
-//        response.put("totalPages", (int) Math.ceil((double) totalCount / size));
-//        response.put("currentPage", page);
-//
-//        return response;
-//    }
-    @GetMapping("/deposit/get")
-    public SavingsDepositDto getDepositByCode(@RequestParam String finPrdtCd) {
-        System.out.println("finPrdtCd : "+finPrdtCd);
-        return depositV1Dao.getDepositByCode(finPrdtCd);
-    }
-
-    @GetMapping("/deposit/hot")
-    public List<SavingsDepositDto> getHotDeposit() {
-        System.out.println("SavingsController getHotDeposit()");
-        return depositV1Dao.getHotDeposit();
-    }
-
-    @GetMapping("/deposit/all")
-    public List<SavingsDepositDto> getAllDeposit() {
-        System.out.println("SavingsController getAllDeposit()");
-        return depositV1Dao.getAllDeposit();
-    }
-
-    @GetMapping("/deposit/pageAll")
-    public Map<String, Object> getDeposit(
+    //페이지네이션(모든 상품 가져오기)
+    @GetMapping("/pageAll")
+    public ResponseEntity<Map<String, Object>> getAllProducts(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        System.out.println("SavingsController getDeposit()");
-        List<SavingsDepositDto> deposit = savingsDepositService.getDeposit(page, size);
-        int totalCount = savingsDepositService.getTotalDepositCount();
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String productType) {
+        return ResponseEntity.ok(savingsDepositService.getAllProducts(page, size, productType));
+    }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("deposit", deposit);
-        response.put("totalCount", totalCount);
-        response.put("totalPages", (int) Math.ceil((double) totalCount / size));
-        response.put("currentPage", page);
 
-        return response;
+    @GetMapping("/initialize")
+    public ResponseEntity initializeData(
+            @RequestParam(required = false) String prdtDiv) {
+        try {
+            savingsDepositApi.scheduledUpdate(); // 외부 API 호출 및 DB 업데이트
+            return ResponseEntity.ok("Data initialization completed successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during data initialization: " + e.getMessage());
+        }
     }
 
 }
+
+
+
+//@GetMapping("/scheduleTest")
+//public ResponseEntity getScheduleTestProducts(
+//        @RequestParam(required = false) String prdtDiv) {
+//    savingsDepositApi.scheduledUpdate();
+//    return ResponseEntity.ok(null);
+//}
+

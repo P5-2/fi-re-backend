@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="81b6b348-47c7-4256-b841-565879dde739" name="Changes" comment="">
+    <list default="true" id="81b6b348-47c7-4256-b841-565879dde739" name="Changes" comment="Fix: options 값을 불러오지 못하는 에러 수정">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -40,9 +40,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
         <option value="MyBatisMapper" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -71,6 +71,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Gradle.Build fi-re-backend.executor": "Run",
+    "Gradle.Download Sources.executor": "Run",
     "Gradle.backend 빌드.executor": "Run",
     "Gradle.fi-re-backend [:test.main()].executor": "Run",
     "Gradle.fi-re-backend 빌드.executor": "Run",
@@ -78,15 +79,17 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Tomcat Server.Tomcat 9.0.91.executor": "Run",
     "Tomcat 서버.Tomcat 9.0.91.executor": "Run",
-    "git-widget-placeholder": "fix/forex",
-    "ignore.virus.scanning.warn.message": "true",
+    "git-widget-placeholder": "feature/savingsDepositList",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Oneul/Desktop/KB_FinalProject/project/fi-re-backend/src/main/resources/mapper",
+    "last_opened_file_path": "C:/realfinal/fi-re-backend",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.1454219",
+    "project.structure.side.proportion": "0.0",
     "settings.editor.selected.configurable": "preferences.lookFeel",
     "vue.rearranger.settings.migration": "true"
   },
@@ -96,18 +99,7 @@
     ]
   }
 }]]></component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Oneul\Desktop\KB_FinalProject\project\fi-re-backend\src\main\resources\mapper" />
-      <recent name="C:\Users\Oneul\Desktop\KB_FinalProject\project\fi-re-backend\src\main\resources\mapper\recommendation" />
-      <recent name="C:\Users\Oneul\Desktop\KB_FinalProject\project\fi-re-backend\src\main\java\fi\re\firebackend\dao\recommendation" />
-    </key>
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="fi.re.firebackend.dto.recommendation" />
-      <recent name="fi.re.firebackend.dao.recommendation" />
-    </key>
-  </component>
-  <component name="RunManager" selected="Tomcat 서버.Tomcat 9.0.91">
+  <component name="RunManager" selected="Tomcat Server.Tomcat 9.0.91">
     <configuration name="test" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="fi.re.firebackend.controller.news.test" />
       <module name="fi-re-backend.main" />
@@ -124,7 +116,7 @@
     <configuration name="Tomcat 9.0.91" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 9.0.91" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true">
       <option name="OPEN_IN_BROWSER" value="false" />
       <option name="COMMON_VM_ARGUMENTS" value="-Dfile.encoding=utf-8" />
-      <option name="UPDATING_POLICY" value="restart-server" />
+      <option name="UPDATING_POLICY" value="redeploy-artifacts" />
       <deployment>
         <artifact name="Gradle : fi.re : fi-re-backend-1.0-SNAPSHOT.war">
           <settings>
@@ -213,15 +205,15 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="Tomcat 서버.Tomcat 9.0.91" />
-      <item itemvalue="애플리케이션.test" />
+      <item itemvalue="Application.test" />
+      <item itemvalue="Tomcat Server.Tomcat 9.0.91" />
     </list>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9f38398b9061-18abd8497189-intellij.indexing.shared.core-IU-241.14494.240" />
-        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-IU-241.14494.240" />
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.17890.1" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.17890.1" />
       </set>
     </attachedChunks>
   </component>
@@ -242,15 +234,87 @@
       <workItem from="1727397416890" duration="2808000" />
       <workItem from="1727405133898" duration="191000" />
       <workItem from="1727482613386" duration="9971000" />
-      <workItem from="1727655248065" duration="33406000" />
-      <workItem from="1727741480518" duration="5489000" />
-      <workItem from="1727827820418" duration="25339000" />
-      <workItem from="1727916024036" duration="1659000" />
-      <workItem from="1727936213726" duration="1964000" />
-      <workItem from="1727942798077" duration="49000" />
-      <workItem from="1727953196217" duration="4000" />
-      <workItem from="1728000479158" duration="8162000" />
+      <workItem from="1727611679064" duration="680000" />
+      <workItem from="1727655885931" duration="43794000" />
+      <workItem from="1727741515905" duration="28086000" />
+      <workItem from="1727828672452" duration="30073000" />
+      <workItem from="1727932952234" duration="21542000" />
+      <workItem from="1727962126853" duration="17102000" />
+      <workItem from="1728000587927" duration="4895000" />
     </task>
+    <task id="LOCAL-00001" summary="Fix: typo error fix">
+      <option name="closed" value="true" />
+      <created>1727674166450</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1727674166450</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Fix: api 호출 로직 수정">
+      <option name="closed" value="true" />
+      <created>1727674192068</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1727674192068</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Chore: 하드코딩된 값 수정">
+      <option name="closed" value="true" />
+      <created>1727674294523</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1727674294523</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Fix: Dto 값 변경과 통합된 Dto 생성">
+      <option name="closed" value="true" />
+      <created>1727844235288</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1727844235288</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Fix: Dto 값 변경과 통합된 Dto 생성">
+      <option name="closed" value="true" />
+      <created>1727844239784</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1727844239784</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Fix: 변경된 값에 따른 로직 변경">
+      <option name="closed" value="true" />
+      <created>1727858464412</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1727858464412</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Fix: 변경된 값에 따른 로직 변경">
+      <option name="closed" value="true" />
+      <created>1727959329823</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1727959329823</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Fix: 변경된 값에 따른 로직 변경">
+      <option name="closed" value="true" />
+      <created>1727959415177</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1727959415177</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Fix: options 값을 불러오지 못하는 에러 수정">
+      <option name="closed" value="true" />
+      <created>1728005620873</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1728005620873</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -266,5 +330,30 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Fix: typo error fix" />
+    <MESSAGE value="Fix: api 호출 로직 수정" />
+    <MESSAGE value="Chore: 하드코딩된 값 수정" />
+    <MESSAGE value="Fix: Dto 값 변경과 통합된 Dto 생성" />
+    <MESSAGE value="Fix: 변경된 값에 따른 로직 변경" />
+    <MESSAGE value="Fix: options 값을 불러오지 못하는 에러 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix: options 값을 불러오지 못하는 에러 수정" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/savings/SavingsDepositDto.java</url>
+          <line>35</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/savings/SavingsDepositService.java</url>
+          <line>17</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
