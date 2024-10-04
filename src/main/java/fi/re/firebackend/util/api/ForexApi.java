@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.time.LocalDate;
@@ -31,8 +32,7 @@ public class ForexApi {
     private static final JSONParser parser = new JSONParser();
     private static final int MAX_REDIRECTS = 5;
 
-    @Value("${forex.url}")
-    private String API_URL;
+    private String API_URL= "https://www.koreaexim.go.kr/site/program/financial/exchangeJSON";
 
     @Value("${forex.api_key}")
     private String AUTH_KEY;
@@ -60,7 +60,7 @@ public class ForexApi {
                     date = date.minusDays(1);
                     log.info("no data at " + date + " minus one day earlier");
                 }
-            } catch (UnknownHostException e){
+            } catch (UnknownHostException e) {
                 log.error("network error: " + e.getMessage());
                 return new ForexWrapper(forexList, date);
             } catch (IOException | ParseException e) {
@@ -84,7 +84,8 @@ public class ForexApi {
         System.setProperty("https.protocols", "TLSv1.1,TLSv1.2");
 
         while (redirectCount < MAX_REDIRECTS) {
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            HttpURLConnection conn = null;
+            conn = (HttpURLConnection) url.openConnection();
             conn.setInstanceFollowRedirects(false); // 수동 리다이렉션 처리
             conn.setRequestMethod("GET");
             conn.setConnectTimeout(10000);
@@ -117,6 +118,8 @@ public class ForexApi {
                             forexList.add(forexDto);
                         }
                     }
+                } catch (SocketException e) {
+                    if (conn != null) conn.disconnect();
                 }
                 return forexList; // 성공적으로 데이터를 받았으면 종료
             } else if (responseCode == HttpURLConnection.HTTP_MOVED_TEMP ||
