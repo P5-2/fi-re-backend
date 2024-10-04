@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="fi.re.firebackend.dao.finance.savings.SavingsDepositDao">
+    <!-- 공통 resultMap -->
+    <resultMap id="savingsDepositWithOptionsResultMap" type="fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto">
+        <association property="savingsDeposit" javaType="fi.re.firebackend.dto.finance.savings.SavingsDepositDto">
+            <id property="finPrdtCd" column="fin_prdt_cd"/>
+            <result property="korCoNm" column="kor_co_nm"/>
+            <result property="finPrdtNm" column="fin_prdt_nm"/>
+            <result property="joinWay" column="join_way"/>
+            <result property="spclCnd" column="spcl_cnd"/>
+            <result property="joinMember" column="join_member"/>
+            <result property="etcNote" column="etc_note"/>
+            <result property="maxLimit" column="max_limit"/>
+            <result property="prdtDiv" column="prdt_div"/>
+        </association>
+        <collection property="options" ofType="fi.re.firebackend.dto.finance.savings.OptionalDto">
+            <result property="intrRateTypeNm" column="intr_rate_type_nm"/>
+            <result property="saveTrm" column="save_trm"/>
+            <result property="intrRate" column="intr_rate"/>
+            <result property="intrRate2" column="intr_rate2"/>
+        </collection>
+    </resultMap>
+
+<!--    예적금 상품 상세 정보 조회-->
+    <select id="getProductDetail" parameterType="string" resultMap="savingsDepositWithOptionsResultMap">
+        SELECT s.*, o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2
+        FROM savingsDeposit s
+                 LEFT JOIN savingsDeposit_options o ON s.fin_prdt_cd = o.fin_prdt_cd
+        WHERE s.fin_prdt_cd = #{finPrdtCd}
+    </select>
+
+
+<!--    예적금 Hot3 리스트 조회-->
+    <select id="getHotProducts" parameterType="string" resultMap="savingsDepositWithOptionsResultMap">
+        SELECT s.*, o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2
+        FROM savingsDeposit s
+                 LEFT JOIN savingsDeposit_options o ON s.fin_prdt_cd = o.fin_prdt_cd
+        WHERE s.prdt_div = #{prdtDiv}
+        ORDER BY s.selectCount DESC
+            LIMIT 3
+    </select>
+
+<!--    전체 예적금 상품 리스트 조회(페이지 네이션 포함)-->
+    <select id="getAllProducts" parameterType="map" resultMap="savingsDepositWithOptionsResultMap">
+        SELECT s.*, o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2
+        FROM savingsDeposit s
+        LEFT JOIN savingsDeposit_options o ON s.fin_prdt_cd = o.fin_prdt_cd
+        <where>
+            <if test="prdtDiv != null and prdtDiv != ''">
+                s.prdt_div = #{prdtDiv}
+            </if>
+        </where>
+        ORDER BY s.fin_prdt_cd
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="getTotalProductCount" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM savingsDeposit
+        <where>
+            <if test="prdtDiv != null and prdtDiv != ''">
+                prdt_div = #{prdtDiv}
+            </if>
+        </where>
+    </select>
+
+    <!-- 상품 정보 업데이트 또는 삽입 -->
+    <insert id="insertProduct" parameterType="fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto">
+        INSERT INTO savingsDeposit (
+            fin_prdt_cd, kor_co_nm, fin_prdt_nm, join_way, spcl_cnd,
+            join_member, etc_note, max_limit, prdt_div
+        ) VALUES (
+                     #{savingsDeposit.finPrdtCd}, #{savingsDeposit.korCoNm}, #{savingsDeposit.finPrdtNm},
+                     #{savingsDeposit.joinWay}, #{savingsDeposit.spclCnd}, #{savingsDeposit.joinMember},
+                     #{savingsDeposit.etcNote}, #{savingsDeposit.maxLimit}, #{savingsDeposit.prdtDiv}
+                 )
+    </insert>
+
+    <insert id="insertProductOptions" parameterType="fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto">
+        INSERT INTO savingsDeposit_options (
+        fin_prdt_cd, intr_rate_type_nm, save_trm, intr_rate, intr_rate2
+        ) VALUES
+        <foreach collection="options" item="option" separator=",">
+            (#{savingsDeposit.finPrdtCd}, #{option.intrRateTypeNm}, #{option.saveTrm},
+            #{option.intrRate}, #{option.intrRate2})
+        </foreach>
+    </insert>
+
+    <update id="updateProduct" parameterType="fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto">
+        UPDATE savingsDeposit
+        SET
+            kor_co_nm = #{savingsDeposit.korCoNm},
+            fin_prdt_nm = #{savingsDeposit.finPrdtNm},
+            join_way = #{savingsDeposit.joinWay},
+            spcl_cnd = #{savingsDeposit.spclCnd},
+            join_member = #{savingsDeposit.joinMember},
+            etc_note = #{savingsDeposit.etcNote},
+            max_limit = #{savingsDeposit.maxLimit},
+            prdt_div = #{savingsDeposit.prdtDiv}
+        WHERE fin_prdt_cd = #{savingsDeposit.finPrdtCd}
+    </update>
+
+    <delete id="deleteProductOptions" parameterType="string">
+        DELETE FROM savingsDeposit_options WHERE fin_prdt_cd = #{finPrdtCd}
+    </delete>
+
+    <insert id="insertUpdatedProductOptions" parameterType="fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto">
+        INSERT INTO savingsDeposit_options (
+        fin_prdt_cd, intr_rate_type_nm, save_trm, intr_rate, intr_rate2
+        ) VALUES
+        <foreach collection="options" item="option" separator=",">
+            (#{savingsDeposit.finPrdtCd}, #{option.intrRateTypeNm}, #{option.saveTrm},
+            #{option.intrRate}, #{option.intrRate2})
+        </foreach>
+    </insert>
+
+    <select id="checkProductExists" parameterType="string" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM savingsDeposit WHERE fin_prdt_cd = #{finPrdtCd}
+    </select>
+
+</mapper>
+
+
+    <!-- 5. 비교함에 상품 추가 -->
+<!--    <insert id="addProductCartStatus">-->
+<!--        INSERT INTO cart (fin_prdt_cd, in_cart)-->
+<!--        VALUES (#{finPrdtCd}, #{inCart})-->
+<!--    </insert>-->
+
+    <!-- 6. 비교함 상품 조회 -->
+<!--    <select id="getProductsInCart" resultMap="productWithOptionsResultMap">-->
+<!--        SELECT p.*, o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2-->
+<!--        FROM financial_products p-->
+<!--                 LEFT JOIN product_options o ON p.fin_prdt_cd = o.fin_prdt_cd-->
+<!--                 JOIN cart cb ON p.fin_prdt_cd = cb.fin_prdt_cd-->
+<!--        WHERE cb.in_cart = 'Y'-->
+<!--    </select>-->
+
+    <!-- 7. 비교함 상태 조회 -->
+<!--    <select id="getProductsCartStatus" resultType="string">-->
+<!--        SELECT in_cart FROM cart-->
+<!--        WHERE fin_prdt_cd = #{finPrdtCd}-->
+<!--    </select>-->
+
