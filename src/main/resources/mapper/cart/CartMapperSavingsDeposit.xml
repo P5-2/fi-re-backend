@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fi.re.firebackend.dao.cart.CartDao">
+
+    <!-- 공통 resultMap -->
+    <resultMap id="savingsDepositWithOptionsResultMap" type="fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto" autoMapping="true">
+        <association property="savingsDeposit" javaType="fi.re.firebackend.dto.finance.savings.SavingsDepositDto">
+            <id property="finPrdtCd" column="fin_prdt_cd"/>
+            <result property="korCoNm" column="kor_co_nm"/>
+            <result property="finPrdtNm" column="fin_prdt_nm"/>
+            <result property="joinWay" column="join_way"/>
+            <result property="spclCnd" column="spcl_cnd"/>
+            <result property="joinMember" column="join_member"/>
+            <result property="etcNote" column="etc_note"/>
+            <result property="maxLimit" column="max_limit"/>
+            <result property="prdtDiv" column="prdt_div"/>
+        </association>
+
+        <collection property="options" ofType="fi.re.firebackend.dto.finance.savings.OptionalDto">
+            <result property="intrRateTypeNm" column="intr_rate_type_nm"/>
+            <result property="saveTrm" column="save_trm"/>
+            <result property="intrRate" column="intr_rate"/>
+            <result property="intrRate2" column="intr_rate2"/>
+        </collection>
+    </resultMap>
+
+    <!-- 특정 사용자에 대한 저축(적금) 상품 정보 조회 -->
+    <select id="getSavingsDepositByUsername" parameterType="String" resultType="fi.re.firebackend.dto.finance.savings.SavingsDepositDto">
+        SELECT
+        s.fin_prdt_cd,
+        s.kor_co_nm,
+        s.fin_prdt_nm,
+        s.join_way,
+        s.spcl_cnd,
+        s.join_member,
+        s.etc_note,
+        s.max_limit,
+        s.prdt_div
+        FROM
+        savingsDeposit s
+        JOIN
+        cart c ON c.finPrdtCd = s.fin_prdt_cd
+        WHERE
+        c.username = #{username}
+        AND c.productType = 'savings'   <!-- 적금 상품만 필터링 -->
+    </select>
+
+    <!-- 특정 사용자에 대한 예금 상품 정보 조회 -->
+    <select id="getDepositByUsername" parameterType="String" resultType="fi.re.firebackend.dto.finance.savings.SavingsDepositDto">
+        SELECT
+        s.fin_prdt_cd,
+        s.kor_co_nm,
+        s.fin_prdt_nm,
+        s.join_way,
+        s.spcl_cnd,
+        s.join_member,
+        s.etc_note,
+        s.max_limit,
+        s.prdt_div
+        FROM
+        savingsDeposit s
+        JOIN
+        cart c ON c.finPrdtCd = s.fin_prdt_cd
+        WHERE
+        c.username = #{username}
+        AND c.productType = 'deposit' <!-- 예금 상품만 필터링 -->
+    </select>
+
+
+
+    <!-- 특정 상품의 옵션 정보 조회 -->
+    <select id="getSavingsDepositOptionsByFinPrdtCd" parameterType="String" resultType="fi.re.firebackend.dto.finance.savings.OptionalDto">
+        SELECT
+            o.intr_rate_type_nm,
+            o.save_trm,
+            o.intr_rate,
+            o.intr_rate2
+        FROM
+            savingsDeposit_options o
+        WHERE
+            o.fin_prdt_cd = #{finPrdtCd}
+    </select>
+
+
+
+    <!-- 즐겨 찾기에 적금 상품 담기 -->
+    <insert id="addSavingsToCart" parameterType="fi.re.firebackend.dto.cart.CartDto">
+        INSERT INTO cart (username, finPrdtCd, productType)
+        VALUES (#{username}, #{finPrdtCd}, 'savings');
+    </insert>
+
+    <!-- 즐겨 찾기에 예금 상품 담기 -->
+    <insert id="addDepositToCart" parameterType="fi.re.firebackend.dto.cart.CartDto">
+        INSERT INTO cart (username, finPrdtCd, productType)
+        VALUES (#{username}, #{finPrdtCd}, 'deposit');
+    </insert>
+
+    <!-- 특정 회원의 즐겨 찾기에서 특정 저축 상품 개별 삭제 -->
+    <delete id="removeSavingsFromCart" parameterType="map">
+        DELETE FROM cart
+        WHERE username = #{username}
+          AND finPrdtCd = #{finPrdtCd}
+          AND productType = 'savings';
+    </delete>
+
+    <!-- 특정 회원의 즐겨 찾기에서 특정 예금 상품 개별 삭제 -->
+    <delete id="removeDepositFromCart" parameterType="map">
+        DELETE FROM cart
+        WHERE username = #{username}
+          AND finPrdtCd = #{finPrdtCd}
+          AND productType = 'deposit';
+    </delete>
+
+    <!-- 사용자가 특정 저축 상품을 즐겨 찾기에 담았는지 확인 -->
+    <select id="isSavingsInUserCart" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM cart
+        WHERE username = #{username}
+          AND finPrdtCd = #{finPrdtCd}
+          AND productType = 'savings';
+    </select>
+
+    <!-- 사용자가 특정 예금 상품을 즐겨 찾기에 담았는지 확인 -->
+    <select id="isDepositInUserCart" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM cart
+        WHERE username = #{username}
+          AND finPrdtCd = #{finPrdtCd}
+          AND productType = 'deposit';
+    </select>
+</mapper>
