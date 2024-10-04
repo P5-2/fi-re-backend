@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -32,7 +33,7 @@ public class GoldController {
     @GetMapping("/info")
     public List<GoldInfo> getGold(
             @RequestParam("endBasDt") String endBasDt,
-            @RequestParam("numOfRows") int numOfRows) {
+            @RequestParam("numOfRows") int numOfRows) throws ParseException {
         return goldService.getGoldInfoInPeriod(endBasDt, numOfRows);
     }
 
