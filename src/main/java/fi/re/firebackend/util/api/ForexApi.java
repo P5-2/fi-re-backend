@@ -49,7 +49,7 @@ public class ForexApi {
             String urlString = UriComponentsBuilder.fromHttpUrl(API_URL)
                     .queryParam("authkey", AUTH_KEY)
                     .queryParam("data", data)
-                    .queryParam("searchdate", date.format(DateTimeFormatter.ofPattern("yyyyMMdd")))
+                    .queryParam("searchdate", date)
                     .build()
                     .toUriString();
 
@@ -126,12 +126,12 @@ public class ForexApi {
                     responseCode == HttpURLConnection.HTTP_MOVED_PERM ||
                     responseCode == HttpURLConnection.HTTP_SEE_OTHER) {
                 // 리다이렉션 처리
-                String newUrl = conn.getHeaderField("Location");
-                if (!newUrl.startsWith("https://www.koreaexim.go.kr")) {
-                    newUrl = "https://www.koreaexim.go.kr" + newUrl;
-                }
-                log.info("리다이렉션 발생. 새로운 URL: " + newUrl);
-                url = new URL(newUrl);
+//                String newUrl = conn.getHeaderField("Location");
+//                if (!newUrl.startsWith("https://www.koreaexim.go.kr")) {
+//                    newUrl = "https://www.koreaexim.go.kr" + newUrl;
+//                }
+//                log.info("리다이렉션 발생. 새로운 URL: " + newUrl);
+//                url = new URL(newUrl);
                 redirectCount++;
             } else {
                 throw new IOException("Invalid response code: " + responseCode);
