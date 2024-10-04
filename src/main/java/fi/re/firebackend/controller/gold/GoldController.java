@@ -42,9 +42,8 @@ public class GoldController {
     @GetMapping("/predict")
     public List<GoldPredicted> getFutureGoldPrice() {
         try {
-            String today = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
             // 미래 금 시세 데이터를 가져옴
-            return goldPredictionService.getFutureGoldPrice(today);
+            return goldPredictionService.getFutureGoldPrice();
         } catch (Exception e) {
             e.printStackTrace();
             return null; // 예측 데이터를 가져오는 중 에러가 발생한 경우 null 반환
@@ -55,10 +54,9 @@ public class GoldController {
     @GetMapping("/test")
     public List<GoldPredicted> test() {
         try {
-            String today = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
             goldService.setDataFromAPI();
             goldPredictionService.goldPredictUpdate();
-            return goldPredictionService.getFutureGoldPrice(today);
+            return goldPredictionService.getFutureGoldPrice();
         } catch (Exception e) {
             e.printStackTrace();
             return null;

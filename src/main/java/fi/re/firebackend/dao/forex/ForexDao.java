@@ -29,6 +29,8 @@ public interface ForexDao {
     // 특정 날짜의 외환 정보를 검색
     List<ForexResponseDto> selectExchangeRateByDate(@Param("searchDate") LocalDate searchDate);
 
+    // DB에 저장된 가장 최근 날짜
+    LocalDate recentDate();
 
     int updateExchangeRate(ForexEntity forexEntity);
 }

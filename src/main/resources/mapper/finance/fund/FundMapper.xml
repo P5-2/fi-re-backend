@@ -7,14 +7,14 @@
     <select id="getFundById"
             parameterType="int"
             resultType="fi.re.firebackend.dto.finance.fund.FundDto">
-        select prdNo, pname, type, rate, dngrGrade, region, bseDt, selectCount, nav
+        select *
         from fund
         where prdNo = #{prdNo}
     </select>
 
     <select id="hot"
             resultType="fi.re.firebackend.dto.finance.fund.FundDto">
-        select prdNo, pname, type, rate, dngrGrade, region, bseDt, selectCount, nav
+        select *
         from fund
         order by selectCount desc
         limit 3
@@ -22,7 +22,7 @@
 
     <select id="all"
             resultType="fi.re.firebackend.dto.finance.fund.FundDto">
-        select prdNo, pname, type, rate, dngrGrade, region, bseDt, selectCount, nav
+        select *
         from fund
     </select>
 

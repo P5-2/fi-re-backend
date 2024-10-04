@@ -1,9 +1,9 @@
 package fi.re.firebackend.controller.recommendation;
 
-import fi.re.firebackend.dto.recommendation.MemberEntity;
-import fi.re.firebackend.dto.recommendation.RcmdMemberDto;
-import fi.re.firebackend.dto.recommendation.filtering.DepositVo;
-import fi.re.firebackend.dto.recommendation.filtering.FundVo;
+import fi.re.firebackend.dto.finance.fund.FundDto;
+import fi.re.firebackend.dto.recommendation.MemberResponseDto;
+import fi.re.firebackend.dto.recommendation.SavingsDepositsResponseDto;
+import fi.re.firebackend.dto.recommendation.vo.FilteredSavingsDepositsVo;
 import fi.re.firebackend.jwt.JwtTokenProvider;
 import fi.re.firebackend.service.recommendation.RecommendationService;
 import org.apache.log4j.Logger;
@@ -30,7 +30,7 @@ public class RecommendationController {
     }
 
     @GetMapping("/deposit")
-    public ResponseEntity<List<DepositVo>> getDepositRecmd(HttpServletRequest request) {
+    public ResponseEntity<SavingsDepositsResponseDto> getDepositRecmd(HttpServletRequest request) {
         // 헤더에서 토큰 가져오기 (Bearer 접두어 제거 및 공백 제거)
         String token = request.getHeader(JwtTokenProvider.httpHeaderKey);
         if (token != null && token.startsWith("Bearer ")) {
@@ -43,17 +43,35 @@ public class RecommendationController {
 
         //jwttokenprovider에서 받은 토큰으로 유저네임 가져오기
         String username = jwtTokenProvider.getUserInfo(token);
-        log.info("username: " + username+"token: " + token);
-        List<DepositVo> recommendedDeposits = recmdService.getRecmdedDeposits(username);
-        log.info("recommendedDeposits : "+recommendedDeposits.toString());
+        SavingsDepositsResponseDto recommendedDeposits = recmdService.getRecmdedDeposits(username);
+        log.info("recommendedDeposits : " + recommendedDeposits.toString());
         return new ResponseEntity<>(recommendedDeposits, HttpStatus.OK);
+    }
+
+    @GetMapping("/savings")
+    public ResponseEntity<SavingsDepositsResponseDto> getSavingsRecmd(HttpServletRequest request) {
+        // 헤더에서 토큰 가져오기 (Bearer 접두어 제거 및 공백 제거)
+        String token = request.getHeader(JwtTokenProvider.httpHeaderKey);
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7).trim();
+        }
+
+        if (token == null || token.isEmpty()) {
+            return null;
+        }
+
+        //jwttokenprovider에서 받은 토큰으로 유저네임 가져오기
+        String username = jwtTokenProvider.getUserInfo(token);
+        SavingsDepositsResponseDto recommendedSavings = recmdService.getRecmdedSavings(username);
+        log.info("recommendedSavings : " + recommendedSavings.toString());
+        return new ResponseEntity<>(recommendedSavings, HttpStatus.OK);
     }
 
 
     // 펀드 상품 추천 URL
     // 필터링 되어 선정된 몇 개의 펀드를 담아 반환
     @GetMapping("/fund")
-    public ResponseEntity<List<FundVo>> getFundRecmd(HttpServletRequest request) {
+    public ResponseEntity<List<FundDto>> getFundRecmd(HttpServletRequest request) {
         // 헤더에서 토큰 가져오기 (Bearer 접두어 제거 및 공백 제거)
         String token = request.getHeader(JwtTokenProvider.httpHeaderKey);
         if (token != null && token.startsWith("Bearer ")) {
@@ -65,16 +83,14 @@ public class RecommendationController {
         }
         //jwttokenprovider에서 받은 토큰으로 유저네임 가져오기
         String username = jwtTokenProvider.getUserInfo(token);
-        log.info("username: " + username+"token: " + token);
-        List<FundVo> recommendedFunds = recmdService.getRecmdedFunds(username);
-        log.info("recommendedFunds: "+recommendedFunds);
+        List<FundDto> recommendedFunds = recmdService.getRecmdedFunds(username);
         return new ResponseEntity<>(recommendedFunds, HttpStatus.OK);
     }
 
 
     //추천 서비스를 이용하는 유저 정보
     @GetMapping("/member")
-    public ResponseEntity<MemberEntity> getMemberInfo(HttpServletRequest request) {
+    public ResponseEntity<MemberResponseDto> getMemberInfo(HttpServletRequest request) {
         // 헤더에서 토큰 가져오기 (Bearer 접두어 제거 및 공백 제거)
         String token = request.getHeader(JwtTokenProvider.httpHeaderKey);
         if (token != null && token.startsWith("Bearer ")) {
@@ -86,7 +102,7 @@ public class RecommendationController {
         }
         //jwttokenprovider에서 받은 토큰으로 유저네임 가져오기
         String username = jwtTokenProvider.getUserInfo(token);
-        MemberEntity memberInfo = recmdService.getMemberInfo(username);
+        MemberResponseDto memberInfo = recmdService.getMemberInfo(username);
         return new ResponseEntity<>(memberInfo, HttpStatus.OK);
     }
 }

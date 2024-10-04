@@ -6,6 +6,7 @@
 <configuration>
     <settings>
         <setting name="mapUnderscoreToCamelCase" value="true" />
+        <setting name="logImpl" value="LOG4J" />
     </settings>
 
     <typeAliases>
@@ -20,6 +21,7 @@
         <mapper resource="mapper/login/Member.xml"/>
         <mapper resource="mapper/recommendation/DepositDao.xml"/>
         <mapper resource="mapper/recommendation/FundDao.xml"/>
+        <mapper resource="mapper/exp/ExpMapper.xml"/>
     </mappers>
 
 </configuration>
