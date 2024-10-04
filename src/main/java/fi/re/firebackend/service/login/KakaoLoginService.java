@@ -30,6 +30,7 @@ public class KakaoLoginService {
     private final MemberDao memberDao;
     private final JwtTokenProvider jwtTokenProvider;
 
+
     public KakaoLoginService( MemberDao memberDao, JwtTokenProvider jwtTokenProvider) {
 
         this.memberDao = memberDao;
@@ -166,6 +167,8 @@ public class KakaoLoginService {
             memberDto.setUsername(id);      // Set username as id
             memberDto.setPlatform("Kakao"); // Set the platform, assuming 'platform' is defined in your context
             memberDto.setNickname(nickname);     // Set nickname as name
+            memberDto.setExp(0);
+
 
             memberDao.save(member);
             memberDao.memberSave(memberDto);

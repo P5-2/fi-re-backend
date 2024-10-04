@@ -46,8 +46,10 @@ public class SurveyController {
         }
 
         // JWT 토큰에서 사용자 정보 추출
+        System.out.println("받아옴");
         String username = jwtTokenProvider.getUserInfo(token);
         surveyService.insertSurveyResult(surveyDto, username);
+        System.out.println(surveyDto);
         return ResponseEntity.ok().body(surveyDto.toString());
     }
 
