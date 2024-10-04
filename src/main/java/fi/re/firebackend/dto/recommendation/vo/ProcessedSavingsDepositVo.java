@@ -36,8 +36,8 @@ public class ProcessedSavingsDepositVo {
         this.maxLimit = entity.getMaxLimit();
         this.intrRateTypeNm = entity.getIntrRateTypeNm();
         this.saveTrm = Integer.parseInt(entity.getSaveTrm());
-        this.intrRate = Double.parseDouble(String.valueOf(entity.getIntrRate()));
-        this.intrRate2 = Double.parseDouble(String.valueOf(entity.getIntrRate2()));
+        this.intrRate = entity.getIntrRate() != null ? Double.parseDouble(entity.getIntrRate()) : 0.0; // 기본값 0.0
+        this.intrRate2 = entity.getIntrRate2() != null ? Double.parseDouble(entity.getIntrRate2()) : 0.0; // 기본값 0.0
         this.selectCount = entity.getSelectCount();
         // 키워드 추출
         this.keywords = extractKeywords(entity);
@@ -76,7 +76,7 @@ public class ProcessedSavingsDepositVo {
         List<String> keywordList = new ArrayList<>();
 
         // 찾고자 하는 키워드 정규 표현식
-        String regex = "(?i)(만기|우대이율|개인|법인|여성|영업점|인터넷|스마트폰|소액)";
+        String regex = "(?i)(만기|우대이율|개인|법인|여성|영업점|인터넷|스마트폰|소액|최초|매주)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(text);
 
