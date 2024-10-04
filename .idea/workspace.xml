@@ -67,6 +67,13 @@
       <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/recommendation/DepositMapper.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/recommendation/FundRcmdDao.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/recommendation/RcmdMemberMapper.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/mybatis-config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mybatis-config.xml" afterDir="false" />
+    <list default="true" id="81b6b348-47c7-4256-b841-565879dde739" name="Changes" comment="Fix: options 값을 불러오지 못하는 에러 수정">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/02adac62-4f61-461a-b10e-6d50e73a60d7.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/02adac62-4f61-461a-b10e-6d50e73a60d7.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/recommendation/RecommendationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/recommendation/RecommendationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/recommendation/vo/ProcessedSavingsDepositVo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/recommendation/vo/ProcessedSavingsDepositVo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/recommendation/RecommendationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/recommendation/RecommendationServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/recommendation/filters/ContentsBasedFilterService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/recommendation/filters/ContentsBasedFilterService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -101,9 +108,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
         <option value="MyBatisMapper" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -132,6 +139,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;Gradle.Build fi-re-backend.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.backend 빌드.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.fi-re-backend [:test.main()].executor&quot;: &quot;Run&quot;,
     &quot;Gradle.fi-re-backend 빌드.executor&quot;: &quot;Run&quot;,
@@ -142,12 +150,17 @@
     &quot;git-widget-placeholder&quot;: &quot;Merging feature/survey&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Oneul/Desktop/KB_FinalProject/project/fi-re-backend/src/main/resources/mapper/recommendation&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;fix/recommend&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/realfinal/fi-re-backend&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.1454219&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
@@ -157,6 +170,7 @@
     ]
   }
 }</component>
+
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Oneul\Desktop\KB_FinalProject\project\fi-re-backend\src\main\resources\mapper\recommendation" />
@@ -184,7 +198,7 @@
     <configuration name="Tomcat 9.0.91" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 9.0.91" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true">
       <option name="OPEN_IN_BROWSER" value="false" />
       <option name="COMMON_VM_ARGUMENTS" value="-Dfile.encoding=utf-8" />
-      <option name="UPDATING_POLICY" value="restart-server" />
+      <option name="UPDATING_POLICY" value="redeploy-artifacts" />
       <deployment>
         <artifact name="Gradle : fi.re : fi-re-backend-1.0-SNAPSHOT.war">
           <settings>
@@ -306,7 +320,89 @@
       <workItem from="1727741480518" duration="5489000" />
       <workItem from="1727828150166" duration="17965000" />
       <workItem from="1728002504155" duration="23404000" />
+      <workItem from="1727611679064" duration="680000" />
+      <workItem from="1727655885931" duration="43794000" />
+      <workItem from="1727741515905" duration="28086000" />
+      <workItem from="1727828672452" duration="30073000" />
+      <workItem from="1727932952234" duration="21542000" />
+      <workItem from="1727962126853" duration="17102000" />
+      <workItem from="1728000587927" duration="4895000" />
+      <workItem from="1728020640626" duration="3556000" />
+
     </task>
+    <task id="LOCAL-00001" summary="Fix: typo error fix">
+      <option name="closed" value="true" />
+      <created>1727674166450</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1727674166450</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Fix: api 호출 로직 수정">
+      <option name="closed" value="true" />
+      <created>1727674192068</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1727674192068</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Chore: 하드코딩된 값 수정">
+      <option name="closed" value="true" />
+      <created>1727674294523</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1727674294523</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Fix: Dto 값 변경과 통합된 Dto 생성">
+      <option name="closed" value="true" />
+      <created>1727844235288</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1727844235288</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Fix: Dto 값 변경과 통합된 Dto 생성">
+      <option name="closed" value="true" />
+      <created>1727844239784</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1727844239784</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Fix: 변경된 값에 따른 로직 변경">
+      <option name="closed" value="true" />
+      <created>1727858464412</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1727858464412</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Fix: 변경된 값에 따른 로직 변경">
+      <option name="closed" value="true" />
+      <created>1727959329823</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1727959329823</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Fix: 변경된 값에 따른 로직 변경">
+      <option name="closed" value="true" />
+      <created>1727959415177</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1727959415177</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Fix: options 값을 불러오지 못하는 에러 수정">
+      <option name="closed" value="true" />
+      <created>1728005620873</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1728005620873</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -322,5 +418,25 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Fix: typo error fix" />
+    <MESSAGE value="Fix: api 호출 로직 수정" />
+    <MESSAGE value="Chore: 하드코딩된 값 수정" />
+    <MESSAGE value="Fix: Dto 값 변경과 통합된 Dto 생성" />
+    <MESSAGE value="Fix: 변경된 값에 따른 로직 변경" />
+    <MESSAGE value="Fix: options 값을 불러오지 못하는 에러 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix: options 값을 불러오지 못하는 에러 수정" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/savings/SavingsDepositService.java</url>
+          <line>17</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

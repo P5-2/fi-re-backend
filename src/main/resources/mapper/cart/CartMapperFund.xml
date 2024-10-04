@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fi.re.firebackend.dao.cart.CartDao">
+    <!-- 특정 회원이 장바구니에 담은 펀드 상품 가져오기 -->
+    <select id="getFundsInCart" parameterType="String" resultType="fi.re.firebackend.dto.finance.fund.FundDto">
+        SELECT f.*
+        FROM cart c
+                 JOIN fund f ON c.prdNo = f.prdNo
+        WHERE c.username = #{username} AND c.productType = 'fund';
+    </select>
+
+
+    <!-- 장바구니에 펀드 상품 추가 -->
+    <insert id="addFundToCart" parameterType="fi.re.firebackend.dto.cart.CartDto">
+        INSERT INTO cart (username, prdNo, productType)
+        VALUES (#{username}, #{prdNo}, 'fund');
+    </insert>
+
+    <!-- 특정 회원의 장바구니에서 특정 펀드 상품 개별 삭제 -->
+    <delete id="removeFundFromCart" parameterType="map">
+        DELETE FROM cart
+        WHERE username = #{username}
+          AND prdNo = #{prdNo}
+          AND productType = 'fund';
+    </delete>
+
+    <!-- 사용자가 특정 펀드를 장바구니에 담았는지 확인 -->
+    <select id="isFundInUserCart" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM cart
+        WHERE username = #{username} AND prdNo = #{prdNo} AND productType = 'fund';
+    </select>
+</mapper>
