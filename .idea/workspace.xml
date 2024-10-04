@@ -7,8 +7,6 @@
     <list default="true" id="81b6b348-47c7-4256-b841-565879dde739" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/forex/ForexServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/forex/ForexServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/util/api/ForexApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/util/api/ForexApi.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,6 +50,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
+  <component name="KubernetesApiProvider"><![CDATA[{
+  "isMigrated": true
+}]]></component>
   <component name="LogFilters">
     <option name="FILTER_ERRORS" value="false" />
     <option name="FILTER_WARNINGS" value="false" />
@@ -81,7 +83,7 @@
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;Tomcat Server.Tomcat 9.0.91.executor&quot;: &quot;Run&quot;,
     &quot;Tomcat 서버.Tomcat 9.0.91.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;fix/forex&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/won&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Oneul/Desktop/KB_FinalProject/project/fi-re-backend/src/main/resources/mapper&quot;,
@@ -223,8 +225,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9f38398b9061-18abd8497189-intellij.indexing.shared.core-IU-241.14494.240" />
-        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-IU-241.14494.240" />
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.17890.1" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.17890.1" />
       </set>
     </attachedChunks>
   </component>
@@ -250,6 +252,7 @@
       <workItem from="1727827820418" duration="25339000" />
       <workItem from="1727916024036" duration="1659000" />
       <workItem from="1727936213726" duration="1336000" />
+      <workItem from="1728000587089" duration="4027000" />
     </task>
     <servers />
   </component>
