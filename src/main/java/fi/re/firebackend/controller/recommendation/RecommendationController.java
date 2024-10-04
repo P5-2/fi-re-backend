@@ -3,7 +3,6 @@ package fi.re.firebackend.controller.recommendation;
 import fi.re.firebackend.dto.finance.fund.FundDto;
 import fi.re.firebackend.dto.recommendation.MemberResponseDto;
 import fi.re.firebackend.dto.recommendation.SavingsDepositsResponseDto;
-import fi.re.firebackend.dto.recommendation.vo.FilteredSavingsDepositsVo;
 import fi.re.firebackend.jwt.JwtTokenProvider;
 import fi.re.firebackend.service.recommendation.RecommendationService;
 import org.apache.log4j.Logger;
