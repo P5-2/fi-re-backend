@@ -12,6 +12,7 @@
         WHERE c.username = #{username} AND c.productType = 'fund';
     </select>
 
+
     <!-- 장바구니에 펀드 상품 추가 -->
     <insert id="addFundToCart" parameterType="fi.re.firebackend.dto.cart.CartDto">
         INSERT INTO cart (username, prdNo, productType)

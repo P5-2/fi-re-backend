@@ -25,7 +25,7 @@ public class ContentsBasedFilterService {
 
         List<ProcessedSavingsDepositVo> filteredDeposits = depositsList.parallelStream()
                 .filter(deposit -> {
-                    boolean withinRange = isWithinAssetRange(member, deposit) || isWithinSalaryRange(member, deposit);
+                    boolean withinRange = isInMemberTerm(member.getKeywordList(), deposit.getKeywords()) && (isWithinAssetRange(member, deposit) || isWithinSalaryRange(member, deposit));
                     if (withinRange) {
                         // 키워드가 일치하는 경우 수집
                         usedKeywords.addAll(deposit.getKeywords());
@@ -63,6 +63,12 @@ public class ContentsBasedFilterService {
         return fundList.stream()
                 .filter(fund -> fund.getDngrGrade() >= convertRiskPointToGrade(member.getRiskPoint()))
                 .collect(Collectors.toList());
+    }
+
+    // 장기인지 단기인지 체크
+    public boolean isInMemberTerm(final List<String> memberKeywords, final List<String> depositKeywords){
+        if(memberKeywords.contains("단기") && depositKeywords.contains("단기")) return true;
+        else return memberKeywords.contains("장기") && depositKeywords.contains("장기");
     }
 
     // 해당하는 키워드가 있는지 매칭
