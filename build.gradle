@@ -105,7 +105,7 @@ dependencies {
     implementation 'org.nd4j:nd4j-api:1.0.0-M1.1'
 
     // Jackson
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
+//    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
 
     //OAuth2 client support
     implementation ("org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}")

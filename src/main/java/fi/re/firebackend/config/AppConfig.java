@@ -1,5 +1,6 @@
 package fi.re.firebackend.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -82,5 +83,11 @@ public class AppConfig {
         // TLS 프로토콜 설정
         System.setProperty("https.protocols", "TLSv1.1,TLSv1.2");
         System.out.println("TLS 프로토콜 설정 완료: TLSv1.1, TLSv1.2");
+    }
+
+    //ObjectMapper 빈 등록
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 }

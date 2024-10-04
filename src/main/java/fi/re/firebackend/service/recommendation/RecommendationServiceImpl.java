@@ -1,10 +1,12 @@
 package fi.re.firebackend.service.recommendation;
 
 import fi.re.firebackend.dao.finance.fund.FundDao;
+import fi.re.firebackend.dao.finance.savings.SavingsDepositDao;
 import fi.re.firebackend.dao.member.MemberDaotwo;
-import fi.re.firebackend.dao.recommendation.DepositRcmdDao;
-import fi.re.firebackend.dao.recommendation.SavingsRcmdDao;
 import fi.re.firebackend.dto.finance.fund.FundDto;
+import fi.re.firebackend.dto.finance.savings.OptionalDto;
+import fi.re.firebackend.dto.finance.savings.SavingsDepositDto;
+import fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto;
 import fi.re.firebackend.dto.member.MemberDto;
 import fi.re.firebackend.dto.recommendation.MemberEntity;
 import fi.re.firebackend.dto.recommendation.MemberResponseDto;
@@ -19,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,23 +33,23 @@ public class RecommendationServiceImpl implements RecommendationService {
     private static final Logger log = Logger.getLogger(RecommendationServiceImpl.class);
     private final ContentsBasedFilterService contentsBasedFilterService;
     private final ItemBasedFilterService itemBasedFilterService;
-    private final DepositRcmdDao depositDao; //적금 레포
-    private final SavingsRcmdDao savingsDao; //예금 레포
     private final FundDao fundDao; // 펀드 레포지토리
     private final MemberDaotwo memberDao;
+    private final SavingsDepositDao savingsDepositDao;
 
-    //적금 추천
+    //예금 추천
     @Override
     public SavingsDepositsResponseDto getRecmdedDeposits(String username) {
         // 1. username으로 유저 정보 가져오기
-        MemberEntity user = convertToEntity(memberDao.findMember(username));
+        MemberEntity user = convertToMemberEntity(memberDao.findMember(username));
         log.info("user: " + user);
 
         // 2. DB에서 모든 적금 조회
-        List<SavingsDepositEntity> allDeposits = depositDao.getAllDeposit();
+        // 모든 적금 데이터를 가져오고 SavingsDepositEntity 리스트로 변환
+        List<SavingsDepositEntity> dividedAlldeposits = getAllSavingsDeposits(400, "D");
 
         // 3. SavingsDepositEntity를 ProcessedSavingsDepositVo로 변환
-        List<ProcessedSavingsDepositVo> depositVos = allDeposits.stream()
+        List<ProcessedSavingsDepositVo> depositVos = dividedAlldeposits.stream()
                 .map(ProcessedSavingsDepositVo::new)
                 .collect(Collectors.toList());
 
@@ -57,12 +60,13 @@ public class RecommendationServiceImpl implements RecommendationService {
         List<String> usedKeywords = result.getUsedKeywords();
 
         // 5. 기준으로 삼을 top3 적금 상품 가져오기
-        List<ProcessedSavingsDepositVo> hotDeposits = depositDao.getHotDeposit().stream()
+        List<SavingsDepositEntity> dividedHotDeposits = getAllSavingsDeposits(20, "D");
+        List<ProcessedSavingsDepositVo> hotDepositVos = dividedHotDeposits.stream()
                 .map(ProcessedSavingsDepositVo::new)
                 .collect(Collectors.toList());
 
         // 6. 아이템 기반 추천
-        List<ProcessedSavingsDepositVo> recommendedDeposits = itemBasedFilterService.filteringSavingsDeposits(hotDeposits, filteredDeposits);
+        List<ProcessedSavingsDepositVo> recommendedDeposits = itemBasedFilterService.filteringSavingsDeposits(hotDepositVos, filteredDeposits);
 
         // 보내기 전에 dto로 옮겨서 보내기
         List<FilteredSavingsDepositsVo> resultDto = convertToFilteredVo(recommendedDeposits).stream()
@@ -72,15 +76,16 @@ public class RecommendationServiceImpl implements RecommendationService {
         return new SavingsDepositsResponseDto(resultDto, usedKeywords);
     }
 
-    //예금추천
+
+    //적금추천
     @Override
     public SavingsDepositsResponseDto getRecmdedSavings(String username) {
         // 1. username으로 유저 정보 가져오기
-        MemberEntity user = convertToEntity(memberDao.findMember(username));
+        MemberEntity user = convertToMemberEntity(memberDao.findMember(username));
         log.info("user: " + user);
 
         // 2. DB에서 모든 예금 조회
-        List<SavingsDepositEntity> allSavings = savingsDao.getAllSavings();
+        List<SavingsDepositEntity> allSavings = getAllSavingsDeposits(400, "S");
 
         // 3. DepositEntity를 ProcessedSavingsDepositVo 변환
         List<ProcessedSavingsDepositVo> savingsVos = allSavings.parallelStream()
@@ -94,13 +99,14 @@ public class RecommendationServiceImpl implements RecommendationService {
         List<String> usedKeywords = result.getUsedKeywords();
 
         // 5. 기준으로 삼을 예금 상품 가져오기
-        List<ProcessedSavingsDepositVo> hotSavings = savingsDao.getHotSavings().stream()
+        List<SavingsDepositEntity> hotSavings = getAllSavingsDeposits(20, "S");
+
+        List<ProcessedSavingsDepositVo> hotSavingVos = hotSavings.stream()
                 .map(ProcessedSavingsDepositVo::new)
-                .distinct()
                 .collect(Collectors.toList());
 
         // 6. 아이템 기반 추천
-        List<ProcessedSavingsDepositVo> recommendedSavings = itemBasedFilterService.filteringSavingsDeposits(hotSavings, filteredSavings);
+        List<ProcessedSavingsDepositVo> recommendedSavings = itemBasedFilterService.filteringSavingsDeposits(hotSavingVos, filteredSavings);
 
         // 보내기 전에 dto로 옮겨서 보내기
         List<FilteredSavingsDepositsVo> resultDto = convertToFilteredVo(recommendedSavings).stream()
@@ -112,7 +118,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Override
     public List<FundDto> getRecmdedFunds(String username) {
         // 1. username으로 유저 정보 가져오기
-        MemberEntity user = convertToEntity(memberDao.findMember(username));
+        MemberEntity user = convertToMemberEntity(memberDao.findMember(username));
 
         // 2. DB에서 모든 펀드 조회
         List<FundDto> allFunds = fundDao.all();
@@ -158,8 +164,8 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
 
-    // MemberDto를 MemberEntity로 변환하는 메서드
-    public static MemberEntity convertToEntity(MemberDto memberDto) {
+    // MemberDto를 MemberEntity로 변환
+    public static MemberEntity convertToMemberEntity(MemberDto memberDto) {
         if (memberDto == null) {
             return null; // null 체크
         }
@@ -180,7 +186,47 @@ public class RecommendationServiceImpl implements RecommendationService {
         return memberEntity;
     }
 
-    // ProcessedSavingsDepositVo 리스트를 FilteredSavingsDepositsVo 리스트로 변환하는 메서드 추가
+    private List<SavingsDepositEntity> getAllSavingsDeposits(int limit, String prdtDiv) {
+        List<SavingsDepositWithOptionsDto> combinedDeposits = savingsDepositDao.getAllProducts(0, limit, prdtDiv);
+        List<SavingsDepositEntity> allDeposits = new ArrayList<>();
+
+        for (SavingsDepositWithOptionsDto dto : combinedDeposits) {
+            SavingsDepositDto savingsDeposit = dto.getSavingsDeposit();
+            List<OptionalDto> options = dto.getOptions();
+
+            // 각 옵션의 인덱스와 함께 SavingsDepositEntity를 생성
+            for (int j = 0; j < options.size(); j++) {
+                OptionalDto option = options.get(j);
+                SavingsDepositEntity depositEntity = new SavingsDepositEntity();
+
+                // SavingsDeposit 정보를 depositEntity에 설정
+                depositEntity.setFinPrdtCd(savingsDeposit.getFinPrdtCd());
+                depositEntity.setKorCoNm(savingsDeposit.getKorCoNm());
+                depositEntity.setFinPrdtNm(savingsDeposit.getFinPrdtNm());
+                depositEntity.setJoinWay(savingsDeposit.getJoinWay());
+                depositEntity.setSpclCnd(savingsDeposit.getSpclCnd());
+                depositEntity.setJoinMember(savingsDeposit.getJoinMember());
+                depositEntity.setEtcNote(savingsDeposit.getEtcNote());
+                depositEntity.setMaxLimit(savingsDeposit.getMaxLimit() != null ? savingsDeposit.getMaxLimit() : 0L);
+
+                // 옵션 정보를 depositEntity에 설정 (인덱스 맞추기)
+                depositEntity.setIntrRateTypeNm(option.getIntrRateTypeNm());
+                depositEntity.setSaveTrm(option.getSaveTrm());
+                depositEntity.setIntrRate(option.getIntrRate());
+                depositEntity.setIntrRate2(option.getIntrRate2());
+
+                // 기본 선택 카운트는 0으로 설정
+                depositEntity.setSelectCount(0);
+
+                // 생성된 SavingsDepositEntity를 리스트에 추가
+                allDeposits.add(depositEntity);
+            }
+        }
+
+        return allDeposits;
+    }
+
+    // ProcessedSavingsDepositVo 리스트를 FilteredSavingsDepositsVo 리스트로 변환
     public List<FilteredSavingsDepositsVo> convertToFilteredVo(List<ProcessedSavingsDepositVo> processedList) {
         return processedList.stream()
                 .distinct()
@@ -188,7 +234,7 @@ public class RecommendationServiceImpl implements RecommendationService {
                 .map(this::convertToFilteredVo).collect(Collectors.toList());
     }
 
-    // 개별 ProcessedSavingsDepositVo를 FilteredSavingsDepositsVo로 변환하는 메서드
+    // 개별 ProcessedSavingsDepositVo를 FilteredSavingsDepositsVo로 변환
     private FilteredSavingsDepositsVo convertToFilteredVo(ProcessedSavingsDepositVo processedVo) {
         FilteredSavingsDepositsVo filteredVo = new FilteredSavingsDepositsVo();
 
