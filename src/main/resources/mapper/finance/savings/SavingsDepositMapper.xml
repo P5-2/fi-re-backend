@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="fi.re.firebackend.dao.finance.savings.SavingsDepositDao">
-
     <!-- 공통 resultMap -->
     <resultMap id="savingsDepositWithOptionsResultMap" type="fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto">
         <association property="savingsDeposit" javaType="fi.re.firebackend.dto.finance.savings.SavingsDepositDto">
@@ -68,48 +69,57 @@
     <!-- 상품 정보 업데이트 또는 삽입 -->
     <insert id="insertProduct" parameterType="fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto">
         INSERT INTO savingsDeposit (
-        fin_prdt_cd, kor_co_nm, fin_prdt_nm, join_way, spcl_cnd,
-        join_member, etc_note, max_limit, prdt_div
+            fin_prdt_cd, kor_co_nm, fin_prdt_nm, join_way, spcl_cnd,
+            join_member, etc_note, max_limit, prdt_div
         ) VALUES (
-        #{savingsDeposit.finPrdtCd}, #{savingsDeposit.korCoNm}, #{savingsDeposit.finPrdtNm}, #{savingsDeposit.joinWay}, #{savingsDeposit.spclCnd},
-        #{savingsDeposit.joinMember}, #{savingsDeposit.etcNote}, #{savingsDeposit.maxLimit}, #{savingsDeposit.prdtDiv}
-        )
+                     #{savingsDeposit.finPrdtCd}, #{savingsDeposit.korCoNm}, #{savingsDeposit.finPrdtNm},
+                     #{savingsDeposit.joinWay}, #{savingsDeposit.spclCnd}, #{savingsDeposit.joinMember},
+                     #{savingsDeposit.etcNote}, #{savingsDeposit.maxLimit}, #{savingsDeposit.prdtDiv}
+                 )
+    </insert>
+
+    <insert id="insertProductOptions" parameterType="fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto">
+        INSERT INTO savingsDeposit_options (
+        fin_prdt_cd, intr_rate_type_nm, save_trm, intr_rate, intr_rate2
+        ) VALUES
         <foreach collection="options" item="option" separator=",">
-            INSERT INTO savingsDeposit_options (
-            fin_prdt_cd, intr_rate_type_nm, save_trm, intr_rate, intr_rate2
-            ) VALUES (
-            #{savingsDeposit.finPrdtCd}, #{option.intrRateTypeNm}, #{option.saveTrm}, #{option.intrRate}, #{option.intrRate2}
-            )
+            (#{savingsDeposit.finPrdtCd}, #{option.intrRateTypeNm}, #{option.saveTrm},
+            #{option.intrRate}, #{option.intrRate2})
         </foreach>
     </insert>
 
     <update id="updateProduct" parameterType="fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto">
         UPDATE savingsDeposit
         SET
-        kor_co_nm = #{savingsDeposit.korCoNm},
-        fin_prdt_nm = #{savingsDeposit.finPrdtNm},
-        join_way = #{savingsDeposit.joinWay},
-        spcl_cnd = #{savingsDeposit.spclCnd},
-        join_member = #{savingsDeposit.joinMember},
-        etc_note = #{savingsDeposit.etcNote},
-        max_limit = #{savingsDeposit.maxLimit},
-        prdt_div = #{savingsDeposit.prdtDiv}
-        WHERE fin_prdt_cd = #{savingsDeposit.finPrdtCd};
-
-        DELETE FROM savingsDeposit_options WHERE fin_prdt_cd = #{savingsDeposit.finPrdtCd};
-
-        <foreach collection="options" item="option" separator=";">
-            INSERT INTO savingsDeposit_options (
-            fin_prdt_cd, intr_rate_type_nm, save_trm, intr_rate, intr_rate2
-            ) VALUES (
-            #{savingsDeposit.finPrdtCd}, #{option.intrRateTypeNm}, #{option.saveTrm}, #{option.intrRate}, #{option.intrRate2}
-            )
-        </foreach>
+            kor_co_nm = #{savingsDeposit.korCoNm},
+            fin_prdt_nm = #{savingsDeposit.finPrdtNm},
+            join_way = #{savingsDeposit.joinWay},
+            spcl_cnd = #{savingsDeposit.spclCnd},
+            join_member = #{savingsDeposit.joinMember},
+            etc_note = #{savingsDeposit.etcNote},
+            max_limit = #{savingsDeposit.maxLimit},
+            prdt_div = #{savingsDeposit.prdtDiv}
+        WHERE fin_prdt_cd = #{savingsDeposit.finPrdtCd}
     </update>
+
+    <delete id="deleteProductOptions" parameterType="string">
+        DELETE FROM savingsDeposit_options WHERE fin_prdt_cd = #{finPrdtCd}
+    </delete>
+
+    <insert id="insertUpdatedProductOptions" parameterType="fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto">
+        INSERT INTO savingsDeposit_options (
+        fin_prdt_cd, intr_rate_type_nm, save_trm, intr_rate, intr_rate2
+        ) VALUES
+        <foreach collection="options" item="option" separator=",">
+            (#{savingsDeposit.finPrdtCd}, #{option.intrRateTypeNm}, #{option.saveTrm},
+            #{option.intrRate}, #{option.intrRate2})
+        </foreach>
+    </insert>
 
     <select id="checkProductExists" parameterType="string" resultType="boolean">
         SELECT COUNT(*) > 0 FROM savingsDeposit WHERE fin_prdt_cd = #{finPrdtCd}
     </select>
+
 </mapper>
 
 

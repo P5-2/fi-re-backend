@@ -8,16 +8,17 @@ import fi.re.firebackend.util.api.SavingsDepositApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.*;
 
 @Service
-@Component
 public class SavingsDepositService {
 
+    private static final Logger log = LoggerFactory.getLogger(SavingsDepositService.class);
     private final SavingsDepositApi savingsDepositApi;
     private final SavingsDepositDao savingsDepositDao;
 
@@ -26,7 +27,6 @@ public class SavingsDepositService {
         this.savingsDepositApi = savingsDepositApi;
         this.savingsDepositDao = savingsDepositDao;
     }
-
 
     //예적금 상세페이지 가져오기
     public SavingsDepositWithOptionsDto getProductDetail(String finPrdtCd) {
@@ -38,7 +38,24 @@ public class SavingsDepositService {
         return savingsDepositDao.getHotProducts(prdtDiv, 3);
     }
 
-    //예적금 전체 페이지 가져오기(페이지 네이션 포함)
+
+
+    @Transactional
+    public void updateDatabase(List<SavingsDepositWithOptionsDto> products) {
+        for (SavingsDepositWithOptionsDto product : products) {
+            if (savingsDepositDao.checkProductExists(product.getSavingsDeposit().getFinPrdtCd())) {
+                savingsDepositDao.updateProduct(product);
+                savingsDepositDao.deleteProductOptions(product.getSavingsDeposit().getFinPrdtCd());
+                savingsDepositDao.insertUpdatedProductOptions(product);
+            } else {
+                savingsDepositDao.insertProduct(product);
+                savingsDepositDao.insertProductOptions(product);
+            }
+        }
+    }
+
+
+    // DB에서 페이지네이션 적용하여 데이터 조회
     public Map<String, Object> getAllProducts(int page, int size, String productType) {
         String prdtDiv = convertProductType(productType);
         int offset = (page - 1) * size;
@@ -61,22 +78,50 @@ public class SavingsDepositService {
         result.put("totalPages", (int) Math.ceil((double) totalCount / size));
         result.put("currentPage", page);
         return result;
-
     }
 
-    //예금,적금 타입 변환
+    // 예금, 적금 타입 변환
     private String convertProductType(String productType) {
         if (productType == null || productType.isEmpty()) {
-            return null;
+            return null; // 모든 상품 조회
         }
-        return productType.equalsIgnoreCase("savings") ? "S" : "D";
+        switch (productType.toLowerCase()) {
+            case "savings":
+                return "S"; // 적금
+            case "deposit":
+                return "D"; // 예금
+            default:
+                throw new IllegalArgumentException("Invalid product type: " + productType);
+        }
     }
 }
 
 
-////private static final List<String> TOP_FIN_GRP_NO = Arrays.asList("020000", "030200", "030300", "050000", "060000");
-//private static final List<String> TOP_FIN_GRP_NO = Arrays.asList("020000", "030300");
-////        String url = "https://finlife.fss.or.kr/finlifeapi/depositProductsSearch.json?auth=775c4db3fbe78868197e38b7919f9212&topFinGrpNo=020000&pageNo=1&options=intr_rate&options=intr_rate2";
-////
-////        String str = restTemplate.getForObject(url, String.class);
-////        System.out.println(str);
+
+
+//주기적인 DB 업데이트를 위함
+//  @Scheduled(cron = "0 0 1 * * ?") // 매일 새벽 1시에 실행
+//public void scheduledUpdate() {
+//    try {
+//        log.info("Starting scheduled update...");
+//        updateAllProducts();
+//        log.info("Scheduled update completed.");
+//    } catch (Exception e) {
+//        log.error("Error during scheduled update: ", e);
+//    }
+//}
+//
+//// insert / update 처리
+//
+//public void updateAllProducts() {
+//    try {
+//        List<SavingsDepositWithOptionsDto> savingsProducts = fetchAllProducts(SAVINGS_API_URL);
+//        List<SavingsDepositWithOptionsDto> depositProducts = fetchAllProducts(DEPOSIT_API_URL);
+//
+//        updateDatabase(savingsProducts);
+//        updateDatabase(depositProducts);
+//    } catch (Exception e) {
+//        log.error("Error updating all products: ", e);
+//        throw new RuntimeException("Failed to update products", e);
+//    }
+//}

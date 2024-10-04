@@ -27,10 +27,18 @@ public interface SavingsDepositDao {
     //예적금 상품이 DB에 update(갱신) or insert(추가) 됐을 경우
     void insertProduct(SavingsDepositWithOptionsDto product);
 
+    void insertProductOptions(SavingsDepositWithOptionsDto product);
+
     void updateProduct(SavingsDepositWithOptionsDto product);
+
+    void deleteProductOptions(String finPrdtCd);
+
+    void insertUpdatedProductOptions(SavingsDepositWithOptionsDto product);
 
     //상품 존재여부 boolean으로 확인
     boolean checkProductExists(@Param("finPrdtCd") String finPrdtCd);
+
+
 
 
 
