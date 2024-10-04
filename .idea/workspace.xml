@@ -5,85 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="81b6b348-47c7-4256-b841-565879dde739" name="Changes" comment="Fix: options 값을 불러오지 못하는 에러 수정">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/02adac62-4f61-461a-b10e-6d50e73a60d7.corrupted.20240926-091507.reason.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/02adac62-4f61-461a-b10e-6d50e73a60d7.corrupted.20240926-091507.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/cart/CartController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/quiz/QuizController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/tip/TipController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/cart/CartDao.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/profile/ProfileDao.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/quiz/QuizDao.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/recommendation/DepositRcmdDao.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/recommendation/SavingsRcmdDao.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/tip/TipDao.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/cart/CartDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/savings/SavingsDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/forex/ForexWrapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/login/UserResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/profile/MemberSavingsEntity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/profile/MemberSavingsRequestDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/profile/MemberSavingsResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/quiz/QuizDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/recommendation/SavingsDepositEntity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/recommendation/SavingsDepositsResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/recommendation/vo/FilteredSavingsDepositsVo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/recommendation/vo/ProcessedSavingsDepositVo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/tip/TipDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/cart/CartService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/quiz/QuizNumber.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/quiz/QuizService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/mapper/cart/CartMapper.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/mapper/profile/ProfileMapper.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/mapper/quiz/QuizMapper.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/mapper/recommendation/DepositRcmdMapper.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/mapper/recommendation/SavingsRcmdMapper.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/mapper/tip/TipMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/config/WebConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/config/WebConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/financeWord/FinanceWordController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/forex/ForexController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/forex/ForexController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/gold/GoldController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/gold/GoldController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/login/KakaoLoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/login/KakaoLoginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/login/NaverLoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/login/NaverLoginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/profile/ProfileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/profile/ProfileController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/recommendation/RecommendationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/recommendation/RecommendationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/finance/fund/FundDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/finance/fund/FundDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/financeWord/FinanceWordDao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/forex/ForexDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/forex/ForexDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/recommendation/DepositDao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/recommendation/FundRcmdDao.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/fund/FundDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/fund/FundDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/financeWord/FinanceWordDto.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/recommendation/DepositEntity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/recommendation/FundEntity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/recommendation/RcmdMemberDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/recommendation/MemberResponseDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/recommendation/filtering/DepositVo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/recommendation/filtering/FundVo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/jwt/JwtTokenProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/jwt/JwtTokenProvider.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/financeWord/FinanceWordService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/forex/ForexService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/forex/ForexService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/forex/ForexServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/forex/ForexServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/gold/GoldPredictionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/gold/GoldPredictionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/gold/GoldPredictionServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/gold/GoldPredictionServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/profile/ProfileService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/profile/ProfileService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/recommendation/RecommendationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/recommendation/RecommendationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/recommendation/RecommendationServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/recommendation/RecommendationServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/recommendation/filters/ContentsBasedFilterService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/recommendation/filters/ContentsBasedFilterService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/recommendation/filters/ItemBasedFilterService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/recommendation/filters/ItemBasedFilterService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/util/api/FinanceWordApi.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/util/api/ForexApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/util/api/ForexApi.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/util/goldPredict/GoldPriceExpectation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/util/goldPredict/GoldPriceExpectation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/member.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/RandomId.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/finance/fund/FundMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/finance/fund/FundMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/financeWord/FinanceWord.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/forex/ForexMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/forex/ForexMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/login/Member.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/login/Member.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/recommendation/DepositMapper.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/recommendation/FundRcmdDao.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/recommendation/RcmdMemberMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -157,7 +79,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Tomcat Server.Tomcat 9.0.91.executor": "Run",
     "Tomcat 서버.Tomcat 9.0.91.executor": "Run",
-    "git-widget-placeholder": "Merging feature/savingsDepositList",
+    "git-widget-placeholder": "feature/savingsDepositList",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/realfinal/fi-re-backend",
     "node.js.detected.package.eslint": "true",
