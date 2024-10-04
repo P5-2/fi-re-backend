@@ -1034,7 +1034,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <schema id="289" parent="1" name="firedb">
-      <LastIntrospectionLocalTimestamp>2024-10-03.15:46:57</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2024-10-04.06:10:50</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <schema id="290" parent="1" name="information_schema">
