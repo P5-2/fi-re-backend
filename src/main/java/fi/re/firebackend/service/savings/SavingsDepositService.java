@@ -29,8 +29,8 @@ public class SavingsDepositService {
     }
 
     //예적금 상세페이지 가져오기
-    public SavingsDepositWithOptionsDto getProductDetail(String finPrdtCd) {
-        return savingsDepositDao.getProductDetail(finPrdtCd);
+    public SavingsDepositWithOptionsDto getProductDetail(String finPrdtCd, String saveTrm) {
+        return savingsDepositDao.getProductDetail(finPrdtCd, saveTrm);
     }
 
     //예적금 Hot 리스트 가져오기

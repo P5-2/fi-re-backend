@@ -7,6 +7,11 @@
     <list default="true" id="81b6b348-47c7-4256-b841-565879dde739" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/finance/savings/SavingsDepositController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/controller/finance/savings/SavingsDepositController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/finance/savings/SavingsDepositDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dao/finance/savings/SavingsDepositDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/dto/finance/savings/SavingsDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/savings/SavingsDepositService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fi/re/firebackend/service/savings/SavingsDepositService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/mapper/finance/savings/SavingsDepositMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/mapper/finance/savings/SavingsDepositMapper.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,10 +55,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="LogFilters">
     <option name="FILTER_ERRORS" value="false" />
     <option name="FILTER_WARNINGS" value="false" />
@@ -253,6 +258,8 @@
       <workItem from="1727916024036" duration="1659000" />
       <workItem from="1727936213726" duration="1336000" />
       <workItem from="1728000587089" duration="4027000" />
+      <workItem from="1728082914269" duration="1357000" />
+      <workItem from="1728129486295" duration="3874000" />
     </task>
     <servers />
   </component>
