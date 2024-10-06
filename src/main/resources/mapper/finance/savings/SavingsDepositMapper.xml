@@ -29,7 +29,7 @@
         SELECT s.*, o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2
         FROM savingsDeposit s
                  LEFT JOIN savingsDeposit_options o ON s.fin_prdt_cd = o.fin_prdt_cd
-        WHERE s.fin_prdt_cd = #{finPrdtCd} and o.save_trm = #{saveTrm}
+        WHERE s.fin_prdt_cd = #{finPrdtCd} and o.save_trm = #{saveTrm} and o.intr_rate_type_nm = #{intrRateTypeNm}
     </select>
 
 
