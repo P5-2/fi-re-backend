@@ -21,6 +21,7 @@
             <result property="saveTrm" column="save_trm"/>
             <result property="intrRate" column="intr_rate"/>
             <result property="intrRate2" column="intr_rate2"/>
+            <result property="rsrvType" column="rsrv_type"/>
         </collection>
     </resultMap>
 

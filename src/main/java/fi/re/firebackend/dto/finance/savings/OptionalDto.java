@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import java.util.Objects;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,6 +23,10 @@ public class OptionalDto {
 
     @JsonProperty("intr_rate2")
     private String intrRate2; //maxRate 최고금리
+
+    @JsonProperty("rsrv_type")
+    private String rsrvType; // S(정액적립식) or F(자유적립식)
+
 }
     //SavingsDepositWithOptionsDto 객체의 리스트로 변환하는 로직 필요
 //    transform_api_response 함수를 통해 구현

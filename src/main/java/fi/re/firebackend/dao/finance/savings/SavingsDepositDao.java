@@ -37,7 +37,7 @@ public interface SavingsDepositDao {
 
     //상품 존재여부 boolean으로 확인
     boolean checkProductExists(@Param("finPrdtCd") String finPrdtCd);
-
+}
 
 
 
@@ -54,6 +54,6 @@ public interface SavingsDepositDao {
 //    //비교함 특정 상품 조회
 //    String getProductsCartStatus(@Param("finPrdtCd") String finPrdtCd);
 
-}
+
 
 
