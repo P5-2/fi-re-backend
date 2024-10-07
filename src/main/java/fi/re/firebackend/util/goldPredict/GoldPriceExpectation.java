@@ -37,7 +37,7 @@ public class GoldPriceExpectation {
     private GoldDao goldDao;
 
     private static final int N_EPOCHS = 300;
-    private static final double LEARNING_RATE = 0.005;
+    private static final double LEARNING_RATE = 0.0005;
     private static final double MOMENTUM = 0.9;
     private static final int SEED = 1000;
     private static final int NUM_FEATURES = 7;
@@ -60,15 +60,12 @@ public class GoldPriceExpectation {
 
         // 학습 및 테스트 데이터 생성
         DataSet trainData = getTrainingData(recentGoldData, trainSize, 1);
-        int testSize = Math.max(0, size - trainSize); // 테스트 데이터 크기 계산
-        DataSet testData = getTestData(goldInfoPerDay, testSize, 1); // 테스트 데이터는 전체에서 가져옴
 
         // 정규화
         NormalizerMinMaxScaler scaler = new NormalizerMinMaxScaler(0, 1);
         scaler.fitLabel(true);
         scaler.fit(trainData);
         scaler.transform(trainData);
-        scaler.transform(testData);
 
         // 모델 구성
         MultiLayerConfiguration config = new NeuralNetConfiguration.Builder()
@@ -86,6 +83,7 @@ public class GoldPriceExpectation {
                         .activation(Activation.SIGMOID)
                         .nIn(100)
                         .nOut(50)
+                        .dropOut(0.2)  // 20% 드롭아웃 추가
                         .build())
                 .layer(2, new RnnOutputLayer.Builder(LossFunctions.LossFunction.MSE)
                         .activation(Activation.IDENTITY)
@@ -109,9 +107,6 @@ public class GoldPriceExpectation {
                 INDArray input3D = currentInput.reshape(1, NUM_FEATURES, 1); // (1, 피처 수, 1)
                 INDArray label3D = currentLabel.reshape(1, NUM_FEATURES, 1); // (1, 피처 수, 1)
 
-                // 손실을 계산
-                double loss = network.score(new DataSet(input3D, label3D));
-
                 // 모델 학습
                 network.fit(new DataSet(input3D, label3D));
             }
@@ -119,16 +114,12 @@ public class GoldPriceExpectation {
         }
         System.out.println();
 
-        // 예측
-        INDArray predicted = network.rnnTimeStep(testData.getFeatures());
+        // 마지막 입력 데이터를 사용하여 365일 예측
+        INDArray lastInput = trainData.getFeatures().get(NDArrayIndex.point(trainData.numExamples() - 1), NDArrayIndex.all(), NDArrayIndex.all());
+        INDArray input3D = lastInput.reshape(1, NUM_FEATURES, 1); // (1, 피처 수, 1)
 
-        // 예측 결과 역변환
-        scaler.revert(trainData);
-        scaler.revert(testData);
-        scaler.revertLabels(predicted);
-
-        // 예측 결과
-        List<GoldPredicted> GoldPredicteds = learnResult(predicted, testSize);
+        // 365일간 예측
+        List<GoldPredicted> futurePredictions = predictFuture(network, scaler, input3D, 365);
 
         // 실행 시간 로깅
         long endTime = System.currentTimeMillis();
@@ -136,8 +127,35 @@ public class GoldPriceExpectation {
         double seconds = (double) estimatedTime / 1000;
         System.out.println("Processing Time: " + seconds);
 
-        return GoldPredicteds;
+        return futurePredictions;
     }
+
+    private List<GoldPredicted> predictFuture(MultiLayerNetwork network, NormalizerMinMaxScaler scaler, INDArray lastInput, int futureDays) throws ParseException {
+        List<GoldPredicted> predictions = new ArrayList<>();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Date today = sdf.parse(sdf.format(Calendar.getInstance().getTime()));
+
+        INDArray input = lastInput;
+        for (int i = 0; i < futureDays; i++) {
+            // 하루치 예측값을 얻음
+            INDArray predicted = network.rnnTimeStep(input);
+            scaler.revertLabels(predicted);  // 예측값을 원래 스케일로 복원
+
+            // 예측 결과를 long 타입으로 변환
+            long predictedValue = (long) predicted.getDouble(0);
+
+            // 날짜를 계산하여 예측 결과 리스트에 추가
+            String predictionDate = sdf.format(DateUtils.addDays(today, i + 1));
+            predictions.add(new GoldPredicted(predictionDate, predictedValue));
+
+            // 다음 입력으로 현재 예측값을 사용
+            input = predicted.reshape(1, NUM_FEATURES, 1);
+        }
+
+        return predictions;
+    }
+
 
     private DataSet getTrainingData(List<GoldInfo> goldInfos, int trainSize, int timeSeriesLength) {
         int numFeatures = NUM_FEATURES; // 사용할 필드 수

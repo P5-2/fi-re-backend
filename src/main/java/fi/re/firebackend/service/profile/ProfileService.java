@@ -3,6 +3,7 @@ package fi.re.firebackend.service.profile;
 import fi.re.firebackend.dao.member.MemberDaotwo;
 import fi.re.firebackend.dao.profile.ProfileDao;
 import fi.re.firebackend.dto.member.MemberDto;
+import fi.re.firebackend.dto.profile.EachTransaction;
 import fi.re.firebackend.dto.profile.MemberSavingsRequestDto;
 import fi.re.firebackend.dto.profile.MemberSavingsEntity;
 import fi.re.firebackend.dto.profile.MemberSavingsResponseDto;
@@ -60,6 +61,16 @@ public class ProfileService {
     public boolean deleteMemberSavings(String username, String finPrdtCd) {
         int rowsAffected = profileDao.deleteMemberSavings(username, finPrdtCd);
         return rowsAffected > 0;  // 삭제 성공 여부 반환
+    }
+
+    public int fetchDepositAmount(String username, String prdNo) {
+        String goalName = profileDao.getMemberSavingsName(username, prdNo); //goal이름가져오기
+        log.info("goalName :"+goalName);
+        EachTransaction result = profileDao.fetchAmount(username, goalName); // goal이름과 계좌번호, 이번달, 총액
+        log.info("result :"+result);
+        int fetchResult = profileDao.fetchMemberSavings(result);
+        log.info("fetchResult :"+fetchResult);
+        return fetchResult;
     }
 }
 
