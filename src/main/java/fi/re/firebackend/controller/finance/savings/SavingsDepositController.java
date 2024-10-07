@@ -33,9 +33,9 @@ public class SavingsDepositController {
     }
 
     //예적금 상세페이지
-    @GetMapping("/{finPrdtCd}")
-    public ResponseEntity<SavingsDepositWithOptionsDto> getProductDetail(@PathVariable String finPrdtCd) {
-        return ResponseEntity.ok(savingsDepositService.getProductDetail(finPrdtCd));
+    @GetMapping("/get")
+    public ResponseEntity<SavingsDepositWithOptionsDto> getProductDetail(String finPrdtCd, String saveTrm, String intrRateTypeNm) {
+        return ResponseEntity.ok(savingsDepositService.getProductDetail(finPrdtCd, saveTrm, intrRateTypeNm));
     }
     //Hot3 list
     @GetMapping("/hot")

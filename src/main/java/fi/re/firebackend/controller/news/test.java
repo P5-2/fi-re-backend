@@ -20,7 +20,7 @@ public class test {
 
         String text = null;
         try {
-            text = URLEncoder.encode("금융", "UTF-8");
+            text = URLEncoder.encode("암호화폐 비트코인  블록체인", "UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("검색어 인코딩 실패",e);
         }

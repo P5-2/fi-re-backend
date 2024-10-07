@@ -5,6 +5,7 @@ import fi.re.firebackend.dto.finance.savings.SavingsDepositDto;
 import fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 public interface SavingsDepositDao {
 
     //예적금 상세페이지
-    SavingsDepositWithOptionsDto getProductDetail(@Param("finPrdtCd") String finPrdtCd);
+    SavingsDepositWithOptionsDto getProductDetail(@Param("finPrdtCd") String finPrdtCd, @Param("saveTrm") String saveTrm, @Param("intrRateTypeNm") String intrRateTypeNm);
 
     //예적금 Hot 리스트
     List<SavingsDepositWithOptionsDto> getHotProducts(@Param("prdtDiv") String prdtDiv, @Param("limit") int limit);

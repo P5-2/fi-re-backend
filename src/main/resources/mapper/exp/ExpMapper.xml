@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fi.re.firebackend.dao.exp.ExpDao">
+    <select id="getDate" parameterType="fi.re.firebackend.dto.exp.VisitedDto" resultType="java.lang.String">
+        SELECT visitDate FROM visitedpage WHERE username = #{username} AND page = #{page};
+    </select>
+
+    <update id="updateExp" parameterType="fi.re.firebackend.dto.exp.ExpDto">
+        UPDATE member
+        SET exp = IFNULL(exp, 0) + #{expAmount} -- exp가 null일 경우 0으로 초기화
+        WHERE username = #{username};
+    </update>
+
+    <update id="updateDate" parameterType="fi.re.firebackend.dto.exp.VisitedDto">
+        UPDATE visitedpage
+        SET visitDate = #{visitDate}
+        WHERE username = #{username} AND page = #{page};
+    </update>
+
+    <!--   방문 테이블에 저장-->
+    <insert id="insertVisited" parameterType="fi.re.firebackend.dto.exp.VisitedDto">
+        INSERT INTO visitedpage (username, page)
+        VALUES (#{username}, #{page})
+    </insert>
+
+    <update id="decreaseExp" parameterType="java.lang.String">
+        UPDATE member
+        SET exp = 0
+        WHERE username = #{username};
+    </update>
+
+    <select id="existsVisited" parameterType="fi.re.firebackend.dto.exp.VisitedDto" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM visitedpage WHERE username = #{username} AND page = #{page};
+    </select>
+
+    <delete id="allDelete" parameterType="java.lang.String">
+        DELETE FROM visitedpage
+        WHERE username = #{username};
+    </delete>
+
+
+</mapper>
