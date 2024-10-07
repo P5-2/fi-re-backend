@@ -13,4 +13,5 @@ public class AllPageListDto {
     private int pageNumber;
     //@JsonProperty("prdt_div")
     private String prdtDiv;
+    
 }
