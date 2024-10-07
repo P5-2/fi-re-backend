@@ -1,5 +1,6 @@
 package fi.re.firebackend.dao.finance.savings;
 
+import fi.re.firebackend.dto.finance.savings.AllPageListDto;
 import fi.re.firebackend.dto.finance.savings.SavingsDepositDto;
 import fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -21,8 +22,11 @@ public interface SavingsDepositDao {
     //예적금 전체 리스트(페이지네이션 포함)
     List<SavingsDepositWithOptionsDto> getAllProducts(@Param("offset") int offset, @Param("limit") int limit, @Param("prdtDiv") String prdtDiv);
 
+    List<SavingsDepositWithOptionsDto> getSavingsDepositPageList(AllPageListDto dto);
+
     //페이지 네이션을 위한 전체 상품 수 조회
-    int getTotalProductCount(@Param("prdtDiv") String prdtDiv);
+    //int getTotalProductCount(@Param("prdtDiv") String prdtDiv);
+    int getTotalProductCount(AllPageListDto dto);
 
     //예적금 상품이 DB에 update(갱신) or insert(추가) 됐을 경우
     void insertProduct(SavingsDepositWithOptionsDto product);

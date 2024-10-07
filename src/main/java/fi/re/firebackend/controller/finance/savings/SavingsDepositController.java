@@ -1,6 +1,7 @@
 package fi.re.firebackend.controller.finance.savings;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import fi.re.firebackend.dto.finance.savings.AllPageListDto;
 import fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto;
 import fi.re.firebackend.service.savings.SavingsDepositService;
 import fi.re.firebackend.util.api.SavingsDepositApi;
@@ -44,12 +45,17 @@ public class SavingsDepositController {
     }
 
     //페이지네이션(모든 상품 가져오기)
-    @GetMapping("/pageAll")
+    /*@GetMapping("/pageAll")
     public ResponseEntity<Map<String, Object>> getAllProducts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(required = false) String productType) throws JsonProcessingException {
         return ResponseEntity.ok(savingsDepositService.getAllProducts(page, size, productType));
+    }*/
+
+    @GetMapping("/pageAll")
+    public Map<String, Object> getAllProducts(AllPageListDto dto) throws JsonProcessingException {
+        return savingsDepositService.getSavingsDepositPageList(dto);
     }
 
 
