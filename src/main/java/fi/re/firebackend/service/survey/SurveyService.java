@@ -51,11 +51,8 @@ public class SurveyService {
             newMember.setGoalAmount(0); // 초기값
             newMember.setKeyword(String.join(", ", surveyDto.getKeywords())); // 프론트에서 받은 데이터
             newMember.setEmail(""); // 비워둠
-
             memberDaotwo.insertMember(newMember); // DAO에서 insertMember 메서드 호출
         }
-
-
 
     }
 

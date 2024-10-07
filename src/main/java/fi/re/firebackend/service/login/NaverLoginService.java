@@ -162,8 +162,10 @@ public class NaverLoginService {
             memberDto.setUsername(id);      // Set username as id
             memberDto.setPlatform("Naver"); // Set the platform, assuming 'platform' is defined in your context
             memberDto.setNickname(name);     // Set nickname as name
+            memberDto.setExp(0);
             memberDao.save(member);
             memberDao.memberSave(memberDto);
+
 
         }
 
