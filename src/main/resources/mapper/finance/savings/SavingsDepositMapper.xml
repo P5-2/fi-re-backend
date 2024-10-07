@@ -21,6 +21,7 @@
             <result property="saveTrm" column="save_trm"/>
             <result property="intrRate" column="intr_rate"/>
             <result property="intrRate2" column="intr_rate2"/>
+            <result property="rsrvType" column="rsrv_type"/>
         </collection>
     </resultMap>
 
@@ -38,33 +39,74 @@
         SELECT s.*, o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2
         FROM savingsDeposit s
                  LEFT JOIN savingsDeposit_options o ON s.fin_prdt_cd = o.fin_prdt_cd
-        WHERE s.prdt_div = #{prdtDiv}
-        ORDER BY s.selectCount DESC
-            LIMIT 3
-    </select>
-
-<!--    전체 예적금 상품 리스트 조회(페이지 네이션 포함)-->
-    <select id="getAllProducts" parameterType="map" resultMap="savingsDepositWithOptionsResultMap">
-        SELECT s.*, o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2
-        FROM savingsDeposit s
-        LEFT JOIN savingsDeposit_options o ON s.fin_prdt_cd = o.fin_prdt_cd
         <where>
             <if test="prdtDiv != null and prdtDiv != ''">
                 s.prdt_div = #{prdtDiv}
             </if>
+            <if test="'12'.equals(o.save_trm)">
+                AND o.save_trm = '12'
+            </if>
+        </where>
+        ORDER BY s.selectCount DESC
+            LIMIT 0, 3
+        </select>
+
+<!--    전체 예적금 상품 리스트 조회(페이지 네이션 포함)-->
+    <select id="getAllProducts" parameterType="map" resultMap="savingsDepositWithOptionsResultMap">
+        SELECT s.fin_prdt_cd, s.kor_co_nm, s.fin_prdt_nm, s.join_way, s.prdt_div, s.selectCount,
+               o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2, o.rsrv_type
+        FROM savingsDeposit s LEFT JOIN savingsDeposit_options o ON s.fin_prdt_cd = o.fin_prdt_cd
+        <where>
+            <if test="prdtDiv != null and prdtDiv != ''">
+                s.prdt_div = #{prdtDiv}
+            </if>
+            <if test="'12'.equals(o.save_trm)">
+                AND o.save_trm = '12'
+            </if>
         </where>
         ORDER BY s.fin_prdt_cd
-        LIMIT #{limit} OFFSET #{offset}
+         LIMIT #{limit} OFFSET #{offset}
     </select>
 
-    <select id="getTotalProductCount" parameterType="string" resultType="int">
+    <select id="getSavingsDepositPageList" parameterType="fi.re.firebackend.dto.finance.savings.AllPageListDto" resultMap="savingsDepositWithOptionsResultMap">
+        SELECT s.fin_prdt_cd, s.kor_co_nm, s.fin_prdt_nm, s.join_way, s.prdt_div, s.selectCount,
+               o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2, o.rsrv_type
+        FROM savingsDeposit s LEFT JOIN savingsDeposit_options o ON s.fin_prdt_cd = o.fin_prdt_cd
+        where o.save_trm = "12"
+        <if test="prdtDiv != null and prdtDiv != ''">
+            <if test="prdtDiv == 'SA'">
+                and s.prdt_div = "S"
+            </if>
+            <if test="prdtDiv == 'DE'">
+                and s.prdt_div = "D"
+            </if>
+        </if>
+        ORDER BY o.intr_rate2 desc
+        limit ${(pageNumber * 5)}, 5
+    </select>
+
+    <select id="getTotalProductCount" parameterType="fi.re.firebackend.dto.finance.savings.AllPageListDto" resultType="int">
+        SELECT COUNT(*)
+        FROM savingsDeposit s LEFT JOIN savingsDeposit_options o ON s.fin_prdt_cd = o.fin_prdt_cd
+        where o.save_trm = "12"
+        <if test="prdtDiv != null and prdtDiv != ''">
+           <if test="prdtDiv == 'SA'">
+                and s.prdt_div = "S"
+            </if>
+            <if test="prdtDiv == 'DE'">
+                and s.prdt_div = "D"
+            </if>
+        </if>
+    </select>
+
+    <!--<select id="getTotalProductCount" parameterType="string" resultType="int">
         SELECT COUNT(*) FROM savingsDeposit
         <where>
             <if test="prdtDiv != null and prdtDiv != ''">
                 prdt_div = #{prdtDiv}
             </if>
         </where>
-    </select>
+    </select>-->
 
     <!-- 상품 정보 업데이트 또는 삽입 -->
     <insert id="insertProduct" parameterType="fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto">
