@@ -34,9 +34,16 @@ public class SavingsDepositController {
 
     //예적금 상세페이지
     @GetMapping("/get")
-    public ResponseEntity<SavingsDepositWithOptionsDto> getProductDetail(String finPrdtCd, String saveTrm, String intrRateTypeNm) {
-        return ResponseEntity.ok(savingsDepositService.getProductDetail(finPrdtCd, saveTrm, intrRateTypeNm));
+    public ResponseEntity<List<SavingsDepositWithOptionsDto>> getProductDetail(String finPrdtCd, String intrRateTypeNm, String rsrvType) {
+        return ResponseEntity.ok(savingsDepositService.getProductDetail(finPrdtCd, intrRateTypeNm, rsrvType));
     }
+
+    @GetMapping("/count")
+    public boolean plusSelectCount(String finPrdtCd){
+        log.info("finance/count plusSelectCount(finPrdtCd): "+finPrdtCd);
+        return savingsDepositService.plusSelectCount(finPrdtCd) > 0;
+    }
+
     //Hot3 list
     @GetMapping("/hot")
     public ResponseEntity<List<SavingsDepositWithOptionsDto>> getHotProducts(

@@ -30,10 +30,19 @@
         SELECT s.*, o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2, o.rsrv_type
         FROM savingsDeposit s
                  LEFT JOIN savingsDeposit_options o ON s.fin_prdt_cd = o.fin_prdt_cd
-        WHERE s.fin_prdt_cd = #{finPrdtCd} and o.save_trm = #{saveTrm} and o.intr_rate_type_nm = #{intrRateTypeNm}
+        WHERE s.fin_prdt_cd = #{finPrdtCd}  and o.intr_rate_type_nm = #{intrRateTypeNm}
+        <if test="rsrvType != null">
+            AND o.rsrv_type = #{rsrvType}
+        </if>
+        ORDER BY length(o.save_trm), o.save_trm
     </select>
 
-
+<!-- selectCount 증가 -->
+    <update id="plusSelectCount" parameterType="String">
+        update savingsDeposit
+        set selectCount = selectCount+1
+        where fin_prdt_cd = #{finPrdtCd}
+    </update>
 <!--    예적금 Hot3 리스트 조회-->
     <select id="getHotProducts" parameterType="string" resultMap="savingsDepositWithOptionsResultMap">
         SELECT s.fin_prdt_cd, s.kor_co_nm, s.fin_prdt_nm, s.join_way, s.prdt_div, s.selectCount,
