@@ -14,6 +14,9 @@ public interface GoldDao {
     // 마지막 저장된 기준일자 가져오기
     String getLastBasDt();
 
+    // 가장 빠른 날짜 가져오기
+    String getFirstBasDt();
+
     // 특정 날짜 범위의 데이터를 가져오기
     List<GoldInfo> getGoldInfoInPeriod(@Param("startDate") String startDate, @Param("endDate") String endDate);
 

@@ -1,5 +1,6 @@
 package fi.re.firebackend.dao.finance.savings;
 
+import fi.re.firebackend.dto.finance.savings.AllPageListDto;
 import fi.re.firebackend.dto.finance.savings.SavingsDepositDto;
 import fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -14,7 +15,10 @@ import java.util.List;
 public interface SavingsDepositDao {
 
     //예적금 상세페이지
-    SavingsDepositWithOptionsDto getProductDetail(@Param("finPrdtCd") String finPrdtCd, @Param("saveTrm") String saveTrm, @Param("intrRateTypeNm") String intrRateTypeNm);
+    List<SavingsDepositWithOptionsDto> getProductDetail(@Param("finPrdtCd") String finPrdtCd, @Param("intrRateTypeNm") String intrRateTypeNm, @Param("rsrvType") String rsrvType);
+
+    //selectCount 증가
+    int plusSelectCount(@Param("finPrdtCd") String finPrdtCd);
 
     //예적금 Hot 리스트
     List<SavingsDepositWithOptionsDto> getHotProducts(@Param("prdtDiv") String prdtDiv, @Param("limit") int limit);
@@ -22,8 +26,11 @@ public interface SavingsDepositDao {
     //예적금 전체 리스트(페이지네이션 포함)
     List<SavingsDepositWithOptionsDto> getAllProducts(@Param("offset") int offset, @Param("limit") int limit, @Param("prdtDiv") String prdtDiv);
 
+    List<SavingsDepositWithOptionsDto> getSavingsDepositPageList(AllPageListDto dto);
+
     //페이지 네이션을 위한 전체 상품 수 조회
-    int getTotalProductCount(@Param("prdtDiv") String prdtDiv);
+    //int getTotalProductCount(@Param("prdtDiv") String prdtDiv);
+    int getTotalProductCount(AllPageListDto dto);
 
     //예적금 상품이 DB에 update(갱신) or insert(추가) 됐을 경우
     void insertProduct(SavingsDepositWithOptionsDto product);
@@ -38,7 +45,7 @@ public interface SavingsDepositDao {
 
     //상품 존재여부 boolean으로 확인
     boolean checkProductExists(@Param("finPrdtCd") String finPrdtCd);
-
+}
 
 
 
@@ -55,6 +62,6 @@ public interface SavingsDepositDao {
 //    //비교함 특정 상품 조회
 //    String getProductsCartStatus(@Param("finPrdtCd") String finPrdtCd);
 
-}
+
 
 

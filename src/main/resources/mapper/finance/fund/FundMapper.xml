@@ -12,6 +12,13 @@
         where prdNo = #{prdNo}
     </select>
 
+    <update id="plusSelectCount"
+            parameterType="int">
+        update fund
+        set selectCount = selectCount+1
+        where prdNo = #{prdNo}
+    </update>
+
     <select id="hot"
             resultType="fi.re.firebackend.dto.finance.fund.FundDto">
         select *

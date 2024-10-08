@@ -1,5 +1,7 @@
 package fi.re.firebackend.controller.finance.savings;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import fi.re.firebackend.dto.finance.savings.AllPageListDto;
 import fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto;
 import fi.re.firebackend.service.savings.SavingsDepositService;
 import fi.re.firebackend.util.api.SavingsDepositApi;
@@ -10,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,9 +34,16 @@ public class SavingsDepositController {
 
     //예적금 상세페이지
     @GetMapping("/get")
-    public ResponseEntity<SavingsDepositWithOptionsDto> getProductDetail(String finPrdtCd, String saveTrm, String intrRateTypeNm) {
-        return ResponseEntity.ok(savingsDepositService.getProductDetail(finPrdtCd, saveTrm, intrRateTypeNm));
+    public ResponseEntity<List<SavingsDepositWithOptionsDto>> getProductDetail(String finPrdtCd, String intrRateTypeNm, String rsrvType) {
+        return ResponseEntity.ok(savingsDepositService.getProductDetail(finPrdtCd, intrRateTypeNm, rsrvType));
     }
+
+    @GetMapping("/count")
+    public boolean plusSelectCount(String finPrdtCd){
+        log.info("finance/count plusSelectCount(finPrdtCd): "+finPrdtCd);
+        return savingsDepositService.plusSelectCount(finPrdtCd) > 0;
+    }
+
     //Hot3 list
     @GetMapping("/hot")
     public ResponseEntity<List<SavingsDepositWithOptionsDto>> getHotProducts(
@@ -42,12 +52,17 @@ public class SavingsDepositController {
     }
 
     //페이지네이션(모든 상품 가져오기)
-    @GetMapping("/pageAll")
+    /*@GetMapping("/pageAll")
     public ResponseEntity<Map<String, Object>> getAllProducts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size,
-            @RequestParam(required = false) String productType) {
+            @RequestParam(required = false) String productType) throws JsonProcessingException {
         return ResponseEntity.ok(savingsDepositService.getAllProducts(page, size, productType));
+    }*/
+
+    @GetMapping("/pageAll")
+    public Map<String, Object> getAllProducts(AllPageListDto dto) throws JsonProcessingException {
+        return savingsDepositService.getSavingsDepositPageList(dto);
     }
 
 
@@ -61,9 +76,7 @@ public class SavingsDepositController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during data initialization: " + e.getMessage());
         }
     }
-
 }
-
 
 
 //@GetMapping("/scheduleTest")

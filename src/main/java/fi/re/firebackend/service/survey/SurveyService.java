@@ -36,6 +36,8 @@ public class SurveyService {
             member.setAge(surveyDto.getAge());
             member.setKeyword(String.join(", ", surveyDto.getKeywords()));
             member.setRiskPoint(surveyDto.getTotalScore());
+            member.setAssets(surveyDto.getAssets());
+            member.setSalary(surveyDto.getSalary());
             surveyDao.updateSurveyResult(member);
         } else {
             // 멤버가 존재하지 않으면 빈 멤버 생성 후 데이터 삽입
@@ -44,7 +46,7 @@ public class SurveyService {
             newMember.setPlatform(""); // 비워둠
             newMember.setNickname(""); // 비워둠
             newMember.setAge(surveyDto.getAge()); // 프론트에서 받은 데이터
-            newMember.setSalary(0); // 초기값
+            newMember.setSalary(surveyDto.getSalary()); // 초기값
             newMember.setAssets(surveyDto.getAssets()); // 초기값
             newMember.setRiskPoint(surveyDto.getTotalScore()); // 초기값
             newMember.setExp(0); // 초기값
