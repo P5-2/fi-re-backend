@@ -103,6 +103,19 @@ dependencies {
     //DL4J
     implementation 'org.deeplearning4j:deeplearning4j-core:1.0.0-M1.1'
     implementation 'org.nd4j:nd4j-api:1.0.0-M1.1'
+
+    // Jackson
+//    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
+
+    //OAuth2 client support
+    implementation ("org.springframework.security:spring-security-oauth2-client:${springSecurityVersion}")
+
+    //gson
+    implementation 'com.google.code.gson:gson:2.9.0'
+
+    //JSON Simple
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+
 }
 
 test {

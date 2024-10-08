@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fi.re.firebackend.dao.profile.ProfileDao">
+    <!-- 회원의 예적금 갯수 조회 -->
+    <select id="countMemberSavings" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM MemberSavings
+        WHERE username = #{username}
+    </select>
+
+    <!-- 회원의 모든 예적금 목록 조회 -->
+    <select id="getAllMemberSavings" parameterType="string"
+            resultType="fi.re.firebackend.dto.profile.MemberSavingsResponseDto">
+        SELECT ms.goalName       as goalName,
+               ms.finPrdtCd      as finPrdtCd,
+               sd.finPrdtNm      as finPrdtNm,
+               sd.intrRateTypeNm as intrRateTypeNm,
+               ms.startDate      as startDate,
+               ms.endDate        as endDate,
+               sd.minRate        as minRate,
+               sd.maxRate        as maxRate,
+               ms.savedAmount    as savedAmount,
+               ms.monthlyDeposit as monthlyDeposit,
+               sd.bankName       as bankName,
+               ms.targetAmount   as targetAmount
+        FROM MemberSavings ms
+                 LEFT JOIN (SELECT finPrdtCd, finPrdtNm, bankName, minRate, maxRate, intrRateTypeNm
+                            FROM savingsv1
+                            UNION ALL
+                            SELECT finPrdtCd, finPrdtNm, bankName, minRate, maxRate, intrRateTypeNm
+                            FROM depositv1) sd ON ms.finPrdtCd = sd.finPrdtCd
+        WHERE ms.username = #{username};
+
+    </select>
+
+    <!-- 예적금 데이터 삽입 -->
+    <insert id="insertMemberSavings" parameterType="fi.re.firebackend.dto.profile.MemberSavingsEntity">
+        INSERT INTO MemberSavings (username, goalName, savedAmount, monthlyDeposit, startDate, endDate, finPrdtCd,
+                                   targetAmount)
+        VALUES (#{username}, #{goalName}, #{savedAmount}, #{monthlyDeposit}, #{startDate}, #{endDate},
+                #{finPrdtCd}, #{targetAmount})
+    </insert>
+
+    <!-- 예적금 데이터 업데이트 -->
+    <update id="updateMemberSavings" parameterType="fi.re.firebackend.dto.profile.MemberSavingsEntity">
+        UPDATE MemberSavings
+        SET goalName       = #{goalName},
+            savedAmount    = #{savedAmount},
+            monthlyDeposit = #{monthlyDeposit},
+            startDate      = #{startDate},
+            endDate        = #{endDate},
+            targetAmount   = #{targetAmount}
+        WHERE username = #{username}
+          AND finPrdtCd = #{finPrdtCd}
+    </update>
+    <!-- username과 prdNo를 기준으로 row 삭제 -->
+    <delete id="deleteMemberSavings" parameterType="map">
+        DELETE
+        FROM MemberSavings
+        WHERE username = #{username}
+          AND finPrdtCd = #{finPrdtCd}
+    </delete>
+
+</mapper>
