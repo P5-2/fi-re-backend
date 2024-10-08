@@ -41,7 +41,7 @@ public class GoldPredictionServiceImpl implements GoldPredictionService {
     // 현재 저장된 예측 값과 예측된 결과의 차이를 구해서 차이 만큼의 미래만 저장
     public void saveGoldPredictData() throws Exception {
         try {
-            String startDate = "20220627"; //DB에 저장된 가장 빠른 날짜 불러와서 사용해도 되지만 성능적인 면에서 fix 해놓음
+            String startDate = "20190627"; //DB에 저장된 가장 빠른 날짜 불러와서 사용해도 되지만 성능적인 면에서 fix 해놓음
             String endDate = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
             int isGoldCategoryEmpty = goldDao.isTableEmpty();
             if(isGoldCategoryEmpty == 0){

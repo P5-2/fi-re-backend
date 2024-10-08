@@ -88,6 +88,7 @@ public class GoldServiceImpl implements GoldService {
                 }
             }
 
+
             // 데이터가 찾아졌다면 저장
             if (dataFound) {
                 // 맨 마지막으로 받아온 데이터가 최신 데이터이면 저장 안함
@@ -104,9 +105,9 @@ public class GoldServiceImpl implements GoldService {
             // 테이블이 비어 있을 경우 OpenAPI로부터 데이터 가져오기
             String today = new SimpleDateFormat("yyyyMMdd").format(new Date());
 
-            // 3년치 데이터 가져오기
+            // 5년치 데이터 가져오기
             try {
-                String response = goldInfoApi.getGoldData("endBasDt", today, 1095);
+                String response = goldInfoApi.getGoldData("endBasDt", today, 1825);
                 goldInfoList = JsonConverter.convertJsonToList(response);
             } catch (IOException e) {
                 throw new RuntimeException(e);

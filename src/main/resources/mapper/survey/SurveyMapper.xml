@@ -9,7 +9,8 @@
             age = #{age},
             riskPoint = #{riskPoint},
             assets = #{assets},
-            keyword = #{keyword}
+            keyword = #{keyword},
+            salary = #{salary}
         WHERE username = #{username};
     </update>
 </mapper>
