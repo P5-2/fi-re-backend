@@ -36,17 +36,13 @@
 
 <!--    예적금 Hot3 리스트 조회-->
     <select id="getHotProducts" parameterType="string" resultMap="savingsDepositWithOptionsResultMap">
-        SELECT s.*, o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2, o.rsrv_type
-        FROM savingsDeposit s
-                 LEFT JOIN savingsDeposit_options o ON s.fin_prdt_cd = o.fin_prdt_cd
-        <where>
-            <if test="prdtDiv != null and prdtDiv != ''">
-                s.prdt_div = #{prdtDiv}
-            </if>
-            <if test="'12'.equals(o.save_trm)">
-                AND o.save_trm = '12'
-            </if>
-        </where>
+        SELECT s.fin_prdt_cd, s.kor_co_nm, s.fin_prdt_nm, s.join_way, s.prdt_div, s.selectCount,
+            o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2, o.rsrv_type
+        FROM savingsDeposit s LEFT JOIN savingsDeposit_options o ON s.fin_prdt_cd = o.fin_prdt_cd
+        where o.save_trm = "12"
+        <if test="prdtDiv != null and prdtDiv != ''">
+            AND s.prdt_div = #{prdtDiv}
+        </if>
         ORDER BY s.selectCount DESC
             LIMIT 0, 3
         </select>
@@ -61,7 +57,7 @@
                 s.prdt_div = #{prdtDiv}
             </if>
             <if test="'12'.equals(o.save_trm)">
-                AND o.save_trm = '12'
+                 o.save_trm = '12'
             </if>
         </where>
         ORDER BY s.fin_prdt_cd
