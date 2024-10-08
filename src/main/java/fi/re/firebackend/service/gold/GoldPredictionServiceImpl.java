@@ -41,7 +41,12 @@ public class GoldPredictionServiceImpl implements GoldPredictionService {
     // 현재 저장된 예측 값과 예측된 결과의 차이를 구해서 차이 만큼의 미래만 저장
     public void saveGoldPredictData() throws Exception {
         try {
-            String startDate = "20220627"; //DB에 저장된 가장 빠른 날짜 불러와서 사용해도 되지만 성능적인 면에서 fix 해놓음
+//            String startDate = "20190627"; //DB에 저장된 가장 빠른 날짜 불러와서 사용해도 되지만 성능적인 면에서 fix 해놓음
+            String startDate = goldDao.getFirstBasDt();
+            if(startDate == null) {
+                log.info("gold table is empty");
+                return;
+            }
             String endDate = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
             int isGoldCategoryEmpty = goldDao.isTableEmpty();
             if(isGoldCategoryEmpty == 0){
@@ -55,12 +60,12 @@ public class GoldPredictionServiceImpl implements GoldPredictionService {
             //Scheduled 메서드가 잘 동작한다면 predictedList size가 크거나 같을 것이므로
             String lastPredictedDate = goldDao.getLastPBasDt() == null ? "00000000" : goldDao.getLastPBasDt();
             System.out.println(lastPredictedDate);
-            // 가장 큰 날짜 이후의 예측 데이터만 필터링
-            List<GoldPredicted> filteredPredictions = predictedList.stream()
-                    .filter(predicted -> predicted.getPBasDt().compareTo(lastPredictedDate) > 0)
-                    .collect(Collectors.toList());
+//            // 가장 큰 날짜 이후의 예측 데이터만 필터링
+//            List<GoldPredicted> filteredPredictions = predictedList.stream()
+//                    .filter(predicted -> predicted.getPBasDt().compareTo(lastPredictedDate) > 0)
+//                    .collect(Collectors.toList());
             //그 차이만큼의 예측치만 db에 저장
-            for (GoldPredicted predicted : filteredPredictions) {
+            for (GoldPredicted predicted : predictedList) {
                 // 해당 날짜가 이미 존재하는지 확인
                 int count = goldDao.checkGoldCategoryExists(Integer.parseInt(predicted.getPBasDt()));
                 // 날짜가 없다면 삽입

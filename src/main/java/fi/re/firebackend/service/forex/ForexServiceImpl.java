@@ -44,7 +44,7 @@ public class ForexServiceImpl implements ForexService {
 
         // 최근 저장 날짜 확인
         LocalDate recentDate = forexDao.recentDate();
-        if (recentDate.isAfter(date)) {
+        if (recentDate != null && recentDate.isAfter(date)) {
             // 파라미터의 날짜가 DB 최신 날짜보다 이전이면 해당 날짜의 환율을 DB에서 가져옴
             return getExchangeRateByDate(date);
         } else {
@@ -119,6 +119,9 @@ public class ForexServiceImpl implements ForexService {
     // 특정 날짜의 외환 정보 검색
     public List<ForexResponseDto> getExchangeRateByDate(LocalDate searchDate) throws IOException, ParseException {
         LocalDate recentDate = forexDao.recentDate();
+        if(searchDate == null){
+            searchDate = LocalDate.now(); //null이면 오늘 날짜 넣음(임시)
+        }
         // 오늘 날짜와 같은 경우 오전인지 확인
         if (searchDate.equals(LocalDate.now())) {
             searchDate = isBeforeNoon(searchDate);

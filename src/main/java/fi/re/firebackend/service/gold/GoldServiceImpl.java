@@ -26,6 +26,8 @@ public class GoldServiceImpl implements GoldService {
     private final GoldDao goldDao;
     private final GoldInfoApi goldInfoApi;
 
+    private final int DAYS = 365*5;
+
     public GoldServiceImpl(GoldDao goldDao, GoldInfoApi goldInfoApi) {
         this.goldDao = goldDao;
         this.goldInfoApi = goldInfoApi;
@@ -104,9 +106,9 @@ public class GoldServiceImpl implements GoldService {
             // 테이블이 비어 있을 경우 OpenAPI로부터 데이터 가져오기
             String today = new SimpleDateFormat("yyyyMMdd").format(new Date());
 
-            // 3년치 데이터 가져오기
+            // 5년치 데이터 가져오기
             try {
-                String response = goldInfoApi.getGoldData("endBasDt", today, 1095);
+                String response = goldInfoApi.getGoldData("endBasDt", today, DAYS);
                 goldInfoList = JsonConverter.convertJsonToList(response);
             } catch (IOException e) {
                 throw new RuntimeException(e);
