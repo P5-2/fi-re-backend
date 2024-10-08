@@ -15,5 +15,6 @@ public class SurveyDto {
     private String age;
     private int assets;
     private List<String> keywords;
+    private int salary;
 
 }

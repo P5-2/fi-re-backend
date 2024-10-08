@@ -187,7 +187,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
     private List<SavingsDepositEntity> getAllSavingsDeposits(int limit, String prdtDiv) {
-        List<SavingsDepositWithOptionsDto> combinedDeposits = savingsDepositDao.getAllProducts(0, limit, prdtDiv);
+        List<SavingsDepositWithOptionsDto> combinedDeposits = savingsDepositDao.getAllProducts(limit, prdtDiv);
         List<SavingsDepositEntity> allDeposits = new ArrayList<>();
 
         for (SavingsDepositWithOptionsDto dto : combinedDeposits) {
