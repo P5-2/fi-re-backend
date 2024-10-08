@@ -33,8 +33,8 @@ import java.util.List;
 @Component
 public class GoldPriceExpectation {
 
-    private static final int N_EPOCHS = 300;
-    private static final double LEARNING_RATE = 0.0005;
+    private static final int N_EPOCHS = 100;
+    private static final double LEARNING_RATE = 0.002;
     private static final double MOMENTUM = 0.9;
     private static final int SEED = 1000;
     private static final int NUM_FEATURES = 7;
@@ -45,7 +45,7 @@ public class GoldPriceExpectation {
         long startTime = System.currentTimeMillis();
 
         // 데이터 분류
-        int size = goldInfoPerDay.size()-TIME_SERIES_LENGTH;
+        int size = goldInfoPerDay.size() - TIME_SERIES_LENGTH;
         int trainSize = (int) (size * 0.7); // 70% 데이터는 훈련용
         int testSize = size - trainSize;
         System.out.println(size + "-" + trainSize + "-" + testSize);
@@ -71,37 +71,14 @@ public class GoldPriceExpectation {
                 .layer(0, new GravesLSTM.Builder()
                         .activation(Activation.TANH)
                         .nIn(NUM_FEATURES)
-                        .nOut(100) // 증가된 노드 수
-                        .dropOut(0.3)
+                        .nOut(10)
                         .build())
-                .layer(1, new GravesLSTM.Builder() // 추가 LSTM 레이어
+                .layer(1, new RnnOutputLayer.Builder(LossFunctions.LossFunction.MSE)
                         .activation(Activation.TANH)
-                        .nIn(100)
-                        .nOut(50)
-                        .dropOut(0.3)
-                        .build())
-                .layer(2, new RnnOutputLayer.Builder(LossFunctions.LossFunction.MSE)
-                        .activation(Activation.IDENTITY)
-                        .nIn(50)
+                        .nIn(10)
                         .nOut(NUM_FEATURES)
-                        .l2(0.0001)
                         .build())
                 .build();
-//                .layer(0, new LSTM.Builder()
-//                        .activation(Activation.TANH)
-//                        .nIn(NUM_FEATURES)
-//                        .nOut(50) // LSTM 노드 수를 50으로 증가
-//                        .dropOut(0.3)
-//                        .build())
-//                .layer(1, new RnnOutputLayer.Builder(LossFunctions.LossFunction.MSE)
-//                        .activation(Activation.IDENTITY)
-//                        .nIn(50)
-//                        .nOut(NUM_FEATURES)
-//                        .dropOut(0.3)
-//                        .build())
-//                .build();
-
-
 
         // 모델 생성 및 학습
         MultiLayerNetwork network = new MultiLayerNetwork(config);
@@ -211,15 +188,15 @@ public class GoldPriceExpectation {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         String todayString = sdf.format(Calendar.getInstance().getTime());
         Date today = sdf.parse(todayString); // String을 Date 객체로 변환
-        long recentAvg = 0;
-        for(int i = goldInfoPerDay.size() - futureDays; i < goldInfoPerDay.size(); i++) {
-            recentAvg += goldInfoPerDay.get(i).getClpr();
+        long adjust = 0;
+        for (int i = goldInfoPerDay.size() - 30; i < goldInfoPerDay.size(); i++) {
+            adjust += goldInfoPerDay.get(i).getClpr();
         }
-        recentAvg /= futureDays;
+        adjust /= 30;
 
         for (int i = 0; i < futureDays; i++) {
             // 예측된 값에 과거 데이터를 더하기
-            long predictedValue = (long) predicted.getDouble(i) + recentAvg; // 예측값 + 과거 값
+            long predictedValue = (long) predicted.getDouble(i) + adjust; // 예측값 + 과거 값
 
             // 예측 날짜 생성
             String predictionDate = sdf.format(DateUtils.addDays(today, i + 1)); // 예측 날짜

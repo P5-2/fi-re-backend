@@ -1,6 +1,6 @@
 package fi.re.firebackend.dao.profile;
 
-import fi.re.firebackend.dto.profile.MemberSavingsRequestDto;
+import fi.re.firebackend.dto.profile.EachTransaction;
 import fi.re.firebackend.dto.profile.MemberSavingsEntity;
 import fi.re.firebackend.dto.profile.MemberSavingsResponseDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -26,4 +26,9 @@ public interface ProfileDao {
 
     // 멤버의 예적금 삭제하기
     int deleteMemberSavings(@Param("username") String username, @Param("finPrdtCd") String finPrdtCd);
+
+    // 이번달, 총 액수
+    String getMemberSavingsName(@Param("username") String username, @Param("prdNo") String prdNo);
+    EachTransaction fetchAmount(@Param("username") String username, @Param("goalName") String goalName);
+    int fetchMemberSavings(EachTransaction eachTransaction);
 }

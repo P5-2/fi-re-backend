@@ -3,6 +3,7 @@ package fi.re.firebackend.controller.profile;
 
 import fi.re.firebackend.dto.member.MemberDto;
 import fi.re.firebackend.dto.news.NewsDto;
+import fi.re.firebackend.dto.profile.EachTransaction;
 import fi.re.firebackend.dto.profile.MemberSavingsRequestDto;
 import fi.re.firebackend.dto.profile.MemberSavingsResponseDto;
 import fi.re.firebackend.jwt.JwtTokenProvider;
@@ -153,5 +154,30 @@ public class ProfileController {
         }
     }
 
+    @GetMapping("/goal/fetch/{prdNo}")
+    public ResponseEntity<String> fetchDepositAmount(@PathVariable("prdNo") String prdNo, HttpServletRequest request) {
+        log.info("fetchDepositAmount");
+        //상품 코드로 받아서 엔티티를 채우기
+        // 토큰 확인
+        String token = request.getHeader(JwtTokenProvider.httpHeaderKey);
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7).trim();
+        }
+
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        // 사용자 정보 추출
+        String username = jwtTokenProvider.getUserInfo(token);
+
+        // 예적금 추가 로직 실행
+        int result = profileService.fetchDepositAmount(username, prdNo);
+        if (result > 0) {
+            return ResponseEntity.ok("Success");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding savings");
+        }
+    }
 
 }
