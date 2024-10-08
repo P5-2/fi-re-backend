@@ -59,18 +59,15 @@
 <!--    전체 예적금 상품 리스트 조회(페이지 네이션 포함)-->
     <select id="getAllProducts" parameterType="map" resultMap="savingsDepositWithOptionsResultMap">
         SELECT s.fin_prdt_cd, s.kor_co_nm, s.fin_prdt_nm, s.join_way, s.prdt_div, s.selectCount,
-               o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2, o.rsrv_type
-        FROM savingsDeposit s LEFT JOIN savingsDeposit_options o ON s.fin_prdt_cd = o.fin_prdt_cd
+        o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2, o.rsrv_type
+        FROM savingsdeposit as s LEFT JOIN savingsdeposit_options as o ON s.fin_prdt_cd = o.fin_prdt_cd
         <where>
             <if test="prdtDiv != null and prdtDiv != ''">
                 s.prdt_div = #{prdtDiv}
             </if>
-            <if test="'12'.equals(o.save_trm)">
-                 o.save_trm = '12'
-            </if>
         </where>
         ORDER BY s.fin_prdt_cd
-         LIMIT #{limit} OFFSET #{offset}
+        LIMIT #{limit}
     </select>
 
     <select id="getSavingsDepositPageList" parameterType="fi.re.firebackend.dto.finance.savings.AllPageListDto" resultMap="savingsDepositWithOptionsResultMap">
