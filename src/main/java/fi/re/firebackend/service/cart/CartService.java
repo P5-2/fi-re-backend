@@ -117,47 +117,4 @@ public class CartService {
                 })
                 .collect(Collectors.toList());
     }
-
-/*    // 특정 사용자에 대한 저축(적금) 상품 및 옵션 정보 조회
-    public List<SavingsDepositWithOptionsDto> getSavingsDepositByUsername(String username) {
-        // 1. 적금 상품 조회
-        List<SavingsDepositDto> savingsDeposits = cartDao.getSavingsDepositByUsername(username);
-
-        // 2. 각 적금 상품의 단리와 복리 옵션 정보를 별도로 조회하고 결합
-        return savingsDeposits.stream().flatMap(savingsDeposit -> {
-            // 단리 옵션 조회
-            List<OptionalDto> singleRateOptions = cartDao.getSavingsDepositOptionsByCartWithType(username, savingsDeposit.getFinPrdtCd(), "단리");
-
-            // 복리 옵션 조회
-            List<OptionalDto> compoundRateOptions = cartDao.getSavingsDepositOptionsByCartWithType(username, savingsDeposit.getFinPrdtCd(), "복리");
-
-            // 단리와 복리 각각을 별도의 SavingsDepositWithOptionsDto로 묶어서 반환
-            return Stream.of(
-                    new SavingsDepositWithOptionsDto(savingsDeposit, singleRateOptions),  // 단리 옵션
-                    new SavingsDepositWithOptionsDto(savingsDeposit, compoundRateOptions)  // 복리 옵션
-            );
-        }).collect(Collectors.toList());
-    }
-
-    // 특정 사용자에 대한 예금 상품 및 옵션 정보 조회
-    public List<SavingsDepositWithOptionsDto> getDepositByUsername(String username) {
-        // 1. 예금 상품 조회
-        List<SavingsDepositDto> deposits = cartDao.getDepositByUsername(username);
-
-        // 2. 각 예금 상품의 단리와 복리 옵션 정보를 별도로 조회하고 결합
-        return deposits.stream().flatMap(deposit -> {
-            // 단리 옵션 조회
-            List<OptionalDto> singleRateOptions = cartDao.getSavingsDepositOptionsByCartWithType(username, deposit.getFinPrdtCd(), "단리");
-
-            // 복리 옵션 조회
-            List<OptionalDto> compoundRateOptions = cartDao.getSavingsDepositOptionsByCartWithType(username, deposit.getFinPrdtCd(), "복리");
-
-            // 단리와 복리 각각을 별도의 SavingsDepositWithOptionsDto로 묶어서 반환
-            return Stream.of(
-                    new SavingsDepositWithOptionsDto(deposit, singleRateOptions),  // 단리 옵션
-                    new SavingsDepositWithOptionsDto(deposit, compoundRateOptions)  // 복리 옵션
-            );
-        }).collect(Collectors.toList());
-    }*/
-
 }
