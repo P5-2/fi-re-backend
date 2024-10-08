@@ -3,10 +3,7 @@ package fi.re.firebackend.controller.finance.fund;
 import fi.re.firebackend.dao.finance.fund.FundDao;
 import fi.re.firebackend.dto.finance.fund.FundDto;
 import fi.re.firebackend.service.fund.FundService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +24,12 @@ public class FundController {
     public FundDto getFund(int prdNo) {
         System.out.println("FundController getFund()");
         return fundDao.getFundById(prdNo);
+    }
+
+    @GetMapping("/count")
+    public boolean plusSelectCount(int prdNo){
+        System.out.println("FundController plusSelectCount() "+ prdNo);
+        return fundDao.plusSelectCount(prdNo) > 0;
     }
 
     @GetMapping("/hot")

@@ -15,7 +15,10 @@ import java.util.List;
 public interface SavingsDepositDao {
 
     //예적금 상세페이지
-    SavingsDepositWithOptionsDto getProductDetail(@Param("finPrdtCd") String finPrdtCd, @Param("saveTrm") String saveTrm, @Param("intrRateTypeNm") String intrRateTypeNm);
+    List<SavingsDepositWithOptionsDto> getProductDetail(@Param("finPrdtCd") String finPrdtCd, @Param("intrRateTypeNm") String intrRateTypeNm, @Param("rsrvType") String rsrvType);
+
+    //selectCount 증가
+    int plusSelectCount(@Param("finPrdtCd") String finPrdtCd);
 
     //예적금 Hot 리스트
     List<SavingsDepositWithOptionsDto> getHotProducts(@Param("prdtDiv") String prdtDiv, @Param("limit") int limit);
