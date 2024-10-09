@@ -76,7 +76,7 @@ public class ProcessedSavingsDepositVo {
         List<String> keywordList = new ArrayList<>();
 
         // 찾고자 하는 키워드 정규 표현식
-        String regex = "(?i)(만기|우대이율|개인|법인|여성|영업점|인터넷|스마트폰|소액|최초|매주)";
+        String regex = "(만기|우대이율|개인|법인|여성|영업점|인터넷|스마트폰|소액|최초|매주|디지털|모바일|복리|단리|차등금리|최소가입금액|납입한도|비대면|최저가입금액|최고우대금리|자동만기연장)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(text);
 
@@ -87,7 +87,6 @@ public class ProcessedSavingsDepositVo {
                 keywordList.add(keyword);
             }
         }
-
         return keywordList;
     }
 
