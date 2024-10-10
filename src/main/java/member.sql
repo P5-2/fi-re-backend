@@ -11,6 +11,7 @@ CREATE TABLE Gold_Category (
                                srtnCd INT PRIMARY KEY, -- 단축코드 (Primary Key)
                                itmsNm VARCHAR(150) NOT NULL -- 종목명
 );
+use firedb;
 CREATE TABLE Gold_Predict_Prices (
                                      PbasDt VARCHAR(20) PRIMARY KEY, -- 기준 일자
                                      dayPrc INT -- 기준 일자 가격
