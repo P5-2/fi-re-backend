@@ -2,6 +2,7 @@ package fi.re.firebackend.service.gold;
 
 import fi.re.firebackend.dao.gold.GoldDao;
 import fi.re.firebackend.dto.gold.GoldInfo;
+import fi.re.firebackend.dto.gold.GoldRate;
 import fi.re.firebackend.util.api.GoldInfoApi;
 import fi.re.firebackend.util.api.JsonConverter;
 import fi.re.firebackend.util.dateUtil.DateUtil;
@@ -142,5 +143,12 @@ public class GoldServiceImpl implements GoldService {
         cal.add(Calendar.DATE, -days);
         String startBasDt = new SimpleDateFormat("yyyyMMdd").format(cal.getTime());
         return goldDao.getGoldInfoInPeriod(startBasDt, endBasDt);
+    }
+
+    @Override
+    public double rate(){
+        GoldRate goldRate = goldDao.rate();
+        double rate = (double) goldRate.getDayPrc() / goldRate.getClpr();
+        return Math.round(rate * 100) / 100.0;
     }
 }
