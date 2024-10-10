@@ -40,8 +40,8 @@ public class ContentsBasedFilterService {
     // 자산 범위 체크
     private boolean isWithinAssetRange(MemberEntity member, ProcessedSavingsDepositVo deposit) {
         if (deposit.getIntrRateTypeNm().equals("예금")) {
-            // 예금일 경우, 회원의 자산이 maxLimit보다 크거나 같을 때 true
-            return deposit.getMaxLimit() > 0 && member.getAssets() >= deposit.getMaxLimit();
+//            return deposit.getMaxLimit() > 0;
+            return true;
         } else if (deposit.getIntrRateTypeNm().equals("적금")) {
             return true; // 적금일 경우 항상 true
         }
@@ -52,7 +52,7 @@ public class ContentsBasedFilterService {
     // 급여 범위 체크(급여의 10~30% 수준인지)
     private boolean isWithinSalaryRange(MemberEntity member, ProcessedSavingsDepositVo deposit) {
         if (deposit.getIntrRateTypeNm().equals("적금") && (Double) deposit.getMaxLimit() != null) { // 적금일 경우
-            double salaryPercent = member.getAssets() * 0.4;
+            double salaryPercent = (member.getAssets() * 10000) * 0.1 ;
             return deposit.getMaxLimit() >= salaryPercent;
         }
         return true;
