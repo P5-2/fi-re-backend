@@ -10,10 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-
 @RestController
 @RequestMapping("/cart")
 public class CartController {
+
     @Autowired
     private CartService cartService;
 
@@ -48,79 +48,86 @@ public class CartController {
         }
     }
 
-
-
-    // 장바구니에 저축 상품 추가
+    // 장바구니에 저축 상품 추가 (단리/복리 옵션 포함)
     @PostMapping("/savings")
     public ResponseEntity<String> addSavingsToCart(@RequestBody CartDto cart) {
         cartService.addSavingsToCart(cart);
         return ResponseEntity.ok("Savings product added to cart successfully");
     }
 
-    // 장바구니에서 특정 저축 상품 개별 삭제
-    @DeleteMapping("/savings/{username}/{finPrdtCd}")
-    public ResponseEntity<String> removeSavingsFromCart(@PathVariable String username, @PathVariable String finPrdtCd) {
-        cartService.removeSavingsFromCart(username, finPrdtCd);
+    // 장바구니에서 특정 저축 상품 개별 삭제 (단리/복리 옵션 포함)
+    @DeleteMapping("/savings/{username}/{finPrdtCd}/{intrRateTypeNm}")
+    public ResponseEntity<String> removeSavingsFromCart(
+            @PathVariable String username,
+            @PathVariable String finPrdtCd,
+            @PathVariable String intrRateTypeNm) {
+        cartService.removeSavingsFromCart(username, finPrdtCd, intrRateTypeNm);
         return ResponseEntity.ok("Savings product removed from cart successfully");
     }
 
-    // 사용자가 장바구니에 저축 상품을 추가했는지 확인
-    @GetMapping("/savings/{username}/{finPrdtCd}")
-    public ResponseEntity<Map<String, Boolean>> checkSavingsInCart(@PathVariable String username, @PathVariable String finPrdtCd) {
+    // 사용자가 장바구니에 저축 상품을 추가했는지 확인 (단리/복리 옵션 포함)
+    @GetMapping("/savings/{username}/{finPrdtCd}/{intrRateTypeNm}")
+    public ResponseEntity<Map<String, Boolean>> checkSavingsInCart(
+            @PathVariable String username,
+            @PathVariable String finPrdtCd,
+            @PathVariable String intrRateTypeNm) {
         try {
-            boolean isInCart = cartService.isSavingsInUserCart(username, finPrdtCd);
+            boolean isInCart = cartService.isSavingsInUserCart(username, finPrdtCd, intrRateTypeNm);
             return ResponseEntity.ok(Collections.singletonMap("isInCart", isInCart));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", true));
         }
     }
 
-    // 장바구니에 예금 상품 추가
+    // 장바구니에 예금 상품 추가 (단리/복리 옵션 포함)
     @PostMapping("/deposits")
     public ResponseEntity<String> addDepositToCart(@RequestBody CartDto cart) {
         cartService.addDepositToCart(cart);
         return ResponseEntity.ok("Deposit product added to cart successfully");
     }
 
-    // 장바구니에서 특정 예금 상품 개별 삭제
-    @DeleteMapping("/deposits/{username}/{finPrdtCd}")
-    public ResponseEntity<String> removeDepositFromCart(@PathVariable String username, @PathVariable String finPrdtCd) {
-        cartService.removeDepositFromCart(username, finPrdtCd);
+    // 장바구니에서 특정 예금 상품 개별 삭제 (단리/복리 옵션 포함)
+    @DeleteMapping("/deposits/{username}/{finPrdtCd}/{intrRateTypeNm}")
+    public ResponseEntity<String> removeDepositFromCart(
+            @PathVariable String username,
+            @PathVariable String finPrdtCd,
+            @PathVariable String intrRateTypeNm) {
+        cartService.removeDepositFromCart(username, finPrdtCd, intrRateTypeNm);
         return ResponseEntity.ok("Deposit product removed from cart successfully");
     }
 
-    // 사용자가 장바구니에 예금 상품을 추가했는지 확인
-    @GetMapping("/deposits/{username}/{finPrdtCd}")
-    public ResponseEntity<Map<String, Boolean>> checkDepositInCart(@PathVariable String username, @PathVariable String finPrdtCd) {
+    // 사용자가 장바구니에 예금 상품을 추가했는지 확인 (단리/복리 옵션 포함)
+    @GetMapping("/deposits/{username}/{finPrdtCd}/{intrRateTypeNm}")
+    public ResponseEntity<Map<String, Boolean>> checkDepositInCart(
+            @PathVariable String username,
+            @PathVariable String finPrdtCd,
+            @PathVariable String intrRateTypeNm) {
         try {
-            boolean isInCart = cartService.isDepositInUserCart(username, finPrdtCd);
+            boolean isInCart = cartService.isDepositInUserCart(username, finPrdtCd, intrRateTypeNm);
             return ResponseEntity.ok(Collections.singletonMap("isInCart", isInCart));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", true));
         }
     }
 
-
-    // 즐겨 찾기에 포함된 특정 사용자의 적금 상품 조회 API
+    // 특정 사용자의 적금 상품 및 옵션 조회
     @GetMapping("/savings/{username}")
     public List<SavingsDepositWithOptionsDto> getSavingsDepositByUsername(@PathVariable String username) {
         return cartService.getSavingsDepositByUsername(username);
     }
 
-    // 즐겨 찾기에 포함된 특정 사용자의 예금 상품 조회 API
+    // 특정 사용자의 예금 상품 및 옵션 조회
     @GetMapping("/deposit/{username}")
     public List<SavingsDepositWithOptionsDto> getDepositByUsername(@PathVariable String username) {
         return cartService.getDepositByUsername(username);
     }
 
-    // 즐겨 찾기에 포함된 특정 사용자의 적금 및 예금 상품 모두 조회하는 API
+    // 특정 사용자의 적금 및 예금 상품 모두 조회
     @GetMapping("/savings-deposit/{username}")
     public Map<String, List<SavingsDepositWithOptionsDto>> getSavingsAndDepositByUsername(@PathVariable String username) {
-        // 적금 및 예금 상품 정보를 가져옴
         List<SavingsDepositWithOptionsDto> savingsDeposits = cartService.getSavingsDepositByUsername(username);
         List<SavingsDepositWithOptionsDto> deposits = cartService.getDepositByUsername(username);
 
-        // 결과를 맵으로 묶어 반환
         Map<String, List<SavingsDepositWithOptionsDto>> result = new HashMap<>();
         result.put("savings", savingsDeposits);
         result.put("deposits", deposits);

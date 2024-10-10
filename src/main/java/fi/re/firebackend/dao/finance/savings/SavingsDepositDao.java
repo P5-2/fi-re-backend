@@ -1,11 +1,9 @@
 package fi.re.firebackend.dao.finance.savings;
 
 import fi.re.firebackend.dto.finance.savings.AllPageListDto;
-import fi.re.firebackend.dto.finance.savings.SavingsDepositDto;
 import fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,7 +22,7 @@ public interface SavingsDepositDao {
     List<SavingsDepositWithOptionsDto> getHotProducts(@Param("prdtDiv") String prdtDiv, @Param("limit") int limit);
 
     //예적금 전체 리스트(페이지네이션 포함)
-    List<SavingsDepositWithOptionsDto> getAllProducts(@Param("offset") int offset, @Param("limit") int limit, @Param("prdtDiv") String prdtDiv);
+    List<SavingsDepositWithOptionsDto> getAllProducts(@Param("limit") int limit, @Param("prdtDiv") String prdtDiv);
 
     List<SavingsDepositWithOptionsDto> getSavingsDepositPageList(AllPageListDto dto);
 
