@@ -85,4 +85,11 @@
         where pBasDt  &lt;= #{pBasDt}
     </delete>
 
+    <select id="rate"
+            resultType="fi.re.firebackend.dto.gold.GoldRate">
+        select BasDt, clpr, PbasDt, dayPrc
+        from gold_trading, gold_predict_prices
+        order by BasDt desc, PbasDt desc
+        limit 1
+    </select>
 </mapper>
