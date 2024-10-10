@@ -56,7 +56,6 @@ public class SavingsDepositApi {
     }
 
     // 주기적인 DB 업데이트를 위한 스케줄링 메서드
-//    @Scheduled(cron = "0 0 3 * * ?") // 매일 새벽 3시에 실행
     public void scheduledUpdate() {
         try {
             log.info("Starting scheduled update...");
@@ -69,7 +68,6 @@ public class SavingsDepositApi {
 
 
     // insert / update 처리
-
     public void updateAllProducts() {
         try {
             List<SavingsDepositWithOptionsDto> savingsProducts = fetchAllProducts(SAVINGS_API_URL);
