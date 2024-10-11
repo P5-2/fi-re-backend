@@ -51,15 +51,6 @@ public class SavingsDepositController {
         return ResponseEntity.ok(savingsDepositService.getHotProducts(prdtDiv));
     }
 
-    //페이지네이션(모든 상품 가져오기)
-    /*@GetMapping("/pageAll")
-    public ResponseEntity<Map<String, Object>> getAllProducts(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size,
-            @RequestParam(required = false) String productType) throws JsonProcessingException {
-        return ResponseEntity.ok(savingsDepositService.getAllProducts(page, size, productType));
-    }*/
-
     @GetMapping("/pageAll")
     public Map<String, Object> getAllProducts(AllPageListDto dto) throws JsonProcessingException {
         return savingsDepositService.getSavingsDepositPageList(dto);
@@ -77,12 +68,4 @@ public class SavingsDepositController {
         }
     }
 }
-
-
-//@GetMapping("/scheduleTest")
-//public ResponseEntity getScheduleTestProducts(
-//        @RequestParam(required = false) String prdtDiv) {
-//    savingsDepositApi.scheduledUpdate();
-//    return ResponseEntity.ok(null);
-//}
 
