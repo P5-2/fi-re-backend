@@ -100,16 +100,7 @@
             </if>
         </if>
     </select>
-
-    <!--<select id="getTotalProductCount" parameterType="string" resultType="int">
-        SELECT COUNT(*) FROM savingsDeposit
-        <where>
-            <if test="prdtDiv != null and prdtDiv != ''">
-                prdt_div = #{prdtDiv}
-            </if>
-        </where>
-    </select>-->
-
+    
     <!-- 상품 정보 업데이트 또는 삽입 -->
     <insert id="insertProduct" parameterType="fi.re.firebackend.dto.finance.savings.SavingsDepositWithOptionsDto">
         INSERT INTO savingsDeposit (

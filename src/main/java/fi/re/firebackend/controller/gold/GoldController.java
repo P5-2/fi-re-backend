@@ -63,4 +63,9 @@ public class GoldController {
         }
     }
 
+    //6개월 뒤 금 이율 계산
+    @GetMapping("/rate")
+    public double rate(){
+        return goldService.rate();
+    }
 }

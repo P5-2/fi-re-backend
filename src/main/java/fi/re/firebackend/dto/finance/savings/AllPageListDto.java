@@ -9,9 +9,7 @@ import lombok.*;
 @Setter @Getter
 @ToString
 public class AllPageListDto {
-    //@JsonProperty("now_page_no")
     private int pageNumber;
-    //@JsonProperty("prdt_div")
     private String prdtDiv;
 
 }

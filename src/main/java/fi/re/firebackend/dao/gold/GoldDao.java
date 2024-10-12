@@ -2,6 +2,7 @@ package fi.re.firebackend.dao.gold;
 
 import fi.re.firebackend.dto.gold.GoldInfo;
 import fi.re.firebackend.dto.gold.GoldPredicted;
+import fi.re.firebackend.dto.gold.GoldRate;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -43,4 +44,6 @@ public interface GoldDao {
 
     // 예측값 테이블에서 마지막 저장된 기준일자 가져오기
     String getLastPBasDt();
+
+    GoldRate rate();
 }
