@@ -72,7 +72,7 @@
 
     <select id="getSavingsDepositPageList" parameterType="fi.re.firebackend.dto.finance.savings.AllPageListDto" resultMap="savingsDepositWithOptionsResultMap">
         SELECT s.fin_prdt_cd, s.kor_co_nm, s.fin_prdt_nm, s.join_way, s.prdt_div, s.selectCount,
-               o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2, o.rsrv_type
+               o.id, o.intr_rate_type_nm, o.save_trm, o.intr_rate, o.intr_rate2, o.rsrv_type
         FROM savingsDeposit s LEFT JOIN savingsDeposit_options o ON s.fin_prdt_cd = o.fin_prdt_cd
         where o.save_trm = "12"
         <if test="prdtDiv != null and prdtDiv != ''">
