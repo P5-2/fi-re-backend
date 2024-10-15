@@ -8,6 +8,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,10 +21,13 @@ import javax.annotation.PostConstruct;
 // 토큰을 발행하고 받은 토큰을 분석하는 클래스
 @RequiredArgsConstructor
 @Component
+@PropertySource({"classpath:/application.properties"})
 public class JwtTokenProvider {
 
+    @Value("${jwt.secret}")
+    private String SECURITY_KEY;
+
     public static String httpHeaderKey = "Authorization"; // 허가
-    private String securityKey = "myJWTkeymyJWTkeymyJWTkeymyJWTkeymyJWTkey";
     private long accessTokenValidTime = Duration.ofDays(4).toMillis(); // 액세스 토큰 유효시간 4일
     private long refreshTokenValidTime = Duration.ofDays(14).toMillis(); // 리프레시 토큰 유효시간 2주
 
@@ -34,7 +38,7 @@ public class JwtTokenProvider {
     // 비밀키를 Base64로 인코딩
     @PostConstruct
     protected void securityKeyEncoding(){
-        securityKey = Base64.getEncoder().encodeToString(securityKey.getBytes());
+        SECURITY_KEY = Base64.getEncoder().encodeToString(SECURITY_KEY.getBytes());
     }
 
     // JWT 토큰 생성
@@ -48,14 +52,14 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + accessTokenValidTime))
-                .signWith(SignatureAlgorithm.HS256, securityKey)
+                .signWith(SignatureAlgorithm.HS256, SECURITY_KEY)
                 .compact();
 
         String refreshToken = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + refreshTokenValidTime))
-                .signWith(SignatureAlgorithm.HS256, securityKey) // same key for simplicity; consider using a different key
+                .signWith(SignatureAlgorithm.HS256, SECURITY_KEY) // same key for simplicity; consider using a different key
                 .compact();
 
         System.out.println("생성된 accessToken ===> " + accessToken);
@@ -75,7 +79,7 @@ public class JwtTokenProvider {
     // 토큰의 유효성 + 만료일자 확인
     public boolean validateToken(String jwtToken) {
         try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(securityKey).parseClaimsJws(jwtToken);
+            Jws<Claims> claims = Jwts.parser().setSigningKey(SECURITY_KEY).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
             return false;
@@ -84,7 +88,7 @@ public class JwtTokenProvider {
 
     // 토큰에서 회원 정보 추출
     public String getUserInfo(String token) {
-        return Jwts.parser().setSigningKey(securityKey).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(SECURITY_KEY).parseClaimsJws(token).getBody().getSubject();
     }
 
     // 리프레시 토큰의 유효성 및 재생성
@@ -92,7 +96,7 @@ public class JwtTokenProvider {
         String refreshToken = refreshTokenObj.getRefreshToken();
 
         try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(securityKey).parseClaimsJws(refreshToken);
+            Jws<Claims> claims = Jwts.parser().setSigningKey(SECURITY_KEY).parseClaimsJws(refreshToken);
             if (!claims.getBody().getExpiration().before(new Date())) {
                 return recreateAccessToken(claims.getBody().get("sub").toString(), claims.getBody().get("roles"));
             }
@@ -112,7 +116,7 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + accessTokenValidTime))
-                .signWith(SignatureAlgorithm.HS256, securityKey)
+                .signWith(SignatureAlgorithm.HS256, SECURITY_KEY)
                 .compact();
     }
 }
