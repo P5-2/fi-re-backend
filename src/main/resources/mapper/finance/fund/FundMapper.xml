@@ -38,7 +38,7 @@
     <select id="selectFunds" resultType="fi.re.firebackend.dto.finance.fund.FundDto">
         SELECT *
         FROM fund
-        ORDER BY prdNo
+        ORDER BY rate desc
         LIMIT #{size} OFFSET #{offset}
     </select>
 

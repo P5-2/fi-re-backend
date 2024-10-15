@@ -175,12 +175,9 @@ public class KakaoLoginService {
             memberDto.setNickname(nickname);     // Set nickname as name
             memberDto.setExp(0);
 
-
             memberDao.save(member);
             memberDao.memberSave(memberDto);
         }
-
-
 
 
 //        DB에 해당 회원정보 있을경우 JWT Token 생성 후 리턴
