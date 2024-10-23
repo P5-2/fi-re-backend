@@ -1,4 +1,5 @@
 package fi.re.firebackend.service.gold;
+
 import fi.re.firebackend.dto.gold.GoldInfo;
 import org.springframework.stereotype.Service;
 

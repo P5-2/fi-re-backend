@@ -2,8 +2,6 @@ package fi.re.firebackend.dto.gold;
 
 import lombok.*;
 
-import java.util.Date;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
