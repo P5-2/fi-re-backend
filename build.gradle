@@ -116,6 +116,16 @@ dependencies {
     //JSON Simple
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
+    // JUnit 5 (Jupiter)
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+
+    // Mockito
+    testImplementation 'org.mockito:mockito-core:5.5.0'
+
+    // For annotations like @InjectMocks, @Mock
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.5.0'
+
 }
 
 test {

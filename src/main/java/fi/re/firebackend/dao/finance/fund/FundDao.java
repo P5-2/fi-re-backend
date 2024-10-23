@@ -24,5 +24,6 @@ public interface FundDao {
     // 페이지 네이션
     List<FundDto> selectFunds(@Param("size") int size, @Param("offset") int offset);
 
-    int countFunds(); // 총 펀드 개수
+    // 총 펀드 개수
+    int countFunds();
 }
