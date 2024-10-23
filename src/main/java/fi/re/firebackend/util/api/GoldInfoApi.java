@@ -1,5 +1,7 @@
 package fi.re.firebackend.util.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -16,13 +18,12 @@ import java.net.URL;
 @PropertySource({"classpath:/application.properties"})
 public class GoldInfoApi {
 
+    private static final int TIMEOUT = 3000; // 3 seconds
+    private static final Logger log = LoggerFactory.getLogger(GoldInfoApi.class);
     @Value("${gold.url}")
     private String API_URL;
-
     @Value("${gold.api_key}")
     private String SERVICE_KEY;
-
-    private static final int TIMEOUT = 3000; // 3 seconds
 
     public String getGoldData(String dateType, String endBasDt, int days) throws IOException {
         String pageNo = "1";    // 페이지 번호
@@ -33,15 +34,7 @@ public class GoldInfoApi {
         String numOfRows = Integer.toString(days);
 
         // UriComponentsBuilder로 URL 생성
-        String urlString = UriComponentsBuilder.fromHttpUrl(API_URL)
-                .queryParam("serviceKey", SERVICE_KEY)
-                .queryParam("pageNo", pageNo)
-                .queryParam("numOfRows", numOfRows)
-                .queryParam("resultType", resultType)
-                .queryParam("likeSrtnCd", likeSrtnCd)
-                .queryParam(refDataName, refDate)
-                .build()
-                .toUriString();
+        String urlString = UriComponentsBuilder.fromHttpUrl(API_URL).queryParam("serviceKey", SERVICE_KEY).queryParam("pageNo", pageNo).queryParam("numOfRows", numOfRows).queryParam("resultType", resultType).queryParam("likeSrtnCd", likeSrtnCd).queryParam(refDataName, refDate).build().toUriString();
 
         HttpURLConnection conn = null;
         BufferedReader rd = null;
@@ -57,7 +50,7 @@ public class GoldInfoApi {
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Content-type", "application/json");
 
-            System.out.println("Response code: " + conn.getResponseCode());
+            log.info("Response code: " + conn.getResponseCode());
 
             if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
                 rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -70,17 +63,17 @@ public class GoldInfoApi {
                 sb.append(line);
             }
         } catch (ConnectException e) {
-            System.err.println("Connection timed out: " + e.getMessage());
+            log.info("Connection timed out: " + e.getMessage());
             throw new RuntimeException("Connection timed out: Unable to connect to the API.", e);
         } catch (IOException e) {
-            System.err.println("I/O error occurred: " + e.getMessage());
+            log.error("I/O error occurred: " + e.getMessage());
             throw new RuntimeException("I/O error occurred during API request.", e);
         } finally {
             if (rd != null) {
                 try {
                     rd.close();
                 } catch (IOException e) {
-                    System.err.println("Error closing BufferedReader: " + e.getMessage());
+                    log.error("Error closing BufferedReader: " + e.getMessage());
                 }
             }
             if (conn != null) {

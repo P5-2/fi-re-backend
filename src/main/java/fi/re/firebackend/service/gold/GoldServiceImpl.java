@@ -6,6 +6,7 @@ import fi.re.firebackend.dto.gold.GoldRate;
 import fi.re.firebackend.util.api.GoldInfoApi;
 import fi.re.firebackend.util.api.JsonConverter;
 import fi.re.firebackend.util.dateUtil.DateUtil;
+import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class GoldServiceImpl implements GoldService {
 
     private static final Logger log = Logger.getLogger(GoldServiceImpl.class);
@@ -27,11 +29,6 @@ public class GoldServiceImpl implements GoldService {
     private final GoldInfoApi goldInfoApi;
 
     private final int DAYS = 365 * 5;
-
-    public GoldServiceImpl(GoldDao goldDao, GoldInfoApi goldInfoApi) {
-        this.goldDao = goldDao;
-        this.goldInfoApi = goldInfoApi;
-    }
 
     public void saveGoldData(GoldInfo goldInfo, String itmsNm) {
         // 금종목이 이미 존재하는지 확인
@@ -78,19 +75,18 @@ public class GoldServiceImpl implements GoldService {
                 try {
                     goldInfoList = JsonConverter.convertJsonToList(goldInfoApi.getGoldData("endBasDt", targetDate, 30));
                     if (!goldInfoList.isEmpty()) {
-                        dataFound = true; // 데이터가 있으면 루프 종료
+                        dataFound = true;
                     } else {
                         dayDiff--; // 데이터가 없으면 하루씩 이전으로 이동
                     }
                 } catch (IOException e) {
                     log.error("GoldService setDataFromAPI: OpenAPI에서 데이터를 가져오는 중 예외가 발생했습니다. DB에서 최신 데이터를 반환합니다.", e);
-                    return; // 예외 발생 시 저장된 가장 최신 데이터를 반환
+                    return;
                 }
             }
 
             if (dataFound) {
-                if (goldInfoList.stream()
-                        .anyMatch(goldInfo -> goldInfo.getBasDt() == Integer.parseInt(lastUpdateDate))) {
+                if (goldInfoList.stream().anyMatch(goldInfo -> goldInfo.getBasDt() == Integer.parseInt(lastUpdateDate))) {
                     return;
                 }
             } else {

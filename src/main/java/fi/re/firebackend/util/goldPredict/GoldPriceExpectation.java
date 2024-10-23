@@ -1,16 +1,14 @@
 package fi.re.firebackend.util.goldPredict;
 
-import fi.re.firebackend.dao.gold.GoldDao;
 import fi.re.firebackend.dto.gold.GoldInfo;
 import fi.re.firebackend.dto.gold.GoldPredicted;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.log4j.Logger;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.layers.GravesLSTM;
-import org.deeplearning4j.nn.conf.layers.LSTM;
 import org.deeplearning4j.nn.conf.layers.RnnOutputLayer;
-import org.deeplearning4j.nn.conf.layers.recurrent.SimpleRnn;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.nd4j.linalg.activations.Activation;
@@ -18,7 +16,6 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.api.preprocessor.NormalizerMinMaxScaler;
 import org.nd4j.linalg.factory.Nd4j;
-import org.nd4j.linalg.indexing.NDArrayIndex;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.springframework.stereotype.Component;
@@ -39,6 +36,7 @@ public class GoldPriceExpectation {
     private static final int SEED = 1000;
     private static final int NUM_FEATURES = 7;
     private static final int TIME_SERIES_LENGTH = 365;
+    private static final Logger log = Logger.getLogger(GoldPriceExpectation.class);
 
 
     public List<GoldPredicted> lstm(List<GoldInfo> goldInfoPerDay) throws Exception {
@@ -48,7 +46,7 @@ public class GoldPriceExpectation {
         int size = goldInfoPerDay.size() - TIME_SERIES_LENGTH;
         int trainSize = (int) (size * 0.7); // 70% 데이터는 훈련용
         int testSize = size - trainSize;
-        System.out.println(size + "-" + trainSize + "-" + testSize);
+        GoldPriceExpectation.log.info(size + "-" + trainSize + "-" + testSize);
 
         // 학습 및 테스트 데이터 생성
         DataSet trainData = getTrainingData(goldInfoPerDay, trainSize, TIME_SERIES_LENGTH);
@@ -62,23 +60,7 @@ public class GoldPriceExpectation {
         scaler.transform(testData);
 
         // 모델 구성
-        MultiLayerConfiguration config = new NeuralNetConfiguration.Builder()
-                .seed(SEED)
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .weightInit(WeightInit.XAVIER)
-                .updater(new Nesterovs(LEARNING_RATE, MOMENTUM))
-                .list()
-                .layer(0, new GravesLSTM.Builder()
-                        .activation(Activation.TANH)
-                        .nIn(NUM_FEATURES)
-                        .nOut(10)
-                        .build())
-                .layer(1, new RnnOutputLayer.Builder(LossFunctions.LossFunction.MSE)
-                        .activation(Activation.TANH)
-                        .nIn(10)
-                        .nOut(NUM_FEATURES)
-                        .build())
-                .build();
+        MultiLayerConfiguration config = new NeuralNetConfiguration.Builder().seed(SEED).optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT).weightInit(WeightInit.XAVIER).updater(new Nesterovs(LEARNING_RATE, MOMENTUM)).list().layer(0, new GravesLSTM.Builder().activation(Activation.TANH).nIn(NUM_FEATURES).nOut(10).build()).layer(1, new RnnOutputLayer.Builder(LossFunctions.LossFunction.MSE).activation(Activation.TANH).nIn(10).nOut(NUM_FEATURES).build()).build();
 
         // 모델 생성 및 학습
         MultiLayerNetwork network = new MultiLayerNetwork(config);
@@ -87,9 +69,8 @@ public class GoldPriceExpectation {
         // 모델 학습
         for (int i = 1; i <= N_EPOCHS; i++) {
             network.fit(trainData);
-            System.out.print(".");
         }
-        System.out.println();
+        log.info("learning done");
         network.rnnTimeStep(testData.getFeatures());
         // 예측
         INDArray predicted = network.rnnTimeStep(testData.getFeatures());
@@ -120,7 +101,6 @@ public class GoldPriceExpectation {
         }
 
         INDArray input = Nd4j.create(dataSize, numFeatures, timeSeriesLength);
-//        INDArray output = Nd4j.create(dataSize, 1);
         INDArray output = Nd4j.create(dataSize, numFeatures, timeSeriesLength);
 
         for (int i = 0; i < dataSize; i++) {
@@ -155,7 +135,6 @@ public class GoldPriceExpectation {
         }
 
         INDArray input = Nd4j.create(dataSize, numFeatures, timeSeriesLength);
-//        INDArray output = Nd4j.create(dataSize, 1);
         INDArray output = Nd4j.create(dataSize, numFeatures, timeSeriesLength);
         for (int i = 0; i < dataSize; i++) {
             for (int j = 0; j < timeSeriesLength; j++) {
@@ -168,7 +147,6 @@ public class GoldPriceExpectation {
                 input.putScalar(new int[]{i, 5, j}, goldInfo.getLopr());
                 input.putScalar(new int[]{i, 6, j}, goldInfo.getTrqu());
             }
-//            output.putScalar(i, goldInfos.get(i + timeSeriesLength).getClpr());
             output.putScalar(new int[]{i, 0, 0}, goldInfos.get(i + timeSeriesLength).getClpr());
         }
 
@@ -204,7 +182,6 @@ public class GoldPriceExpectation {
             // 예측 결과 추가
             GoldPredicteds.add(new GoldPredicted(predictionDate, predictedValue));
         }
-
 
         return GoldPredicteds;
     }
