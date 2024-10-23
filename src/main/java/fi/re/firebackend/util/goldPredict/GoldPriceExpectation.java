@@ -87,9 +87,9 @@ public class GoldPriceExpectation {
         // 모델 학습
         for (int i = 1; i <= N_EPOCHS; i++) {
             network.fit(trainData);
-            System.out.print(".");
+            double loss = network.score();  // network.score()는 손실율을 반환함
+            System.out.println("Epoch " + i + " - Loss: " + loss);
         }
-        System.out.println();
         network.rnnTimeStep(testData.getFeatures());
         // 예측
         INDArray predicted = network.rnnTimeStep(testData.getFeatures());

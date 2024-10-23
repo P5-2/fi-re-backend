@@ -10,10 +10,10 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -26,24 +26,23 @@ import java.util.List;
 public class ForexApi {
     private static final Logger log = Logger.getLogger(ForexApi.class);
     private static final JSONParser parser = new JSONParser();
-
+    private final RestTemplate restTemplate;
     @Value("${forex.url}")
     private String API_URL;
-
     @Value("${forex.api_key}")
     private String AUTH_KEY;
-
-    private final RestTemplate restTemplate;
 
     public ForexWrapper getForexData(String searchDate) throws ParseException {
         String data = "AP01";
         List<ForexDto> forexList = new ArrayList<>();
+        int maxAttempts = 1; // 최대 시도 횟수
+        int attempts = 0;
 
         // searchDate를 LocalDate로 변환
         LocalDate date = LocalDate.parse(searchDate, DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         // API 데이터 가져오기
-        while (forexList.isEmpty()) {
+        while (forexList.isEmpty() && attempts < maxAttempts) {
             String urlString = buildUrl(data, date);
 
             try {
@@ -56,17 +55,18 @@ public class ForexApi {
                 log.error("Error during API request: " + e.getMessage());
                 break;
             }
+
+            attempts++; // 시도 횟수 증가
         }
 
-        return new ForexWrapper(forexList, date); // 데이터와 날짜 반환
+        // 최대 시도 횟수에 도달하거나 데이터가 비어있지 않으면 반환
+        LocalDate effectiveDate = !forexList.isEmpty() ? date : date.minusDays(1);
+
+        return new ForexWrapper(forexList, effectiveDate); // 데이터와 날짜 반환
     }
 
-    private String buildUrl(String data, LocalDate date) {
-        return UriComponentsBuilder.fromHttpUrl(API_URL)
-                .queryParam("authkey", AUTH_KEY)
-                .queryParam("data", data)
-                .queryParam("searchdate", date.format(DateTimeFormatter.ofPattern("yyyyMMdd")))
-                .toUriString();
+    public String buildUrl(String data, LocalDate date) {
+        return UriComponentsBuilder.fromHttpUrl(API_URL).queryParam("authkey", AUTH_KEY).queryParam("data", data).queryParam("searchdate", date.format(DateTimeFormatter.ofPattern("yyyyMMdd"))).toUriString();
     }
 
     private List<ForexDto> fetchForexData(String urlString) throws ParseException {

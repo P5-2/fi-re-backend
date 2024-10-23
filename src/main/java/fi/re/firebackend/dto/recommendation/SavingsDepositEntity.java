@@ -1,6 +1,9 @@
 package fi.re.firebackend.dto.recommendation;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
@@ -8,9 +11,9 @@ import lombok.*;
 @Builder
 public class SavingsDepositEntity {
 
-    private String finPrdtCd; //Financial Product Code
-    private String korCoNm; //bankName
-    private String finPrdtNm; //Financial Product Name
+    private String finPrdtCd; // 금융 상품 코드
+    private String korCoNm; // 은행명
+    private String finPrdtNm; // 금융 상품 이름
     private String joinWay; // 가입방법
     private String spclCnd; //우대조건
     private String joinMember; //가입대상
