@@ -1,11 +1,13 @@
 package fi.re.firebackend.dto.recommendation.vo;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Data
+@Builder
 public class FilteredSavingsDepositsVo {
     private String finPrdtCd; // Financial Product Code
     private String korCoNm; // Bank Name

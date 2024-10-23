@@ -43,8 +43,7 @@ public class ItemBasedFilterService {
         return calculateSimilarities(topThreeProducts, allFunds, this::calculateFundSimilarity);
     }
 
-    private <T> List<T> calculateSimilarities(List<T> targetProducts, List<T> allProducts,
-                                              SimilarityCalculator<T> calculator) {
+    private <T> List<T> calculateSimilarities(List<T> targetProducts, List<T> allProducts, SimilarityCalculator<T> calculator) {
         List<Similarity<T>> similarities = new ArrayList<>();
 
         for (T targetProduct : targetProducts) {
@@ -58,7 +57,7 @@ public class ItemBasedFilterService {
 
         similarities.sort((s1, s2) -> Double.compare(s2.getSimilarity(), s1.getSimilarity()));
 
-        return similarities.stream()
+        return similarities.parallelStream()
                 .map(Similarity::getItem)
                 .collect(Collectors.toList());
     }

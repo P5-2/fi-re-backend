@@ -13,7 +13,6 @@ public class ForexJsonConverter {
         ObjectMapper objectMapper = new ObjectMapper();
 
         // JSON 문자열을 List<ForexDto>로 변환
-        return objectMapper.readValue(jsonString, new TypeReference<List<ForexDto>>() {
-        });
+        return objectMapper.readValue(jsonString, new TypeReference<List<ForexDto>>() {});
     }
 }

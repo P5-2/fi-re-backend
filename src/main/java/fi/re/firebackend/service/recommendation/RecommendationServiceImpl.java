@@ -33,7 +33,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     private static final Logger log = Logger.getLogger(RecommendationServiceImpl.class);
     private final ContentsBasedFilterService contentsBasedFilterService;
     private final ItemBasedFilterService itemBasedFilterService;
-    private final FundDao fundDao; // 펀드 레포지토리
+    private final FundDao fundDao;
     private final MemberDaotwo memberDao;
     private final SavingsDepositDao savingsDepositDao;
 
@@ -215,7 +215,6 @@ public class RecommendationServiceImpl implements RecommendationService {
                 depositEntity.setIntrRate(option.getIntrRate());
                 depositEntity.setIntrRate2(option.getIntrRate2());
 
-                // 기본 선택 카운트는 0으로 설정
                 depositEntity.setSelectCount(0);
 
                 // 생성된 SavingsDepositEntity를 리스트에 추가
@@ -236,21 +235,20 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     // 개별 ProcessedSavingsDepositVo를 FilteredSavingsDepositsVo로 변환
     private FilteredSavingsDepositsVo convertToFilteredVo(ProcessedSavingsDepositVo processedVo) {
-        FilteredSavingsDepositsVo filteredVo = new FilteredSavingsDepositsVo();
-
-        filteredVo.setFinPrdtCd(processedVo.getFinPrdtCd());
-        filteredVo.setKorCoNm(processedVo.getKorCoNm());
-        filteredVo.setFinPrdtNm(processedVo.getFinPrdtNm());
-        filteredVo.setJoinWay(processedVo.getJoinWay());
-        filteredVo.setKeywords(processedVo.getKeywords());
-        filteredVo.setMaxLimit(BigDecimal.valueOf(processedVo.getMaxLimit())); // double -> BigDecimal
-        filteredVo.setIntrRateTypeNm(processedVo.getIntrRateTypeNm());
-        filteredVo.setSaveTrm(processedVo.getSaveTrm());
-        filteredVo.setIntrRate(BigDecimal.valueOf(processedVo.getIntrRate()));
-        filteredVo.setIntrRate2(BigDecimal.valueOf(processedVo.getIntrRate2()));
-        filteredVo.setSelectCount(processedVo.getSelectCount());
-
-        return filteredVo;
+        return FilteredSavingsDepositsVo.builder()
+                .finPrdtCd(processedVo.getFinPrdtCd())
+                .korCoNm(processedVo.getKorCoNm())
+                .finPrdtNm(processedVo.getFinPrdtNm())
+                .joinWay(processedVo.getJoinWay())
+                .keywords(processedVo.getKeywords())
+                .maxLimit(BigDecimal.valueOf(processedVo.getMaxLimit())) // double -> BigDecimal
+                .intrRateTypeNm(processedVo.getIntrRateTypeNm())
+                .saveTrm(processedVo.getSaveTrm())
+                .intrRate(BigDecimal.valueOf(processedVo.getIntrRate()))
+                .intrRate2(BigDecimal.valueOf(processedVo.getIntrRate2()))
+                .selectCount(processedVo.getSelectCount())
+                .build();
     }
+
 }
 

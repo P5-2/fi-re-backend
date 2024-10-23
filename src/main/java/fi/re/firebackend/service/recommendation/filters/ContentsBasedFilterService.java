@@ -49,7 +49,7 @@ public class ContentsBasedFilterService {
     }
 
 
-    // 급여 범위 체크(급여의 10~30% 수준인지)
+    // 급여 범위 체크(급여의 10% 이상 수준을 만족하는지)
     private boolean isWithinSalaryRange(MemberEntity member, ProcessedSavingsDepositVo deposit) {
         if (deposit.getIntrRateTypeNm().equals("적금") && (Double) deposit.getMaxLimit() != null) { // 적금일 경우
             double salaryPercent = (member.getAssets() * 10000) * 0.1 ;
