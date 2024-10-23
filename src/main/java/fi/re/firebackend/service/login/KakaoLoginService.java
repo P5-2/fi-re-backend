@@ -39,9 +39,6 @@ public class KakaoLoginService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-//    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
-//    @Value("${application.spring.security.kakao.redirect-uri}")
-
     @Value("${kakao.client_secret}")
     private String CLIENT_SECRET;
 
@@ -76,7 +73,6 @@ public class KakaoLoginService {
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=" + REST_API_KEY);
             sb.append("&redirect_uri=" + redirect_uri);
-            System.out.println("code = " + code);
             sb.append("&code=" + code);
             sb.append("&client_secret=" + CLIENT_SECRET);
             bw.write(sb.toString());
@@ -188,8 +184,7 @@ public class KakaoLoginService {
         TokenDto tokenDto = jwtTokenProvider.createToken(member.getUsername(), Collections.singletonList(member.getAuth()));
         tokenDto.setGrantType(member.getAuth());
 
-        // jwtService.saveRefreshToken(tokenDto); // 필요 시 리프레시 토큰 저장 로직 추가
-        System.out.println("tokenDto=" + tokenDto);
+        log.info("tokenDto=" + tokenDto);
         return tokenDto;
     }
 

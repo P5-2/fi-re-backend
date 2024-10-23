@@ -7,6 +7,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +28,8 @@ public class JwtTokenProvider {
     @Value("${jwt.secret}")
     private String SECURITY_KEY;
 
+    private static final Logger log = Logger.getLogger(JwtTokenProvider.class);
+
     public static String httpHeaderKey = "Authorization"; // 허가
     private long accessTokenValidTime = Duration.ofDays(4).toMillis(); // 액세스 토큰 유효시간 4일
     private long refreshTokenValidTime = Duration.ofDays(14).toMillis(); // 리프레시 토큰 유효시간 2주
@@ -34,6 +37,7 @@ public class JwtTokenProvider {
     private Set<String> tokenBlacklist = new HashSet<String>(); // 블랙리스트
 
     private final UserDetailsService userService;
+
 
     // 비밀키를 Base64로 인코딩
     @PostConstruct
@@ -43,7 +47,7 @@ public class JwtTokenProvider {
 
     // JWT 토큰 생성
     public TokenDto createToken(String userPk, List<String> roles) {
-        System.out.println("createToken - 토큰 생성");
+        log.info("createToken - 토큰 생성");
         Claims claims = Jwts.claims().setSubject(userPk);
         claims.put("roles", roles);
         Date now = new Date();
@@ -62,8 +66,8 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS256, SECURITY_KEY) // same key for simplicity; consider using a different key
                 .compact();
 
-        System.out.println("생성된 accessToken ===> " + accessToken);
-        System.out.println("생성된 refreshToken ===> " + refreshToken);
+        log.info("생성된 accessToken ===> " + accessToken);
+        log.info("생성된 refreshToken ===> " + refreshToken);
         return TokenDto.builder().accessToken(accessToken).refreshToken(refreshToken).key(userPk).build();
     }
 

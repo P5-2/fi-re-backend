@@ -1,6 +1,8 @@
 package fi.re.firebackend.security;
 
+import fi.re.firebackend.jwt.JwtTokenFilter;
 import fi.re.firebackend.service.login.MemberService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.User;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class SecurityService implements UserDetailsService {
 
     private final MemberService service;
+    private static final Logger log = Logger.getLogger(SecurityService.class);
 
     @Autowired
     @Lazy
@@ -26,7 +29,7 @@ public class SecurityService implements UserDetailsService {
     // Security 사용자 인증 -> Database 설정
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println("~ loadUserByUsername() : " + username);
+        log.info("~ loadUserByUsername() : " + username);
 
         // DB로 접근 <- dto
         SecurityUser user = service.getInfo(username);

@@ -18,8 +18,6 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-//@Import(WebConfig.class)
-//@ComponentScan(basePackageClasses = WebConfig.class)
 @Configuration
 @EnableWebSecurity
 @ComponentScan(basePackages  = {"fi.re.firebackend"})
@@ -55,37 +53,6 @@ public class SecurityConfig {
 
         // 3. JWT 필터를 사용여부 설정
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
-
-        // 4. login form
-
-
-
-        // enable h2-console
-//        http.headers(headers ->
-//                headers.frameOptions(options ->
-//                        options.sameOrigin()
-//                )
-//        );
-
-      /*  http.logout(logoutConfig ->
-                logoutConfig
-                        .logoutUrl("/logout")
-                        .logoutSuccessHandler((request, response, authentication) ->
-                                //SecurityContextHolder.clearContext()
-                        {
-                            System.out.println("logout securityconfig 호출");
-                            String authorization = request.getHeader("Authorization");
-
-                            SecurityContextHolder.getContext().setAuthentication(null);
-
-                            if (authorization == null || !authorization.startsWith("Bearer ")) {
-                                throw new RuntimeException("Access token과 함께 요청하십시오.");
-                            }
-
-                            SecurityContextHolder.clearContext();
-                        }
-                        )
-        );*/
 
         return http.build();
     }

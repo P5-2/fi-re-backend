@@ -64,27 +64,26 @@ public class SavingsDepositService {
 
     // 페이지네이션
     public Map<String, Object> getSavingsDepositPageList(AllPageListDto dto){
-        System.out.println("~~~ getSavingsDepositPageList");
         int pageNumber = 0;
         if(dto != null){
             pageNumber = dto.getPageNumber();
-            System.out.println(dto.toString());
+            log.info(dto.toString());
         }
 
         List<SavingsDepositWithOptionsDto> list = savingsDepositDao.getSavingsDepositPageList(dto);
         for (SavingsDepositWithOptionsDto s: list){
-            System.out.println(s.toString());
+            log.info(s.toString());
         }
 
         int totalItems = savingsDepositDao.getTotalProductCount(dto);
-        System.out.println("~~~ totalItems:" + totalItems);
+        log.info("~~~ totalItems:" + totalItems);
 
         Map<String, Object> result = new HashMap<>();
         result.put("list", list);
         result.put("totalCount", totalItems);
         result.put("totalPages", (int) Math.ceil((double) totalItems / 5));
         result.put("pageNumber", pageNumber);
-        System.out.println("~~~ pageNumber:" + pageNumber);
+        log.info("~~~ pageNumber:" + pageNumber);
 
         return result;
     }
