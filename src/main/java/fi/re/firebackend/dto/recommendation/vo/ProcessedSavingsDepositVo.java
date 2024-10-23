@@ -15,9 +15,9 @@ import java.util.regex.Pattern;
 @NoArgsConstructor
 public class ProcessedSavingsDepositVo {
 
-    private String finPrdtCd; //Financial Product Code
-    private String korCoNm; //Bank Name
-    private String finPrdtNm; //Financial Product Name
+    private String finPrdtCd; // 금융상품코드
+    private String korCoNm; // 은행명
+    private String finPrdtNm; // 금융상품이름
     private String joinWay; //가입 방법
     private List<String> keywords; // 추출된 키워드 리스트
     private double maxLimit; //최대한도
@@ -43,6 +43,25 @@ public class ProcessedSavingsDepositVo {
         this.keywords = extractKeywords(entity);
     }
 
+    // 키워드 추출 메서드
+    private static List<String> extractKeywords(String text) {
+        List<String> keywordList = new ArrayList<>();
+
+        // 찾고자 하는 키워드 정규 표현식
+        String regex = "(만기|우대이율|개인|법인|여성|영업점|인터넷|스마트폰|소액|최초|매주|디지털|모바일|복리|단리|차등금리|최소가입금액|납입한도|비대면|최저가입금액|최고우대금리|자동만기연장)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(text);
+
+        // 키워드가 발견될 때마다 리스트에 추가
+        while (matcher.find()) {
+            String keyword = matcher.group();
+            if (!keywordList.contains(keyword)) { // 중복 키워드 추가 방지
+                keywordList.add(keyword);
+            }
+        }
+        return keywordList;
+    }
+
     // 키워드 추출 메서드: spclCnd, joinMember, etcNote에서 키워드 추출
     private List<String> extractKeywords(SavingsDepositEntity entity) {
         List<String> keywordList = new ArrayList<>();
@@ -62,31 +81,12 @@ public class ProcessedSavingsDepositVo {
             keywordList.addAll(extractKeywords(entity.getEtcNote()));
         }
 
-        if(this.saveTrm < 12){
+        if (this.saveTrm < 12) {
             keywordList.add("단기");
-        }else{
+        } else {
             keywordList.add("장기");
         }
 
-        return keywordList;
-    }
-
-    // 키워드 추출 메서드
-    private static List<String> extractKeywords(String text) {
-        List<String> keywordList = new ArrayList<>();
-
-        // 찾고자 하는 키워드 정규 표현식
-        String regex = "(만기|우대이율|개인|법인|여성|영업점|인터넷|스마트폰|소액|최초|매주|디지털|모바일|복리|단리|차등금리|최소가입금액|납입한도|비대면|최저가입금액|최고우대금리|자동만기연장)";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(text);
-
-        // 키워드가 발견될 때마다 리스트에 추가
-        while (matcher.find()) {
-            String keyword = matcher.group();
-            if (!keywordList.contains(keyword)) { // 중복 키워드 추가 방지
-                keywordList.add(keyword);
-            }
-        }
         return keywordList;
     }
 
