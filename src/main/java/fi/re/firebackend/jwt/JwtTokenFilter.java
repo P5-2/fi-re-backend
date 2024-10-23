@@ -1,6 +1,8 @@
 package fi.re.firebackend.jwt;
 
+import fi.re.firebackend.controller.profile.ProfileController;
 import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
 
+    private static final Logger log = Logger.getLogger(JwtTokenFilter.class);
     private final JwtTokenProvider jwtTokenProvider;
 
 
@@ -24,7 +27,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
 
-        System.out.println("JwtTokenFilter >>>>>>>>>>>>>>>>>>>> ");
+        log.info("JwtTokenFilter >>>>>>>>>>>>>>>>>>>> ");
 
 
         String token = request.getHeader(JwtTokenProvider.httpHeaderKey);
@@ -32,13 +35,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             System.out.println("token:" + BearerRemove(token));
             token = BearerRemove(token);
         }
+
         /// 토큰 검사
-        // 만료된 토큰
+        // 만료된 토큰여부 확인
         if (token != null){
             if(jwtTokenProvider.validateToken(token)) {
 
 
-                System.out.println("유효한 토큰입니다");
+                log.info("유효한 토큰입니다");
                 // 토큰을 통해서 유저 정보를 취득
                 Authentication authentication = jwtTokenProvider.getAuthentication(token);
 
@@ -46,7 +50,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
             else{
-                System.out.println("만료된 토큰입니다");
+                log.info("만료된 토큰입니다");
 
                 response.setContentType("application/json;charset=utf-8");
                 response.getWriter().print("EXPIRED_TOKEN");
@@ -54,7 +58,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
         }
         else{
-            System.out.println("토큰이 없습니다");
+            log.info("토큰이 없습니다");
         }
 
         filterChain.doFilter(request, response);
