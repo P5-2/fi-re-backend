@@ -67,7 +67,6 @@ public class NaverLoginService {
             sb.append("grant_type=authorization_code");
             sb.append("&client_id=" + CLIENT_ID);
             sb.append("&client_secret=" + CLIENT_SECRET);
-            System.out.println("code = " + code);
             sb.append("&code=" + code);
             sb.append("&state=" + state);
             bw.write(sb.toString());
@@ -162,8 +161,10 @@ public class NaverLoginService {
             memberDto.setUsername(id);      // Set username as id
             memberDto.setPlatform("Naver"); // Set the platform, assuming 'platform' is defined in your context
             memberDto.setNickname(name);     // Set nickname as name
+            memberDto.setExp(0);
             memberDao.save(member);
             memberDao.memberSave(memberDto);
+
 
         }
 
@@ -175,8 +176,7 @@ public class NaverLoginService {
         TokenDto tokenDto = jwtTokenProvider.createToken(member.getUsername(), Collections.singletonList(member.getAuth()));
         tokenDto.setGrantType(member.getAuth());
 
-        // jwtService.saveRefreshToken(tokenDto); // 필요 시 리프레시 토큰 저장 로직 추가
-        System.out.println("tokenDto=" + tokenDto);
+        log.info("tokenDto=" + tokenDto);
         return tokenDto;
     }
 

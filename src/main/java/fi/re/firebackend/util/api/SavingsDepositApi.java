@@ -24,7 +24,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Component
@@ -33,10 +35,10 @@ public class SavingsDepositApi {
 
     private static final Logger log = LoggerFactory.getLogger(SavingsDepositApi.class);
     @Value("${savings.url}")
-    private String SAVINGS_API_URL;
+    public String SAVINGS_API_URL;
 
     @Value("${deposit.url}")
-    private String DEPOSIT_API_URL;
+    public String DEPOSIT_API_URL;
 
     @Value("${savingsDeposit.api_key}")
     private String AUTH_KEY;
@@ -54,7 +56,6 @@ public class SavingsDepositApi {
     }
 
     // 주기적인 DB 업데이트를 위한 스케줄링 메서드
-    @Scheduled(cron = "0 0 3 * * ?") // 매일 새벽 3시에 실행
     public void scheduledUpdate() {
         try {
             log.info("Starting scheduled update...");
@@ -67,7 +68,6 @@ public class SavingsDepositApi {
 
 
     // insert / update 처리
-
     public void updateAllProducts() {
         try {
             List<SavingsDepositWithOptionsDto> savingsProducts = fetchAllProducts(SAVINGS_API_URL);
@@ -113,28 +113,40 @@ public class SavingsDepositApi {
     }
 
     //API 응답을 DTO 객체로 변환
-    private List<SavingsDepositWithOptionsDto> parseApiResponse(String responseBody) {
+    public List<SavingsDepositWithOptionsDto> parseApiResponse(String responseBody) {
         try {
             JsonNode root = objectMapper.readTree(responseBody);
             JsonNode baseList = root.path("result").path("baseList");
             JsonNode optionList = root.path("result").path("optionList");
 
-            List<SavingsDepositWithOptionsDto> savingsProducts = new ArrayList<>();
+            Map<String, SavingsDepositDto> savingsDepositMap = new HashMap<>();
+            Map<String, List<OptionalDto>> optionsMap = new HashMap<>();
 
             for (JsonNode productNode : baseList) {
-                SavingsDepositDto savingsProduct = objectMapper.treeToValue(productNode, SavingsDepositDto.class);
-                savingsProduct.setPrdtDiv(root.path("result").path("prdt_div").asText()); // prdt_div 설정
-                List<OptionalDto> options = new ArrayList<>();
-
-                for (JsonNode optionNode : optionList) {
-                    if (optionNode.path("fin_prdt_cd").asText().equals(savingsProduct.getFinPrdtCd())) {
-                        OptionalDto option = objectMapper.treeToValue(optionNode, OptionalDto.class);
-                        options.add(option);
-                    }
-                }
-                savingsProducts.add(new SavingsDepositWithOptionsDto(savingsProduct, options));
+                SavingsDepositDto savingsDeposit = objectMapper.treeToValue(productNode, SavingsDepositDto.class);
+                savingsDeposit.setPrdtDiv(root.path("result").path("prdt_div").asText());
+                String finPrdtCd = savingsDeposit.getFinPrdtCd();
+                savingsDepositMap.put(finPrdtCd, savingsDeposit);
+                optionsMap.put(finPrdtCd, new ArrayList<>());
             }
-            return savingsProducts;
+
+            for (JsonNode optionNode : optionList) {
+                String finPrdtCd = optionNode.path("fin_prdt_cd").asText();
+                if (savingsDepositMap.containsKey(finPrdtCd)) {
+                    OptionalDto option = objectMapper.treeToValue(optionNode, OptionalDto.class);
+                    optionsMap.get(finPrdtCd).add(option);
+                }
+            }
+
+            List<SavingsDepositWithOptionsDto> result = new ArrayList<>();
+            for (Map.Entry<String, SavingsDepositDto> entry : savingsDepositMap.entrySet()) {
+                String finPrdtCd = entry.getKey();
+                SavingsDepositDto savingsDeposit = entry.getValue();
+                List<OptionalDto> options = optionsMap.get(finPrdtCd);
+                result.add(new SavingsDepositWithOptionsDto(savingsDeposit, options));
+            }
+
+            return result;
         } catch (Exception e) {
             throw new RuntimeException("Error parsing API response", e);
         }
@@ -161,31 +173,5 @@ public class SavingsDepositApi {
         }
     }
 }
-
-//for (String region : regions) {
-//int page = 1;
-//int EXPECTED_PAGE_SIZE = 5;
-//boolean hasMorePages = true;
-//            while (hasMorePages) {
-//String url = UriComponentsBuilder.fromHttpUrl(apiUrl)
-//        .queryParam("auth", AUTH_KEY)
-//        .queryParam("topFinGrpNo", region)
-//        .queryParam("pageNo", page)
-//        .build()
-//        .toUriString();
-//ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-//List<SavingsDepositWithOptionsDto> products = parseApiResponse(response.getBody());
-//                allProducts.addAll(products);
-//
-//// Check if more pages exist
-//                if (products.isEmpty() || products.size() < EXPECTED_PAGE_SIZE) {
-//hasMorePages = false;
-//        } else {
-//page++;
-//        }
-//        }
-//        }
-//        return allProducts;
-//    }
 
 

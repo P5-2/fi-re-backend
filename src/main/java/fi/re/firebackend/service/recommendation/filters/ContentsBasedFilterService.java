@@ -23,25 +23,22 @@ public class ContentsBasedFilterService {
         List<String> memberKeywords = member.getKeywordList() != null ? member.getKeywordList() : new ArrayList<>();
         Set<String> usedKeywords = new HashSet<>();
 
-        List<ProcessedSavingsDepositVo> filteredDeposits = depositsList.parallelStream()
-                .filter(deposit -> {
-                    boolean withinRange = isInMemberTerm(member.getKeywordList(), deposit.getKeywords()) && (isWithinAssetRange(member, deposit) || isWithinSalaryRange(member, deposit));
-                    if (withinRange) {
-                        // 키워드가 일치하는 경우 수집
-                        usedKeywords.addAll(deposit.getKeywords());
-                    }
-                    return withinRange && hasCommonKeyword(deposit.getKeywords(), memberKeywords);
-                })
-                .collect(Collectors.toList());
+        List<ProcessedSavingsDepositVo> filteredDeposits = depositsList.parallelStream().filter(deposit -> {
+            boolean withinRange = isInMemberTerm(member.getKeywordList(), deposit.getKeywords()) && (isWithinAssetRange(deposit) || isWithinSalaryRange(member, deposit));
+            if (withinRange) {
+                // 키워드가 일치하는 경우 수집
+                usedKeywords.addAll(deposit.getKeywords());
+            }
+            return withinRange && hasCommonKeyword(deposit.getKeywords(), memberKeywords);
+        }).collect(Collectors.toList());
         log.info("filterProducts with " + filteredDeposits);
         return new FilteredProductsResult(filteredDeposits, new ArrayList<>(usedKeywords));
     }
 
     // 자산 범위 체크
-    private boolean isWithinAssetRange(MemberEntity member, ProcessedSavingsDepositVo deposit) {
+    private boolean isWithinAssetRange(ProcessedSavingsDepositVo deposit) {
         if (deposit.getIntrRateTypeNm().equals("예금")) {
-            // 예금일 경우, 회원의 자산이 maxLimit보다 크거나 같을 때 true
-            return deposit.getMaxLimit() > 0 && member.getAssets() >= deposit.getMaxLimit();
+            return true;
         } else if (deposit.getIntrRateTypeNm().equals("적금")) {
             return true; // 적금일 경우 항상 true
         }
@@ -49,10 +46,10 @@ public class ContentsBasedFilterService {
     }
 
 
-    // 급여 범위 체크(급여의 10~30% 수준인지)
+    // 급여 범위 체크(급여의 10%~ 수준인지)
     private boolean isWithinSalaryRange(MemberEntity member, ProcessedSavingsDepositVo deposit) {
         if (deposit.getIntrRateTypeNm().equals("적금") && (Double) deposit.getMaxLimit() != null) { // 적금일 경우
-            double salaryPercent = member.getAssets() * 0.4;
+            double salaryPercent = (member.getAssets() * 10000) * 0.1;
             return deposit.getMaxLimit() >= salaryPercent;
         }
         return true;
@@ -60,14 +57,12 @@ public class ContentsBasedFilterService {
 
     // 위험도에 따른 펀드 필터링
     public List<FundDto> filterFund(final MemberEntity member, final List<FundDto> fundList) {
-        return fundList.stream()
-                .filter(fund -> fund.getDngrGrade() >= convertRiskPointToGrade(member.getRiskPoint()))
-                .collect(Collectors.toList());
+        return fundList.stream().filter(fund -> fund.getDngrGrade() >= convertRiskPointToGrade(member.getRiskPoint())).collect(Collectors.toList());
     }
 
     // 장기인지 단기인지 체크
-    public boolean isInMemberTerm(final List<String> memberKeywords, final List<String> depositKeywords){
-        if(memberKeywords.contains("단기") && depositKeywords.contains("단기")) return true;
+    public boolean isInMemberTerm(final List<String> memberKeywords, final List<String> depositKeywords) {
+        if (memberKeywords.contains("단기") && depositKeywords.contains("단기")) return true;
         else return memberKeywords.contains("장기") && depositKeywords.contains("장기");
     }
 

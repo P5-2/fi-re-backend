@@ -11,6 +11,7 @@ import fi.re.firebackend.jwt.dto.TokenDto;
 import fi.re.firebackend.security.SecurityUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,11 +25,13 @@ import java.util.UUID;
 @Slf4j
 @Transactional
 @Service
+@PropertySource({"classpath:/application.properties"})
 public class KakaoLoginService {
 
 
     private final MemberDao memberDao;
     private final JwtTokenProvider jwtTokenProvider;
+
 
     public KakaoLoginService( MemberDao memberDao, JwtTokenProvider jwtTokenProvider) {
 
@@ -36,10 +39,11 @@ public class KakaoLoginService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-//    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
+    @Value("${kakao.client_secret}")
+    private String CLIENT_SECRET;
 
-
-//    @Value("${application.spring.security.kakao.redirect-uri}")
+    @Value("${kakao.rest_api_key}")
+    private String REST_API_KEY;
 
 
     // Token 가져오기
@@ -48,12 +52,12 @@ public class KakaoLoginService {
         String access_Token = "";
         String refresh_Token = "";
         String reqURL = "https://kauth.kakao.com/oauth/token";
-        String rest_api_key="3ac8e4957835e3e46a6bbce90bdee2e7";
         String redirect_uri="http://localhost:5173/kakao/callback";
-        String client_secret="RtiowmigZAXeFWRqXdilvNnZLCL0FIyh";
+
 
         String result = null;
         String id_token = null;
+
 
         try {
             URL url = new URL(reqURL);
@@ -67,11 +71,10 @@ public class KakaoLoginService {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
-            sb.append("&client_id=" + rest_api_key);
+            sb.append("&client_id=" + REST_API_KEY);
             sb.append("&redirect_uri=" + redirect_uri);
-            System.out.println("code = " + code);
             sb.append("&code=" + code);
-            sb.append("&client_secret=" + client_secret);
+            sb.append("&client_secret=" + CLIENT_SECRET);
             bw.write(sb.toString());
             bw.flush();
 
@@ -166,12 +169,11 @@ public class KakaoLoginService {
             memberDto.setUsername(id);      // Set username as id
             memberDto.setPlatform("Kakao"); // Set the platform, assuming 'platform' is defined in your context
             memberDto.setNickname(nickname);     // Set nickname as name
+            memberDto.setExp(0);
 
             memberDao.save(member);
             memberDao.memberSave(memberDto);
         }
-
-
 
 
 //        DB에 해당 회원정보 있을경우 JWT Token 생성 후 리턴
@@ -182,8 +184,7 @@ public class KakaoLoginService {
         TokenDto tokenDto = jwtTokenProvider.createToken(member.getUsername(), Collections.singletonList(member.getAuth()));
         tokenDto.setGrantType(member.getAuth());
 
-        // jwtService.saveRefreshToken(tokenDto); // 필요 시 리프레시 토큰 저장 로직 추가
-        System.out.println("tokenDto=" + tokenDto);
+        log.info("tokenDto=" + tokenDto);
         return tokenDto;
     }
 

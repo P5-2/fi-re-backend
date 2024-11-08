@@ -9,7 +9,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
-// 이 dto는 DB스키마와 매칭되는 dto로, db에 저장하기 위해 db 컬럼과 매칭되도록 함
 public class ForexEntity {
     private LocalDate searchDate;  // 날짜
     private String curUnit;        // 통화 코드

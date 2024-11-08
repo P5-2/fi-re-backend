@@ -27,20 +27,6 @@ public interface CartDao {
     // 제품의 장바구니 여부 확인
     int isFundInUserCart(@Param("username") String username, @Param("prdNo") int prdNo);
 
-    // 특정 사용자에 대한 적금 상품 정보 조회
-    List<SavingsDepositDto> getSavingsDepositByUsername(@Param("username") String username);
-
-    // 특정 사용자에 대한 예금 상품 정보 조회
-    List<SavingsDepositDto> getDepositByUsername(@Param("username") String username);
-
-    // 특정 상품의 단리/복리 옵션 정보를 조회하는 메서드
-    List<OptionalDto> getSavingsDepositOptionsByCartWithType(
-            @Param("username") String username,
-            @Param("finPrdtCd") String finPrdtCd,
-            @Param("intrRateTypeNm") String intrRateTypeNm
-    );
-
-
     // 장바구니에 적금 상품 추가 (단리/복리 반영)
     void addSavingsToCart(CartDto cart);
 

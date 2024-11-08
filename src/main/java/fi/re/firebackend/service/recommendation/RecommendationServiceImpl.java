@@ -33,9 +33,29 @@ public class RecommendationServiceImpl implements RecommendationService {
     private static final Logger log = Logger.getLogger(RecommendationServiceImpl.class);
     private final ContentsBasedFilterService contentsBasedFilterService;
     private final ItemBasedFilterService itemBasedFilterService;
-    private final FundDao fundDao; // 펀드 레포지토리
+    private final FundDao fundDao;
     private final MemberDaotwo memberDao;
     private final SavingsDepositDao savingsDepositDao;
+
+    // MemberDto를 MemberEntity로 변환
+    public static MemberEntity convertToMemberEntity(MemberDto memberDto) {
+        if (memberDto == null) {
+            return null;
+        }
+
+        MemberEntity memberEntity = new MemberEntity();
+        memberEntity.setUsername(memberDto.getUsername());
+        memberEntity.setAge(Integer.parseInt(memberDto.getAge()));
+        memberEntity.setSalary(memberDto.getSalary());
+        memberEntity.setAssets(memberDto.getAssets());
+        memberEntity.setRiskPoint(memberDto.getRiskPoint());
+        memberEntity.setGoalAmount(memberDto.getGoalAmount());
+        memberEntity.setKeyword(memberDto.getKeyword());
+
+        memberEntity.parseKeywords();
+
+        return memberEntity;
+    }
 
     //예금 추천
     @Override
@@ -49,9 +69,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         List<SavingsDepositEntity> dividedAlldeposits = getAllSavingsDeposits(400, "D");
 
         // 3. SavingsDepositEntity를 ProcessedSavingsDepositVo로 변환
-        List<ProcessedSavingsDepositVo> depositVos = dividedAlldeposits.stream()
-                .map(ProcessedSavingsDepositVo::new)
-                .collect(Collectors.toList());
+        List<ProcessedSavingsDepositVo> depositVos = dividedAlldeposits.stream().map(ProcessedSavingsDepositVo::new).collect(Collectors.toList());
 
         // 4. 컨텐츠 기반 필터링
         ContentsBasedFilterService.FilteredProductsResult result = contentsBasedFilterService.filterProducts(user, depositVos);
@@ -61,21 +79,16 @@ public class RecommendationServiceImpl implements RecommendationService {
 
         // 5. 기준으로 삼을 top3 적금 상품 가져오기
         List<SavingsDepositEntity> dividedHotDeposits = getAllSavingsDeposits(20, "D");
-        List<ProcessedSavingsDepositVo> hotDepositVos = dividedHotDeposits.stream()
-                .map(ProcessedSavingsDepositVo::new)
-                .collect(Collectors.toList());
+        List<ProcessedSavingsDepositVo> hotDepositVos = dividedHotDeposits.stream().map(ProcessedSavingsDepositVo::new).collect(Collectors.toList());
 
         // 6. 아이템 기반 추천
         List<ProcessedSavingsDepositVo> recommendedDeposits = itemBasedFilterService.filteringSavingsDeposits(hotDepositVos, filteredDeposits);
 
         // 보내기 전에 dto로 옮겨서 보내기
-        List<FilteredSavingsDepositsVo> resultDto = convertToFilteredVo(recommendedDeposits).stream()
-                .limit(10)
-                .collect(Collectors.toList());
+        List<FilteredSavingsDepositsVo> resultDto = convertToFilteredVo(recommendedDeposits).stream().limit(10).collect(Collectors.toList());
 
         return new SavingsDepositsResponseDto(resultDto, usedKeywords);
     }
-
 
     //적금추천
     @Override
@@ -88,9 +101,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         List<SavingsDepositEntity> allSavings = getAllSavingsDeposits(400, "S");
 
         // 3. DepositEntity를 ProcessedSavingsDepositVo 변환
-        List<ProcessedSavingsDepositVo> savingsVos = allSavings.parallelStream()
-                .map(ProcessedSavingsDepositVo::new)
-                .collect(Collectors.toList());
+        List<ProcessedSavingsDepositVo> savingsVos = allSavings.parallelStream().map(ProcessedSavingsDepositVo::new).collect(Collectors.toList());
 
         // 4. 컨텐츠 기반 필터링
         ContentsBasedFilterService.FilteredProductsResult result = contentsBasedFilterService.filterProducts(user, savingsVos);
@@ -101,17 +112,13 @@ public class RecommendationServiceImpl implements RecommendationService {
         // 5. 기준으로 삼을 예금 상품 가져오기
         List<SavingsDepositEntity> hotSavings = getAllSavingsDeposits(20, "S");
 
-        List<ProcessedSavingsDepositVo> hotSavingVos = hotSavings.stream()
-                .map(ProcessedSavingsDepositVo::new)
-                .collect(Collectors.toList());
+        List<ProcessedSavingsDepositVo> hotSavingVos = hotSavings.stream().map(ProcessedSavingsDepositVo::new).collect(Collectors.toList());
 
         // 6. 아이템 기반 추천
         List<ProcessedSavingsDepositVo> recommendedSavings = itemBasedFilterService.filteringSavingsDeposits(hotSavingVos, filteredSavings);
 
         // 보내기 전에 dto로 옮겨서 보내기
-        List<FilteredSavingsDepositsVo> resultDto = convertToFilteredVo(recommendedSavings).stream()
-                .limit(10)
-                .collect(Collectors.toList());
+        List<FilteredSavingsDepositsVo> resultDto = convertToFilteredVo(recommendedSavings).stream().limit(10).collect(Collectors.toList());
         return new SavingsDepositsResponseDto(resultDto, usedKeywords);
     }
 
@@ -130,12 +137,8 @@ public class RecommendationServiceImpl implements RecommendationService {
         List<FundDto> hotFunds = fundDao.hot();
 
         // 5. 아이템 기반 추천
-        List<FundDto> recommendedFunds = itemBasedFilterService.filteredFunds(hotFunds, filteredFunds)
-                .stream()
-                .distinct()
-                .sorted(Comparator.comparingDouble(FundDto::getOneYRate).reversed()) // oneYRate 수익률 높은 순으로 정렬
-                .limit(10)
-                .collect(Collectors.toList());
+        List<FundDto> recommendedFunds = itemBasedFilterService.filteredFunds(hotFunds, filteredFunds).stream().distinct().sorted(Comparator.comparingDouble(FundDto::getOneYRate).reversed()) // oneYRate 수익률 높은 순으로 정렬
+                .limit(10).collect(Collectors.toList());
 
         return recommendedFunds;
     }
@@ -151,43 +154,11 @@ public class RecommendationServiceImpl implements RecommendationService {
             return null;
         }
 
-        return new MemberResponseDto().builder()
-                .nickname(user.getNickname())
-                .age(user.getAge())
-                .salary(user.getSalary())
-                .assets(user.getAssets())
-                .riskPoint(user.getRiskPoint())
-                .exp(user.getExp())
-                .goalAmount(user.getGoalAmount())
-                .keyword(user.getKeyword())
-                .build();
-    }
-
-
-    // MemberDto를 MemberEntity로 변환
-    public static MemberEntity convertToMemberEntity(MemberDto memberDto) {
-        if (memberDto == null) {
-            return null; // null 체크
-        }
-
-        // MemberEntity 생성
-        MemberEntity memberEntity = new MemberEntity();
-        memberEntity.setUsername(memberDto.getUsername());
-        memberEntity.setAge(Integer.parseInt(memberDto.getAge())); // 나이를 int로 변환
-        memberEntity.setSalary(memberDto.getSalary());
-        memberEntity.setAssets(memberDto.getAssets());
-        memberEntity.setRiskPoint(memberDto.getRiskPoint());
-        memberEntity.setGoalAmount(memberDto.getGoalAmount());
-        memberEntity.setKeyword(memberDto.getKeyword());
-
-        // 키워드 파싱
-        memberEntity.parseKeywords();
-
-        return memberEntity;
+        return new MemberResponseDto().builder().nickname(user.getNickname()).age(user.getAge()).salary(user.getSalary()).assets(user.getAssets()).riskPoint(user.getRiskPoint()).exp(user.getExp()).goalAmount(user.getGoalAmount()).keyword(user.getKeyword()).build();
     }
 
     private List<SavingsDepositEntity> getAllSavingsDeposits(int limit, String prdtDiv) {
-        List<SavingsDepositWithOptionsDto> combinedDeposits = savingsDepositDao.getAllProducts(0, limit, prdtDiv);
+        List<SavingsDepositWithOptionsDto> combinedDeposits = savingsDepositDao.getAllProducts(limit, prdtDiv);
         List<SavingsDepositEntity> allDeposits = new ArrayList<>();
 
         for (SavingsDepositWithOptionsDto dto : combinedDeposits) {
@@ -215,7 +186,6 @@ public class RecommendationServiceImpl implements RecommendationService {
                 depositEntity.setIntrRate(option.getIntrRate());
                 depositEntity.setIntrRate2(option.getIntrRate2());
 
-                // 기본 선택 카운트는 0으로 설정
                 depositEntity.setSelectCount(0);
 
                 // 생성된 SavingsDepositEntity를 리스트에 추가
@@ -228,29 +198,25 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     // ProcessedSavingsDepositVo 리스트를 FilteredSavingsDepositsVo 리스트로 변환
     public List<FilteredSavingsDepositsVo> convertToFilteredVo(List<ProcessedSavingsDepositVo> processedList) {
-        return processedList.stream()
-                .distinct()
-                .sorted(Comparator.comparingDouble(ProcessedSavingsDepositVo::getIntrRate2).reversed())
-                .map(this::convertToFilteredVo).collect(Collectors.toList());
+        return processedList.stream().distinct().sorted(Comparator.comparingDouble(ProcessedSavingsDepositVo::getIntrRate2).reversed()).map(this::convertToFilteredVo).collect(Collectors.toList());
     }
 
     // 개별 ProcessedSavingsDepositVo를 FilteredSavingsDepositsVo로 변환
     private FilteredSavingsDepositsVo convertToFilteredVo(ProcessedSavingsDepositVo processedVo) {
-        FilteredSavingsDepositsVo filteredVo = new FilteredSavingsDepositsVo();
-
-        filteredVo.setFinPrdtCd(processedVo.getFinPrdtCd());
-        filteredVo.setKorCoNm(processedVo.getKorCoNm());
-        filteredVo.setFinPrdtNm(processedVo.getFinPrdtNm());
-        filteredVo.setJoinWay(processedVo.getJoinWay());
-        filteredVo.setKeywords(processedVo.getKeywords());
-        filteredVo.setMaxLimit(BigDecimal.valueOf(processedVo.getMaxLimit())); // double -> BigDecimal
-        filteredVo.setIntrRateTypeNm(processedVo.getIntrRateTypeNm());
-        filteredVo.setSaveTrm(processedVo.getSaveTrm());
-        filteredVo.setIntrRate(BigDecimal.valueOf(processedVo.getIntrRate()));
-        filteredVo.setIntrRate2(BigDecimal.valueOf(processedVo.getIntrRate2()));
-        filteredVo.setSelectCount(processedVo.getSelectCount());
-
-        return filteredVo;
+        return FilteredSavingsDepositsVo.builder()
+                .finPrdtCd(processedVo.getFinPrdtCd())
+                .korCoNm(processedVo.getKorCoNm())
+                .finPrdtNm(processedVo.getFinPrdtNm())
+                .joinWay(processedVo.getJoinWay())
+                .keywords(processedVo.getKeywords())
+                .maxLimit(BigDecimal.valueOf(processedVo.getMaxLimit())) // double -> BigDecimal
+                .intrRateTypeNm(processedVo.getIntrRateTypeNm())
+                .saveTrm(processedVo.getSaveTrm())
+                .intrRate(BigDecimal.valueOf(processedVo.getIntrRate()))
+                .intrRate2(BigDecimal.valueOf(processedVo.getIntrRate2()))
+                .selectCount(processedVo.getSelectCount())
+                .build();
     }
+
 }
 

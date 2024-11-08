@@ -12,6 +12,13 @@
         FROM gold_trading
     </select>
 
+    <!-- 처음 저장된 기준일자 가져오기 -->
+    <select id="getFirstBasDt" resultType="String">
+        SELECT MIN(basDt)
+        FROM gold_trading
+    </select>
+
+
     <!-- 금종목이 존재하는지 확인하는 쿼리 -->
     <select id="checkGoldCategoryExists" resultType="int">
         SELECT COUNT(*)
@@ -78,4 +85,11 @@
         where pBasDt  &lt;= #{pBasDt}
     </delete>
 
+    <select id="rate"
+            resultType="fi.re.firebackend.dto.gold.GoldRate">
+        select BasDt, clpr, PbasDt, dayPrc
+        from gold_trading, gold_predict_prices
+        order by BasDt desc, PbasDt desc
+        limit 1
+    </select>
 </mapper>

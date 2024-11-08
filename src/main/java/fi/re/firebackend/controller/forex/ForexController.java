@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
@@ -27,8 +26,7 @@ public class ForexController {
     public ResponseEntity<List<ForexResponseDto>> getExchangeRateByDate(@PathVariable String searchDate) {
         try {
             List<ForexResponseDto> rates = forexService.getExchangeRateForDate(searchDate);
-            System.out.println("rates : "+rates);
-            // 리스트가 비어있는 경우 처리
+            // 리스트가 비어있는 경우
             if (rates.isEmpty()) {
                 return ResponseEntity.noContent().build(); // 204 No Content
             }

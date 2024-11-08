@@ -24,10 +24,23 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ForexServiceImpl implements ForexService {
     private static final Logger log = Logger.getLogger(ForexServiceImpl.class);
+    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
     private final ForexDao forexDao;
     private final ForexApi forexApi;
 
-    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+    public static double parseStringToDouble(String numberStr) {
+        if (numberStr == null || numberStr.isEmpty()) {
+            throw new NumberFormatException("Input string is null or empty");
+        }
+        return Double.parseDouble(numberStr.replace(",", ""));
+    }
+
+    public static int parseStringToInt(String numberStr) {
+        if (numberStr == null || numberStr.isEmpty()) {
+            throw new NumberFormatException("Input string is null or empty");
+        }
+        return Integer.parseInt(numberStr.replace(",", ""));
+    }
 
     // 오늘 날짜로(12시 전이면 어제 날짜로 api에서 불러와서 저장하는 함수)
     @Scheduled(cron = "0 0 12 * * ?", zone = "Asia/Seoul")    //월~금 초 분 시 일 월 요일 12시 정각에 업데이트(영업일 11시 전후로 업데이트되므로)
@@ -38,13 +51,12 @@ public class ForexServiceImpl implements ForexService {
 
     @Override
     public List<ForexResponseDto> getExchangeRateForDate(String searchDate) throws IOException, ParseException {
-        // 날짜 문자열을 형식에 맞춰 변환
         LocalDate date = LocalDate.parse(searchDate, formatter);
         log.info("date: " + date);
 
         // 최근 저장 날짜 확인
         LocalDate recentDate = forexDao.recentDate();
-        if (recentDate.isAfter(date)) {
+        if (recentDate != null && recentDate.isAfter(date)) {
             // 파라미터의 날짜가 DB 최신 날짜보다 이전이면 해당 날짜의 환율을 DB에서 가져옴
             return getExchangeRateByDate(date);
         } else {
@@ -52,14 +64,12 @@ public class ForexServiceImpl implements ForexService {
             ForexWrapper forexRes = setForexDataFromApi(date);
 
             if (forexRes == null) {
-                log.info("forexRes is null, get "+forexDao.recentDate());
+                log.info("forexRes is null, get " + forexDao.recentDate());
                 return getExchangeRateByDate(forexDao.recentDate()); // 가장 최근 날짜의 환율 반환
             }
             return getExchangeRateByDate(forexRes.getSearchDate());
         }
     }
-
-
 
     //api에서 매개변수로 받는 날짜를 불러오는 함수
     @Override
@@ -104,8 +114,7 @@ public class ForexServiceImpl implements ForexService {
         dateUnitMap.put("curUnit", forexEntity.getCurUnit());
 
         int count = forexDao.isExistsBySearchDateAndCurUnit(dateUnitMap);
-//        System.out.println(count);
-        // 데이터가 존재하는지 확인 후 업데이트 또는 삽입
+
         if (count > 0) {
             forexDao.updateExchangeRate(forexEntity);
             System.out.println("updated forex");
@@ -119,12 +128,14 @@ public class ForexServiceImpl implements ForexService {
     // 특정 날짜의 외환 정보 검색
     public List<ForexResponseDto> getExchangeRateByDate(LocalDate searchDate) throws IOException, ParseException {
         LocalDate recentDate = forexDao.recentDate();
+        if (searchDate == null) {
+            searchDate = LocalDate.now();
+        }
         // 오늘 날짜와 같은 경우 오전인지 확인
         if (searchDate.equals(LocalDate.now())) {
             searchDate = isBeforeNoon(searchDate);
         }
 
-        // 날짜와 기준 통화를 담은 맵 생성
         Map<String, Object> dateUnitMap = new HashMap<>();
         dateUnitMap.put("searchDate", searchDate);
         dateUnitMap.put("curUnit", "KRW"); // 원화를 기준으로 데이터를 받았는지 확인
@@ -163,22 +174,6 @@ public class ForexServiceImpl implements ForexService {
         forexEntity.setKftcBkpr(parseStringToInt(forexDto.getKftcBkpr()));
         forexEntity.setKftcDealBasR(parseStringToDouble(forexDto.getKftcDealBasR()));
         return forexEntity;
-    }
-
-    public static double parseStringToDouble(String numberStr) {
-        if (numberStr == null || numberStr.isEmpty()) {
-            throw new NumberFormatException("Input string is null or empty");
-        }
-        // 콤마를 제거한 후 double로 변환
-        return Double.parseDouble(numberStr.replace(",", ""));
-    }
-
-    public static int parseStringToInt(String numberStr) {
-        if (numberStr == null || numberStr.isEmpty()) {
-            throw new NumberFormatException("Input string is null or empty");
-        }
-        // 콤마를 제거하고 int로 변환
-        return Integer.parseInt(numberStr.replace(",", ""));
     }
 
     public LocalDate isBeforeNoon(LocalDate date) {

@@ -1,15 +1,14 @@
 package fi.re.firebackend.util.goldPredict;
 
-import fi.re.firebackend.dao.gold.GoldDao;
 import fi.re.firebackend.dto.gold.GoldInfo;
 import fi.re.firebackend.dto.gold.GoldPredicted;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.log4j.Logger;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
-import org.deeplearning4j.nn.conf.layers.LSTM;
+import org.deeplearning4j.nn.conf.layers.GravesLSTM;
 import org.deeplearning4j.nn.conf.layers.RnnOutputLayer;
-import org.deeplearning4j.nn.conf.layers.recurrent.SimpleRnn;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.nd4j.linalg.activations.Activation;
@@ -19,8 +18,10 @@ import org.nd4j.linalg.dataset.api.preprocessor.NormalizerMinMaxScaler;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,104 +32,92 @@ import java.util.List;
 @Component
 public class GoldPriceExpectation {
 
-    //    @Autowired
-    private GoldDao goldDao;
-
     private static final int N_EPOCHS = 100;
-    private static final double LEARNING_RATE = 0.0015;
+    private static final double LEARNING_RATE = 0.002;
     private static final double MOMENTUM = 0.9;
     private static final int SEED = 1000;
     private static final int NUM_FEATURES = 7;
+    private static final int TIME_SERIES_LENGTH = 365;
+    private static final Logger log = Logger.getLogger(GoldPriceExpectation.class);
 
-    GoldPriceExpectation(GoldDao goldDao) {
-        this.goldDao = goldDao;
+    private MultiLayerNetwork network;
+    private NormalizerMinMaxScaler scaler;
+
+    @PostConstruct
+    public void init() {
+        log.info("Initializing LSTM model...");
+        this.network = createModel();
+        this.scaler = new NormalizerMinMaxScaler(0, 1);
+        log.info("Model initialized successfully.");
     }
 
-    public List<GoldPredicted> lstm(List<GoldInfo> goldInfoPerDay) throws Exception {
-        long startTime = System.currentTimeMillis();
-
-        // 데이터 분류
-        int size = goldInfoPerDay.size();
-        int trainSize = (int) (size * 0.7); // 70% 데이터는 훈련용
-        int testSize = size - trainSize;
-        System.out.println(size + "-" + trainSize + "-" + testSize);
-
-        // 학습 및 테스트 데이터 생성
-        DataSet trainData = getTrainingData(goldInfoPerDay, trainSize, 1);
-        DataSet testData = getTestData(goldInfoPerDay, testSize, 1);
-
-        // 정규화
-        NormalizerMinMaxScaler scaler = new NormalizerMinMaxScaler(0, 1);
-        scaler.fitLabel(true);
-        scaler.fit(trainData);
-        scaler.transform(trainData);
-        scaler.transform(testData);
-
-        // 모델 구성
+    private MultiLayerNetwork createModel() {
         MultiLayerConfiguration config = new NeuralNetConfiguration.Builder()
                 .seed(SEED)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .weightInit(WeightInit.XAVIER)
                 .updater(new Nesterovs(LEARNING_RATE, MOMENTUM))
                 .list()
-                .layer(0, new LSTM.Builder()
+                .layer(0, new GravesLSTM.Builder()
                         .activation(Activation.TANH)
-                        .nIn(NUM_FEATURES)  // input features (number of features used)
+                        .nIn(NUM_FEATURES)
                         .nOut(10)
                         .build())
                 .layer(1, new RnnOutputLayer.Builder(LossFunctions.LossFunction.MSE)
-                        .activation(Activation.IDENTITY)
+                        .activation(Activation.TANH)
                         .nIn(10)
                         .nOut(NUM_FEATURES)
                         .build())
                 .build();
 
-        // 모델 생성 및 학습
-        MultiLayerNetwork network = new MultiLayerNetwork(config);
-        network.init();
+        MultiLayerNetwork model = new MultiLayerNetwork(config);
+        model.init();
+        return model;
+    }
 
-        // 모델 학습
-        for (int i = 1; i <= N_EPOCHS; i++) {
-            network.fit(trainData);
-            System.out.print(".");
-        }
-        System.out.println();
-        network.rnnTimeStep(testData.getFeatures());
-        // 예측
+    @Async
+    public List<GoldPredicted> lstm(List<GoldInfo> goldInfoPerDay) throws Exception {
+        long startTime = System.currentTimeMillis();
+
+        int size = goldInfoPerDay.size() - TIME_SERIES_LENGTH;
+        int trainSize = (int) (size * 0.7);
+        int testSize = size - trainSize;
+
+        log.info("Data split: Total=" + size + ", Train=" + trainSize + ", Test=" + testSize);
+
+        DataSet trainData = getData(goldInfoPerDay, 0, trainSize);
+        DataSet testData = getData(goldInfoPerDay, trainSize, testSize);
+
+        scaler.fitLabel(true);
+        scaler.fit(trainData);
+        scaler.transform(trainData);
+        scaler.transform(testData);
+
+        trainModel(trainData);
+
         INDArray predicted = network.rnnTimeStep(testData.getFeatures());
-
-        // 예측 결과 역변환
-        scaler.revert(trainData);
-        scaler.revert(testData);
         scaler.revertLabels(predicted);
 
-        // 예측 결과
-        List<GoldPredicted> GoldPredicteds = learnResult(predicted, testSize);
+        List<GoldPredicted> predictions = createPredictionList(predicted, testSize, goldInfoPerDay);
 
-        // 실행 시간 로깅
-        long endTime = System.currentTimeMillis();
-        long estimatedTime = endTime - startTime;
-        double seconds = (double) estimatedTime / 1000;
-        System.out.println("Processing Time: " + seconds);
-
-        return GoldPredicteds;
+        logProcessingTime(startTime);
+        return predictions;
     }
 
-    private DataSet getTrainingData(List<GoldInfo> goldInfos, int trainSize, int timeSeriesLength) {
-        int numFeatures = NUM_FEATURES; // 사용할 필드 수
-        int dataSize = trainSize + 1;
-
-        if (dataSize <= 0) {
-            throw new IllegalArgumentException("Not enough data to create training sequences.");
+    private void trainModel(DataSet trainData) {
+        for (int i = 1; i <= N_EPOCHS; i++) {
+            network.fit(trainData);
         }
+        log.info("Model training completed.");
+    }
 
-        INDArray input = Nd4j.create(dataSize, numFeatures, timeSeriesLength);
-//        INDArray output = Nd4j.create(dataSize, 1);
-        INDArray output = Nd4j.create(dataSize, numFeatures, timeSeriesLength);
+    private DataSet getData(List<GoldInfo> goldInfos, int startIndex, int dataSize) {
+        INDArray input = Nd4j.create(dataSize, NUM_FEATURES, TIME_SERIES_LENGTH);
+        INDArray output = Nd4j.create(dataSize, NUM_FEATURES, TIME_SERIES_LENGTH);
 
         for (int i = 0; i < dataSize; i++) {
-            for (int j = 0; j < timeSeriesLength; j++) {
-                GoldInfo goldInfo = goldInfos.get(i + j);
+            for (int j = 0; j < TIME_SERIES_LENGTH; j++) {
+                GoldInfo goldInfo = goldInfos.get(startIndex + i + j);
                 input.putScalar(new int[]{i, 0, j}, goldInfo.getClpr());
                 input.putScalar(new int[]{i, 1, j}, goldInfo.getVs());
                 input.putScalar(new int[]{i, 2, j}, goldInfo.getFltRt());
@@ -137,11 +126,9 @@ public class GoldPriceExpectation {
                 input.putScalar(new int[]{i, 5, j}, goldInfo.getLopr());
                 input.putScalar(new int[]{i, 6, j}, goldInfo.getTrqu());
             }
-            output.putScalar(new int[]{i, 0, 0}, goldInfos.get(i + timeSeriesLength).getClpr());
+            output.putScalar(new int[]{i, 0, 0}, goldInfos.get(startIndex + i + TIME_SERIES_LENGTH).getClpr());
         }
 
-        // 데이터 정규화
-        NormalizerMinMaxScaler scaler = new NormalizerMinMaxScaler(0, 1);
         DataSet dataSet = new DataSet(input, output);
         scaler.fit(dataSet);
         scaler.transform(dataSet);
@@ -149,57 +136,27 @@ public class GoldPriceExpectation {
         return dataSet;
     }
 
-    private DataSet getTestData(List<GoldInfo> goldInfos, int testSize, int timeSeriesLength) {
-        int numFeatures = NUM_FEATURES; // 사용할 필드 수
-        int dataSize = testSize + 1;
-
-        if (dataSize <= 0) {
-            throw new IllegalArgumentException("Not enough data to create test sequences.");
-        }
-
-        INDArray input = Nd4j.create(dataSize, numFeatures, timeSeriesLength);
-//        INDArray output = Nd4j.create(dataSize, 1);
-        INDArray output = Nd4j.create(dataSize, numFeatures, timeSeriesLength);
-        for (int i = 0; i < dataSize; i++) {
-            for (int j = 0; j < timeSeriesLength; j++) {
-                GoldInfo goldInfo = goldInfos.get(i + j);
-                input.putScalar(new int[]{i, 0, j}, goldInfo.getClpr());
-                input.putScalar(new int[]{i, 1, j}, goldInfo.getVs());
-                input.putScalar(new int[]{i, 2, j}, goldInfo.getFltRt());
-                input.putScalar(new int[]{i, 3, j}, goldInfo.getMkp());
-                input.putScalar(new int[]{i, 4, j}, goldInfo.getHipr());
-                input.putScalar(new int[]{i, 5, j}, goldInfo.getLopr());
-                input.putScalar(new int[]{i, 6, j}, goldInfo.getTrqu());
-            }
-//            output.putScalar(i, goldInfos.get(i + timeSeriesLength).getClpr());
-            output.putScalar(new int[]{i, 0, 0}, goldInfos.get(i + timeSeriesLength).getClpr());
-        }
-
-        // 데이터 정규화
-        NormalizerMinMaxScaler scaler = new NormalizerMinMaxScaler(0, 1);
-        DataSet dataSet = new DataSet(input, output);
-        scaler.fit(dataSet);
-        scaler.transform(dataSet);
-
-        return dataSet;
-    }
-
-    private List<GoldPredicted> learnResult(INDArray predicted, int futureDays) throws ParseException {
-        List<GoldPredicted> GoldPredicteds = new ArrayList<>();
-
-        // 오늘 날짜를 "yyyyMMdd" 형식으로 가져오기
+    private List<GoldPredicted> createPredictionList(INDArray predicted, int testSize, List<GoldInfo> goldInfoPerDay) throws ParseException {
+        List<GoldPredicted> predictions = new ArrayList<>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        String todayString = sdf.format(Calendar.getInstance().getTime());
-        Date today = sdf.parse(todayString); // String을 Date 객체로 변환
+        Date today = sdf.parse(sdf.format(Calendar.getInstance().getTime()));
 
-        for (int i = 0; i < futureDays; i++) {
-            long predictedValue = (long) predicted.getDouble(i); // 예측된 값
-            String predictionDate = sdf.format(DateUtils.addDays(today, i + 1)); // 예측 날짜
+        long adjust = goldInfoPerDay.subList(goldInfoPerDay.size() - 30, goldInfoPerDay.size())
+                .stream()
+                .mapToLong(GoldInfo::getClpr)
+                .sum() / 30;
 
-            GoldPredicteds.add(new GoldPredicted(predictionDate, predictedValue));
+        for (int i = 0; i < testSize; i++) {
+            long predictedValue = (long) predicted.getDouble(i) + adjust;
+            String predictionDate = sdf.format(DateUtils.addDays(today, i + 1));
+            predictions.add(new GoldPredicted(predictionDate, predictedValue));
         }
 
-        return GoldPredicteds;
+        return predictions;
     }
 
+    private void logProcessingTime(long startTime) {
+        double seconds = (System.currentTimeMillis() - startTime) / 1000.0;
+        log.info("Processing Time: " + seconds + " seconds");
+    }
 }

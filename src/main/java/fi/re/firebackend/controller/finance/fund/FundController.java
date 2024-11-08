@@ -3,10 +3,9 @@ package fi.re.firebackend.controller.finance.fund;
 import fi.re.firebackend.dao.finance.fund.FundDao;
 import fi.re.firebackend.dto.finance.fund.FundDto;
 import fi.re.firebackend.service.fund.FundService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import fi.re.firebackend.service.profile.ProfileService;
+import org.apache.log4j.Logger;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,19 +24,21 @@ public class FundController {
 
     @GetMapping("/get")
     public FundDto getFund(int prdNo) {
-        System.out.println("FundController getFund()");
         return fundDao.getFundById(prdNo);
+    }
+
+    @GetMapping("/count")
+    public boolean plusSelectCount(int prdNo){
+        return fundDao.plusSelectCount(prdNo) > 0;
     }
 
     @GetMapping("/hot")
     public List<FundDto> getHotFund() {
-        System.out.println("FundController getHotFund()");
         return fundDao.hot();
     }
 
     @GetMapping("/all")
     public List<FundDto> getAllFund() {
-        System.out.println("FundController getAllFund()");
         return fundDao.all();
     }
 
@@ -45,7 +46,6 @@ public class FundController {
     public Map<String, Object> getFunds(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        System.out.println("FundController getFunds()");
         List<FundDto> funds = fundService.getFunds(page, size);
         int totalCount = fundService.getTotalCount();
 
