@@ -22,8 +22,8 @@ public class GoldPredictionServiceImpl implements GoldPredictionService {
 
     private static final Logger log = Logger.getLogger(GoldPredictionServiceImpl.class);
     private final GoldService goldService;
-    GoldPriceExpectation goldPriceExpectation;
-    GoldDao goldDao;
+    private final GoldPriceExpectation goldPriceExpectation;
+    private final GoldDao goldDao;
 
     @Override
     @Scheduled(cron = "0 0 8 * * ?") //초 분 시 일 월 요일 현재는 08시 정각
